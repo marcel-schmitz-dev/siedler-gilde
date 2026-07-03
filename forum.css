@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 
 .forum-container {
@@ -30,3 +31,16 @@
     padding: 10px 20px; border: none; 
     border-radius: 4px; cursor: pointer;
  }
+=======
+.forum-container {
+    background: rgba(233, 220, 185, 0.7);
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #c4b083;
+}
+
+.forum-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+.forum-table th { text-align: left; border-bottom: 2px solid #5c4028; padding: 10px; color: #5c4028; }
+.forum-table td { padding: 15px 10px; border-bottom: 1px solid #c4b083; }
+.btn-create { background-color: #5c4028; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
+>>>>>>> fe1073e98691c71ca7fce7cfcdff8ac21bad9465

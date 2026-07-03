@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* Grundlegende Variablen & Body */
 :root {
     --bg-parchment: #e9dcb9;    
@@ -78,4 +79,86 @@ footer {
 
 /* Gilden-Header (kommt auf allen Seiten vor) */
 .gilden-header { text-align: center; margin-bottom: 35px; }
+=======
+/* Grundlegende Variablen & Body */
+:root {
+    --bg-parchment: #e9dcb9;    
+    --sidebar-brown: #64421F;   
+    --sidebar-active: #b5893d;  
+    --text-dark: #2b1a0a;
+    --text-light: #fff3db;
+}
+
+body {
+    margin: 0;
+    padding: 15px;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    background-color: #2c351a;
+    color: var(--text-dark);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+.wrapper {
+    width: 100%;
+    max-width: 1200px;
+    background: #e9dcb9 url('../assets/img/background_home.png') no-repeat center center;
+    background-size: 100% 100%;
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    grid-template-rows: 1fr auto;
+    box-shadow: 0 0 30px rgba(0,0,0,0.8);
+    border-radius: 8px;
+    min-height: 90vh;
+    overflow: visible;
+    position: relative;
+    box-sizing: border-box;
+}
+
+/* Sidebar & Footer (Global) */
+aside {
+    width: 270px;
+    height: 100%;
+    background-color: var(--sidebar-brown);
+    color: var(--text-light);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-left: -30px;
+    z-index: 10;
+    border-left: 3px solid #b5893d;
+    border-right: 3px solid #b5893d;
+    box-shadow: inset 4px 0px 0px #ffca54, inset -4px 0px 0px #ffca54, 5px 0px 15px rgba(0, 0, 0, 0.4);
+}
+
+nav ul li a {
+    display: flex;
+    align-items: center;
+    width: 280px;
+    padding: 12px 15px;
+    color: var(--text-light);
+    text-decoration: none;
+    background: #36260C;
+    border: 3px solid #b5893d;
+    border-radius: 20px;
+    margin-right: -10px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+footer {
+    grid-column: 1 / span 2;
+    background-color: #362211;
+    color: #a89279;
+    padding: 20px;
+    border-top: 2px solid #b5893d;
+    box-shadow: inset 0 3px 0px #ffca54;
+}
+
+/* Gilden-Header (kommt auf allen Seiten vor) */
+.gilden-header { text-align: center; margin-bottom: 35px; }
+>>>>>>> fe1073e98691c71ca7fce7cfcdff8ac21bad9465
 .gilden-header img { width: 100%; max-width: 600px; filter: drop-shadow(0px 5px 10px rgba(0,0,0,0.3)); }
