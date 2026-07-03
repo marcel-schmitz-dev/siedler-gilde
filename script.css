@@ -1,0 +1,555 @@
+/* ==========================================
+   GRUNDDESIGN & FARBEN (SIEDLER-STIL)
+   ========================================== */
+:root {
+    --bg-parchment: #e9dcb9;    
+    --sidebar-brown: #5c4028;   
+    --sidebar-active: #b5893d;  
+    --text-dark: #2b1a0a;
+    --text-light: #fff3db;
+}
+
+body {
+    margin: 0;
+    padding: 15px; /* Gewährleistet den permanenten grünen Rand (auch bei 320px) */
+    font-family: 'Georgia', 'Times New Roman', serif;
+    background-color: #2c351a; /* Das dunkle Siedler-Grün */
+    color: var(--text-dark);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+/* Hauptcontainer - Flexibler Aufbau mit maximalen Begrenzungen */
+.wrapper {
+    width: 100%;
+    /* Standard-Begrenzung für normale Bildschirme (unter 1440px Viewport) */
+    max-width: 1200px; 
+    background: #e9dcb9 url('assets/img/background_home.png') no-repeat center center;
+    background-size: 100% 100%; /* Verhindert das Abschneiden der Ränder */
+    
+    display: grid;
+    grid-template-columns: 300px 1fr; 
+    box-shadow: 0 0 30px rgba(0,0,0,0.8);
+    border-radius: 8px;
+    min-height: 90vh;
+    
+    /* Schutzabstand zum Pergamentrand */
+    padding: 40px 30px; 
+    box-sizing: border-box;
+    transition: max-width 0.3s ease;
+
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    grid-template-rows: 1fr auto; /* Erzwingt, dass die Sidebar (Spalte 1) bis zum Footer (Reihe 2) geht */
+    min-height: 90vh;
+    padding: 0;
+
+    position: relative; /* WICHTIG: Damit wir die Sidebar relativ dazu verschieben können */
+    overflow: visible;  /* Damit der Überhang nicht abgeschnitten wird */
+    display: grid;
+    grid-template-columns: 250px 1fr;
+}
+
+/* ==========================================
+   LINKE SIDEBAR (SCHWEBENDER BALKEN)
+   ========================================== */
+aside {
+    width: 270px;
+    height: 100%;
+    background-color: #64421F;
+    color: var(--text-light);
+    /* padding: 35px 20px; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    margin-left: -30px; /* Schiebt die Sidebar nach links über den Pergament-Rand */
+    z-index: 10;
+    /* ... der
+    
+    /* Zwingt die Sidebar, die gesamte Spaltenhöhe auszufüllen */
+    align-self: stretch; 
+    
+    /* BEIDSEITIGE GOLD-EFFEKTE */
+    border-left: 3px solid #b5893d;
+    border-right: 3px solid #b5893d;
+    
+    /* Zusätzlicher innerer Glow für beide Seiten */
+    box-shadow: inset 4px 0px 0px #ffca54, 
+                inset -4px 0px 0px #ffca54,
+                5px 0px 15px rgba(0, 0, 0, 0.4);
+    
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.logo-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.logo-area img {
+    width: 480px; 
+    height: auto;
+    filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.5));
+}
+
+.nav-decorations {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    margin: 10px 0 35px 0;
+}
+
+.nav-decorations img {
+    width: 92px; 
+    height: auto;
+    object-fit: contain; /* Behält das Seitenverhältnis bei, füllt aber die 50x50px optimal aus */
+    
+    /* Erhöhte Sichtbarkeit durch kombinierten Schatten und hellen Glow-Effekt */
+    filter: drop-shadow(0px 0px 4px rgba(255, 235, 180, 0.2)) 
+            drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.7));
+    
+    transition: transform 0.2s ease;
+}
+
+/* Kleiner Bonus: Sanfter Effekt beim Drüberfahren */
+.nav-decorations img:hover {
+    transform: scale(1.08);
+}
+
+nav {
+    width: 100%;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+nav ul li {
+    margin-bottom: 12px;
+}
+
+nav ul li a {
+
+    display: flex;
+    align-items: center;
+    width: 280px;
+    position: relative;
+    left: 0;
+    padding: 12px 15px;
+    color: var(--text-light);
+    text-decoration: none;
+    background: #36260C;
+    
+    border-left: 5px solid transparent;
+    font-weight: bold;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    border-radius: 20px;
+    border: 3px solid #b5893d;
+
+
+    margin-right: -10px;
+}
+
+nav ul li a img {
+    width: 56px !important; 
+    height: 56px !important;
+    object-fit: contain; /* Garantiert, dass kein Icon verzerrt oder gequetscht wird */
+    margin-right: 14px;
+    
+    /* Macht die kleinen Menü-Icons auf dem dunklen Braun knackig scharf und sichtbar */
+    filter: drop-shadow(0px 0px 2px rgba(255, 243, 219, 0.3)) 
+            drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.6));
+}
+
+nav ul li a:hover, nav ul li a.active {
+    background-color: #875B1C;
+    color: var(--text-light);
+    border-left: 5px solid #ffca54;
+    transform: translateX(5px);
+}
+
+/* ==========================================
+   RECHTER INHALTSBEREICH (MAIN)
+   ========================================== */
+main {
+    padding: 40 30px; 
+    display: flex;
+    flex-direction: column;
+}
+
+.gilden-header {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.gilden-header img {
+    width: 100%;
+    max-width: 600px; 
+    height: auto;
+    filter: drop-shadow(0px 5px 10px rgba(0,0,0,0.3));
+}
+
+/* Content Layout (Zwei Spalten standardmäßig) */
+.content-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 25px;
+}
+
+.section-title {
+    display: flex;
+    flex-direction: column; /* Damit Überschrift und Inhalt untereinander bleiben */
+    align-items: center;
+    text-align: center;
+    font-size: 1.6rem;
+    border-bottom: 2px solid #b5893d;
+    padding-bottom: 5px;
+    padding-left: 30px;
+    margin-top: 0;
+    color: #4a321a;
+}
+
+.news-item {
+    display: flex;
+    flex-direction: column; /* Damit Überschrift und Inhalt untereinander bleiben */
+    align-items: center;
+    text-align: center;
+    width: 80%;            /* Statt fester 300px lieber prozentual */
+    max-width: 400px;      /* Begrenzung, damit es nicht zu breit wird */
+    margin-bottom: 25px;
+    padding: 20px;
+    /* padding-left: clamp(30px, 8.9vw , 130px); */
+    margin-left: clamp(30px, 8.9vw, 130px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.news-item h4 {
+    margin: 0 0 8px 0;
+    color: #8c5213;
+    font-size: 1.25rem;
+}
+
+.news-item p {
+    line-height: 1.5;
+}
+
+.widget {
+    background-color: transparent; /* Pergament-Hintergrund scheint durch */
+    padding: 10px 0;
+    margin-bottom: 25px;
+    border: none;
+    box-shadow: none;
+}
+
+.widget h3 {
+    margin-top: 0;
+    font-size: 1.3rem;
+    color: #4a321a;
+    border-bottom: 2px solid #c4b083; /* Etwas dickerer Strich für den Look */
+    padding-bottom: 5px;
+    display: flex;
+    justify-content: space-between; /* Überschrift links, Icon rechts */
+    align-items: center;
+}
+
+.widget-icon {
+    width: 28px; /* Größe der Spitzhacke */
+    height: auto;
+}
+
+.event-time {
+    font-weight: bold;
+    font-size: 0.95rem;
+    color: #5c4028;
+}
+
+/* Styling für das More-Menü */
+.member-dropdown {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: #5c4028;
+}
+
+.member-dropdown summary {
+    cursor: pointer;
+    font-weight: bold;
+    color: #8c5213;
+    padding: 5px 0;
+    outline: none;
+}
+
+.member-list {
+    margin-top: 10px;
+    padding-left: 10px;
+    border-left: 2px solid #c4b083; /* Kleine optische Trennung zur Liste */
+}
+
+footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    grid-column: 1 / span 2;
+    background-color: #362211;
+    color: #a89279;
+    text-align: center;
+    padding: 20px;
+    font-size: 0.9rem;
+
+    /* GOLDGELBE STREIFEN OBEN AM FOOTER-RAND */
+    border-top: 2px solid #b5893d; /* Der dicke goldene Streifen */
+    box-shadow: inset 0 3px 0px #ffca54; /* Der feine, hellere Goldstreifen direkt darunter */
+}
+
+.footer-right-group {
+  display: flex;                  /* Macht Contact und About nebeneinander */
+  gap: 40px;                      /* Abstand zwischen Contact und About */
+}
+
+/* Speziell für die Logos im Footer */
+.footer-logo {
+    width: 120px !important; 
+    height: auto !important;
+    margin: 0 10px;
+    filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.5));
+    transition: transform 0.3s ease;
+}
+
+/* Optional: Ein kleiner Effekt beim Drüberfahren */
+.footer-logo:hover {
+    transform: scale(1.1);
+}
+
+
+
+/* ==========================================
+   MEDIA QUERIES (RESPONSIVE ANPASSUNGEN)
+   ========================================== */
+
+/* 1. Auf großen Bildschirmen (Big Screen ab 1440px Breite) */
+@media (min-width: 1440px) {
+    .wrapper {
+        max-width: 1440px; /* Erhöht das Limit auf 1440px */
+        padding: 50px 50px; /* Gibt dem Pergament noch etwas mehr Atmenraum */
+    }
+}
+
+/* 2. Für Tablets & kleinere Bildschirme (Unter 900px Breite) */
+@media (max-width: 900px) {
+    @media (max-width: 900px) {
+    .wrapper {
+        grid-template-columns: 1fr; 
+        padding: 0 20px 20px 20px; /* Auf Handys soll das Pergament wieder überall umschließen */
+    }
+    
+    aside {
+        margin: 0 0 30px 0;
+        width: 100%;
+        box-sizing: border-box;
+        height: auto;
+        
+        /* Goldrand für mobile Ansicht nach unten spiegeln */
+        border-right: none;
+        border-bottom: 2px solid #b5893d;
+        box-shadow: inset 0 -3px 0px #ffca54, 
+                    0px 5px 15px rgba(0, 0, 0, 0.4);
+    }
+    
+    /* ... restliche mobile Stile bleiben gleich ... */
+}
+    
+    .nav-decorations {
+        flex-direction: row; /* Deko-Icons liegen nebeneinander statt untereinander */
+        justify-content: center;
+        gap: 30px;
+    }
+    
+    .content-grid {
+        grid-template-columns: 1fr; /* News und Widgets untereinander */
+    }
+    
+    footer {
+        grid-column: 1;
+    }
+}
+
+/* 3. Für Smartphones (Herunter bis 320px) */
+@media (max-width: 480px) {
+    body {
+        padding: 8px; /* Kleinerer, aber permanenter grüner Rand auf Handys */
+    }
+    
+    .wrapper {
+        padding: 25px 15px; /* Kompakteres Pergament-Padding */
+    }
+    
+    main {
+        padding: 0; /* Nutzt die volle Breite des inneren Pergaments */
+    }
+    
+    .gilden-header img {
+        max-width: 100%; /* Skaliert das Banner sauber runter */
+    }
+    
+    .nav-decorations img {
+        width: 40px; /* Kleinere Deko-Icons auf dem Smartphone */
+    }
+}
+
+/* ==========================================
+   CSS LIGHTBOX (KARTEN-ZOOM)
+   ========================================== */
+
+/* Das abgedunkelte Hintergrund-Overlay (standardmäßig unsichtbar) */
+.lightbox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.85); /* Dunkelt den Rest der Website ab */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Schiebt es über absolut alles andere */
+    
+    /* Animation für ein weiches Einblenden */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+
+/* Unsichtbarer Klickbereich im Hintergrund – klickt man daneben, schließt sich das Bild */
+.lightbox-close {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: zoom-out;
+}
+
+/* Der Container für das große Bild */
+.lightbox-content {
+    position: relative;
+    max-width: 85%;
+    max-height: 85%;
+    background-color: #3d2816; /* Passender Holzrahmen um das große Bild */
+    padding: 10px;
+    border-radius: 6px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    /* Startet leicht verkleinert für einen schönen "Pop"-Effekt */
+    transform: scale(0.9);
+    transition: transform 0.4s ease;
+}
+
+.lightbox-content img {
+    max-width: 100%;
+    max-height: 80vh;
+    object-fit: contain;
+    border-radius: 4px;
+}
+
+/* Der Schließen-Button oben rechts am Bild (Das 'X') */
+.close-button {
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    width: 35px;
+    height: 35px;
+    background-color: #b5893d;
+    color: #fff3db;
+    text-align: center;
+    line-height: 32px;
+    font-size: 24px;
+    font-family: Arial, sans-serif;
+    text-decoration: none;
+    border-radius: 50%;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    border: 2px solid #3d2816;
+    transition: background 0.2s;
+}
+
+.close-button:hover {
+    background-color: #ffca54;
+    color: #2b1a0a;
+}
+
+/* ==========================================
+   WENN AKTIVIERT (:target)
+   ========================================== */
+/* Sobald die ID #karten-zoom in der URL aufgerufen wird, wird das Overlay sichtbar */
+.lightbox:target {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Das Bild zoomt sanft nach vorne */
+.lightbox:target .lightbox-content {
+    transform: scale(1);
+}
+
+.forum-container {
+    background: rgba(233, 220, 185, 0.7); /* Pergament-Look */
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #c4b083;
+}
+
+.forum-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.forum-table th {
+    text-align: left;
+    border-bottom: 2px solid #5c4028;
+    padding: 10px;
+    color: #5c4028;
+}
+
+.forum-table td {
+    padding: 15px 10px;
+    border-bottom: 1px solid #c4b083;
+}
+
+.forum-table a {
+    text-decoration: none;
+    color: #8c5213;
+    font-weight: bold;
+}
+
+.forum-table a:hover {
+    text-decoration: underline;
+}
+
+.btn-create {
+    background-color: #5c4028;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: Georgia, serif;
+}
+
+.btn-create:hover {
+    background-color: #8c5213;
+}
