@@ -27,7 +27,7 @@ body {
     width: 100%;
     /* Standard-Begrenzung für normale Bildschirme (unter 1440px Viewport) */
     max-width: 1200px; 
-    background: #e9dcb9 url('assets/img/background_home.png') no-repeat center center;
+    background: #e9dcb9 url('assets/img/background.png') no-repeat center center;
     background-size: 100% 100%; /* Verhindert das Abschneiden der Ränder */
     
     display: grid;
