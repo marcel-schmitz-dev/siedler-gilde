@@ -79,6 +79,7 @@ aside {
     width: 270px;
     height: 100%;
     background-color: #64421F;
+    
     color: var(--text-light);
     /* padding: 35px 20px; */
     display: flex;
@@ -168,9 +169,11 @@ nav ul li a {
     padding: 12px 15px;
     color: var(--text-light);
     text-decoration: none;
-    background: #36260C;
+    /* background: #36260C; */
+    background: url('assets/img/nav_bar.png') no-repeat center center;
+    background-size: cover;
     
-    border-left: 5px solid transparent;
+    /* border-left: 5px solid transparent; */
     font-weight: bold;
     font-size: 1.05rem;
     transition: all 0.3s ease;
@@ -279,8 +282,12 @@ main {
     border-bottom: 2px solid #c4b083; /* Etwas dickerer Strich für den Look */
     padding-bottom: 5px;
     display: flex;
-    justify-content: space-between; /* Überschrift links, Icon rechts */
     align-items: center;
+}
+
+.widget img{
+    width: 80px;
+    height: auto;
 }
 
 .widget-icon {
@@ -321,6 +328,7 @@ footer {
     align-items: center;
     grid-column: 1 / span 2;
     background-color: #362211;
+    
     color: #a89279;
     text-align: center;
     padding: 20px;
