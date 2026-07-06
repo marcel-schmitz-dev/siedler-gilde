@@ -8,6 +8,7 @@
         <link rel="stylesheet" href="script.css" />
         <link rel="stylesheet" href="global.css">
         <link rel="stylesheet" href="forum.css">
+        <link rel="stylesheet" href="abenteuer-karten.css">
 
         
     </head>
@@ -116,6 +117,53 @@
                     <div>
                     
             </main>
+            <main>
+            <div class="content-wrapper">
+                <h2 class="gallery-title"></h2>
+                <div class="gallery" id="gallery"></div>
+            </div>
+        </main>
+
+            <div id="overlay" class="overlay hidden" onclick="closeOverlay()">
+            <div class="overlay-window" onclick="event.stopPropagation()">
+                <div class="overlay-header">
+                    <span id="imageTitle">Alaska-810433_1280</span>
+                    <button class="close-icon" onclick="closeOverlay()">
+                        ×
+                    </button>
+                </div>
+                <img id="largeImage" src="" alt="Großansicht" />
+                <div class="overlay-footer">
+                    <button class="nav-btn" onclick="prevImage(event)">
+                        ←
+                    </button>
+                    <span id="imageCounter">1/12</span>
+                    <button class="nav-btn" onclick="nextImage(event)">
+                        →
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="overlay" class="overlay hidden" onclick="closeOverlay()">
+            <div class="overlay-window" onclick="event.stopPropagation()">
+                <div class="overlay-header">
+                    <span id="imageTitle">Alaska-810433_1280</span>
+                    <button class="close-icon" onclick="closeOverlay()">
+                        ×
+                    </button>
+                </div>
+                <img id="largeImage" src="" alt="Großansicht" />
+                <div class="overlay-footer">
+                    <button class="nav-btn" onclick="prevImage(event)">
+                        ←
+                    </button>
+                    <span id="imageCounter">1/12</span>
+                    <button class="nav-btn" onclick="nextImage(event)">
+                        →
+                    </button>
+                </div>
+            </div>
+        </div>
 
             <!-- FOOTER UNTEN -->
             <footer>
@@ -136,6 +184,7 @@
     </div>
 </footer>
         </div>
+        <script src="abenteuerkarten.js"></script>
     </body>
 </html>
 
