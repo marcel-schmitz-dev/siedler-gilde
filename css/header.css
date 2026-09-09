@@ -1,0 +1,111 @@
+header {
+
+    height: var(--header-height);
+
+    position: absolute;
+
+    top: 0;
+
+    left: 0;
+
+    width: 100%;
+
+    z-index: 100;
+
+    border-bottom: 1px solid
+        rgba(214, 169, 76, 0.3);
+
+}
+
+
+.header-content {
+
+    height: 100%;
+
+    max-width: 1440px;
+
+    margin: auto;
+
+    padding: 0 60px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+}
+
+
+.logo img {
+
+    height: 70px;
+
+    width: auto;
+
+}
+
+
+nav {
+
+    display: flex;
+
+    gap: 35px;
+
+}
+
+
+nav a {
+
+    color: var(--text-primary);
+
+    font-size: 14px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 1px;
+
+    transition: 0.3s;
+
+}
+
+
+nav a:hover {
+
+    color: var(--gold-light);
+
+}
+
+
+/* JOIN BUTTON */
+
+.join-button {
+
+    padding: 12px 20px;
+
+    border: 1px solid
+        var(--gold-primary);
+
+    color: var(--gold-light);
+
+    border-radius: 4px;
+
+    font-size: 14px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 1px;
+
+    transition: 0.3s;
+
+}
+
+
+.join-button:hover {
+
+    background-color:
+        var(--gold-primary);
+
+    color: var(--bg-primary);
+
+}

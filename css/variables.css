@@ -1,0 +1,42 @@
+:root {
+
+    /* =========================
+    COLORS
+    ========================= */
+
+    --bg-primary: #08131D;
+    --bg-secondary: #0D1F2D;
+    --bg-card: #16354A;
+
+
+    /* GREEN */
+
+    --green-primary: #183F32;
+    --green-light: #245A43;
+
+
+    /* GOLD */
+
+    --gold-primary: #D6A94C;
+    --gold-light: #F0C76A;
+    --gold-dark: #A8782A;
+
+
+    /* TEXT */
+
+    --text-primary: #F5E7C8;
+    --text-secondary: #C9AD7A;
+
+
+    /* PARCHMENT */
+
+    --parchment: #E8D6B0;
+
+
+    /* =========================
+    SIZES
+    ========================= */
+
+    --header-height: 80px;
+
+}
