@@ -1,133 +1,251 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
+    <head>
+        <meta charset="UTF-8" />
 
-<head>
-    <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0">
+        <meta
+            name="description"
+            content="Gründer von Goldenau [GvG] – Die Siedler Online Gilde"
+        />
 
-    <title>Gründer von Goldenau | GvG</title>
+        <title>Gründer von Goldenau | GvG</title>
 
-    <link rel="stylesheet" href="./css/styles.css">
-</head>
+        <link rel="stylesheet" href="./css/styles.css" />
+    </head>
 
+    <body>
+        <!-- =========================
+         HEADER
+    ========================== -->
 
-<body>
+        <header class="site-header">
+            <div class="header-content">
+                <!-- LOGO -->
 
-    <!-- HEADER -->
+                <a href="#home" class="logo">
+                    <img
+                        src="./assets/img/logo/gvg-wappen.webp"
+                        alt="Wappen der Gründer von Goldenau"
+                    />
+                </a>
 
-    <header>
+                <!-- NAVIGATION -->
 
-        <div class="header-content">
+                <nav class="main-navigation">
+                    <a href="#home" class="nav-link active"> Home </a>
 
-            <!-- LOGO -->
+                    <a href="#about" class="nav-link"> Über uns </a>
 
-            <a href="#" class="logo">
+                    <a href="#guild" class="nav-link"> Gilde </a>
 
-                <img
-                    src="./assets/img/logo/gvg-wappen.webp"
-                    alt="Gründer von Goldenau Wappen">
+                    <a href="#activities" class="nav-link"> Aktivitäten </a>
 
-            </a>
+                    <a href="#news" class="nav-link"> News </a>
 
+                    <a href="#contact" class="nav-link"> Kontakt </a>
+                </nav>
 
-            <!-- NAVIGATION -->
+                <!-- JOIN BUTTON -->
 
-            <nav>
+                <a href="#contact" class="join-button">
+                    <span class="crown">♛</span>
 
-                <a href="#home">Home</a>
+                    Jetzt beitreten
+                </a>
 
-                <a href="#about">Über uns</a>
+                <!-- MOBILE MENU BUTTON -->
 
-                <a href="#guild">Gilde</a>
+                <button class="menu-button" aria-label="Menü öffnen">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </header>
 
-                <a href="#activities">Aktivitäten</a>
+        <main>
+            <!-- =========================
+         HERO
+    ========================== -->
 
-                <a href="#news">News</a>
+            <section id="home" class="hero-section">
+                <div class="hero-overlay"></div>
 
-                <a href="#contact">Kontakt</a>
-
-            </nav>
-
-
-            <!-- BUTTON -->
-
-            <a href="#contact" class="join-button">
-
-                ♛ Jetzt beitreten
-
-            </a>
-
-        </div>
-
-    </header>
-
-
-    <!-- HERO -->
-
-    <main>
-
-        <section id="home" class="hero-section">
-
-            <div class="hero-overlay"></div>
-
-
-            <div class="hero-content">
-
-                <p class="hero-subtitle">
-                    Die Siedler Online Gilde
-                </p>
-
-
-                <h1>
-                    Gründer von
-                    <span>Goldenau</span>
-                </h1>
-
-
-                <p class="guild-tag">
-                    [GvG]
-                </p>
-
-
-                <p class="hero-description">
-
-                    Gemeinsam bauen.
-                    Gemeinsam wachsen.
-                    Gemeinsam stärker.
-
-                </p>
-
-
-                <div class="hero-buttons">
-
-                    <a href="#contact"
-                        class="primary-button">
-
-                        ♛ Jetzt beitreten
-
-                    </a>
-
-
-                    <a href="#about"
-                        class="secondary-button">
-
-                        Mehr erfahren ↓
-
-                    </a>
-
+                <div class="hero-watermark">
+                    <img src="./assets/img/logo/gvg-wappen.webp" alt="" />
                 </div>
 
-            </div>
+                <div class="hero-content">
+                    <div class="hero-pretitle">
+                        <span class="ornament-line"></span>
 
-        </section>
+                        <p>Die Siedler Online Gilde</p>
 
-    </main>
+                        <span class="ornament-line"></span>
+                    </div>
 
+                    <h1>
+                        <span class="title-small"> Gründer von </span>
 
-    <script src="./js/script.js"></script>
+                        <span class="title-main"> Goldenau </span>
+                    </h1>
 
-</body>
+                    <div class="guild-tag-container">
+                        <span></span>
 
+                        <p class="guild-tag">[GvG]</p>
+
+                        <span></span>
+                    </div>
+
+                    <p class="hero-description">
+                        Gemeinsam bauen. Gemeinsam wachsen. Gemeinsam stärker.
+                    </p>
+
+                    <div class="hero-buttons">
+                        <a href="#contact" class="primary-button">
+                            <span>♛</span>
+
+                            Jetzt beitreten
+                        </a>
+
+                        <a href="#about" class="secondary-button">
+                            Mehr erfahren
+
+                            <span>↓</span>
+                        </a>
+                    </div>
+                </div>
+
+                <a href="#about" class="scroll-indicator">
+                    <span class="scroll-line"></span>
+
+                    <span class="scroll-icon"> ↓ </span>
+
+                    <span class="scroll-text"> Entdecken </span>
+
+                    <span class="scroll-line"></span>
+                </a>
+            </section>
+
+            <!-- =========================
+         UNSERE GILDE
+    ========================== -->
+
+            <section id="about" class="about-section">
+                <!-- BACKGROUND DECORATION -->
+
+                <div class="about-background-ornament">✦</div>
+
+                <div class="about-container">
+                    <!-- SECTION HEADER -->
+
+                    <div class="section-heading">
+                        <p class="section-pretitle">✦ Gemeinsam stärker ✦</p>
+
+                        <h2>Unsere Gilde</h2>
+
+                        <div class="section-ornament">
+                            <span></span>
+
+                            <span class="ornament-symbol"> ♛ </span>
+
+                            <span></span>
+                        </div>
+                    </div>
+
+                    <!-- CONTENT -->
+
+                    <div class="about-content">
+                        <!-- WAPPEN -->
+
+                        <div class="about-emblem">
+                            <div class="emblem-frame">
+                                <img
+                                    src="./assets/img/logo/gvg-wappen.webp"
+                                    alt="Gründer von Goldenau Gildenwappen"
+                                />
+                            </div>
+                        </div>
+
+                        <!-- TEXT -->
+
+                        <div class="about-text">
+                            <p class="about-intro">
+                                Willkommen bei den
+                                <strong>Gründern von Goldenau.</strong>
+                            </p>
+
+                            <p>
+                                Wir sind eine Gemeinschaft von Siedlern,
+                                Entdeckern und Strategen, die gemeinsam ihre
+                                Inseln aufbauen, Abenteuer bestreiten und
+                                Goldenau jeden Tag ein Stück weiterentwickeln.
+                            </p>
+
+                            <p>
+                                Bei uns steht nicht nur der Erfolg im
+                                Vordergrund. Wir glauben daran, dass eine starke
+                                Gilde durch Zusammenhalt, gegenseitige Hilfe und
+                                gemeinsame Erlebnisse entsteht.
+                            </p>
+
+                            <!-- VALUES -->
+
+                            <div class="guild-values">
+                                <div class="guild-value">
+                                    <span class="value-icon"> ⚒ </span>
+
+                                    <div>
+                                        <h3>Gemeinsam bauen</h3>
+
+                                        <p>
+                                            Wir helfen uns gegenseitig und
+                                            wachsen gemeinsam.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="guild-value">
+                                    <span class="value-icon"> 🛡 </span>
+
+                                    <div>
+                                        <h3>Zusammenhalt</h3>
+
+                                        <p>
+                                            Eine Gemeinschaft, auf die man
+                                            zählen kann.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="guild-value">
+                                    <span class="value-icon"> ♛ </span>
+
+                                    <div>
+                                        <h3>Gemeinsam stärker</h3>
+
+                                        <p>
+                                            Gemeinsam meistern wir jede
+                                            Herausforderung.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <a href="#guild" class="about-button">
+                                Mehr über uns
+
+                                <span> → </span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <script src="./js/script.js"></script>
+    </body>
 </html>
