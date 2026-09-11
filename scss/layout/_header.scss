@@ -1,0 +1,51 @@
+@use "../abstracts/variables" as *;
+
+// =========================
+// COMPONENTS: HEADER
+// =========================
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background: rgba($bg-primary, 0.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba($gold-primary, 0.25);
+
+    .header-content {
+        max-width: $content-width;
+        height: $header-height;
+        margin: 0 auto;
+        padding: 0 60px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .logo {
+        img {
+            width: 85px;
+            height: auto;
+        }
+    }
+
+    nav {
+        display: flex;
+        gap: 45px;
+
+        a {
+            color: $gold-primary;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: color $transition;
+
+            &:hover {
+                color: $gold-primary;
+            }
+        }
+    }
+}

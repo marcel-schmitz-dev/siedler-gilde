@@ -1,0 +1,25 @@
+{
+  "name": "dso-website",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "sass": "sass scss/main.scss css/main.css",
+    "sass:watch": "sass --watch scss/main.scss:css/main.css"
+},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marcel-schmitz-dev/siedler-gilde.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/marcel-schmitz-dev/siedler-gilde/issues"
+  },
+  "homepage": "https://github.com/marcel-schmitz-dev/siedler-gilde#readme",
+  "devDependencies": {
+    "sass": "^1.104.0"
+  }
+}
