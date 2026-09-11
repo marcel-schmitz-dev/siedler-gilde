@@ -1,22 +1,28 @@
 // =========================
-//   BASE
+// ABSTRACTS
+// =========================
+
+@use "./abstracts/variables";
+
+
+// =========================
+// BASE
 // =========================
 
 @use "./base/reset";
-@use "./abstracts/variables" as *;
 
 
 // =========================
-//   LAYOUT
+// LAYOUT
 // =========================
 
 @use "./layout/header";
 
 
 // =========================
-//   COMPONENTS
+// COMPONENTS
 // =========================
 
 @use "./components/hero";
+
 @use "./components/about";
-@use "./components/guild-about";

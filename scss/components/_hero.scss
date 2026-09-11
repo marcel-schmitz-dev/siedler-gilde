@@ -203,8 +203,6 @@
         }
     }
 
-    // --- Responsive Media Queries (innerhalb von .hero-section genestet) ---
-
     @media (max-width: 1100px) {
         .hero-content {
             padding-left: 35px;
@@ -296,7 +294,6 @@
     }
 }
 
-// Animation (global am Ende der Datei)
 @keyframes scrollBounce {
     0%, 100% {
         transform: translateY(0);
