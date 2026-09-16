@@ -1,0 +1,149 @@
+@use "../abstracts/variables" as *;
+
+// =========================
+// LEGAL / IMPRESSUM
+// =========================
+
+.legal-page {
+    background: $bg-primary;
+    color: $text-primary;
+    min-height: 100vh;
+}
+
+.legal-content {
+    padding-top: $header-height;
+}
+
+.legal-section {
+    min-height: calc(100vh - $header-height);
+    padding: 100px 30px;
+    background:
+        radial-gradient(
+            circle at 50% 0%,
+            rgba($gold-primary, 0.08),
+            transparent 45%
+        ),
+        $bg-primary;
+}
+
+.legal-container {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.legal-subtitle {
+    display: block;
+    margin-bottom: 15px;
+
+    color: $gold-primary;
+
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+}
+
+.legal-container h1 {
+    margin-bottom: 25px;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(48px, 6vw, 80px);
+    color: $text-primary;
+}
+
+.legal-divider {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 50px;
+
+    color: $gold-primary;
+
+    span {
+        display: block;
+
+        &:first-child,
+        &:last-child {
+            width: 80px;
+            height: 1px;
+            background: rgba($gold-primary, 0.6);
+        }
+    }
+}
+
+.legal-box {
+    padding: 50px;
+
+    background: rgba($bg-secondary, 0.75);
+
+    border: 1px solid rgba($gold-primary, 0.25);
+
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.25),
+        inset 0 0 40px rgba($gold-primary, 0.02);
+}
+
+.legal-box h2 {
+    margin-top: 35px;
+    margin-bottom: 15px;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 24px;
+
+    color: $gold-light;
+
+    &:first-child {
+        margin-top: 0;
+    }
+}
+
+.legal-box p {
+    margin-bottom: 18px;
+
+    color: $text-secondary;
+
+    font-size: 16px;
+    line-height: 1.8;
+}
+
+.legal-box strong {
+    color: $text-primary;
+}
+
+.legal-box a {
+    color: $gold-light;
+
+    transition: color $transition;
+
+    &:hover {
+        color: $gold-primary;
+    }
+}
+
+
+// =========================
+// RESPONSIVE
+// =========================
+
+@media (max-width: 700px) {
+
+    .legal-section {
+        padding: 70px 20px;
+    }
+
+    .legal-box {
+        padding: 30px 25px;
+    }
+
+    .legal-divider {
+
+        span {
+            &:first-child,
+            &:last-child {
+                width: 40px;
+            }
+        }
+    }
+
+}
