@@ -1,28 +1,12 @@
-// =========================
-// ABSTRACTS
-// =========================
-
 @use "./abstracts/variables";
 
 
-// =========================
-// BASE
-// =========================
-
 @use "./base/reset";
-
-
-// =========================
-// LAYOUT
-// =========================
 
 @use "./layout/header";
 
-
-// =========================
-// COMPONENTS
-// =========================
-
 @use "./components/hero";
-
 @use "./components/about";
+@use "./components/members";
+@use "./components/join";
+@use "./components/footer";

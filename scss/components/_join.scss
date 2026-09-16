@@ -1,0 +1,195 @@
+@use "../abstracts/variables" as *;
+
+
+// ==================================================
+// COMPONENT: JOIN CTA
+// ==================================================
+
+.join-section {
+
+    position: relative;
+
+    padding: 100px 20px;
+
+    text-align: center;
+
+    background:
+        linear-gradient(
+            135deg,
+            $bg-dark,
+            $bg-secondary,
+            $bg-dark
+        );
+
+    border-top:
+        1px solid
+        rgba($gold-primary, 0.2);
+
+    border-bottom:
+        1px solid
+        rgba($gold-primary, 0.2);
+
+    overflow: hidden;
+
+
+    // ==================================================
+    // GOLDENER HINTERGRUND
+    // ==================================================
+
+    &::before {
+
+        content: "";
+
+        position: absolute;
+
+        width: 500px;
+        height: 500px;
+
+        top: 50%;
+        left: 50%;
+
+        transform:
+            translate(-50%, -50%);
+
+        border-radius: 50%;
+
+        background:
+            radial-gradient(
+                circle,
+                rgba($gold-primary, 0.08),
+                transparent 65%
+            );
+
+        pointer-events: none;
+    }
+
+
+    &__content {
+
+        position: relative;
+
+        z-index: 2;
+
+        max-width: 800px;
+
+        margin: 0 auto;
+    }
+
+
+    &__subtitle {
+
+        display: block;
+
+        margin-bottom: 20px;
+
+        color: $gold-primary;
+
+        font-size: 11px;
+
+        font-weight: 700;
+
+        letter-spacing: 4px;
+
+        text-transform: uppercase;
+    }
+
+
+    h2 {
+
+        margin: 0;
+
+        color: $text-primary;
+
+        font-family:
+            Georgia,
+            "Times New Roman",
+            serif;
+
+        font-size:
+            clamp(
+                38px,
+                5vw,
+                65px
+            );
+
+        line-height: 1.05;
+
+
+        span {
+
+            display: block;
+
+            color: $gold-light;
+        }
+    }
+
+
+    p {
+
+        margin:
+            25px auto 35px;
+
+        color: $text-secondary;
+
+        font-size: 16px;
+
+        line-height: 1.7;
+    }
+
+
+    // ==================================================
+    // BUTTON
+    // ==================================================
+
+    &__button {
+
+        display: inline-flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        gap: 12px;
+
+        padding:
+            17px 35px;
+
+        color: $bg-primary;
+
+        background:
+            linear-gradient(
+                135deg,
+                $gold-light,
+                $gold-primary
+            );
+
+        font-size: 12px;
+
+        font-weight: 700;
+
+        letter-spacing: 1.5px;
+
+        text-transform: uppercase;
+
+        transition:
+            transform $transition,
+            box-shadow $transition;
+
+
+        span {
+
+            font-size: 18px;
+        }
+
+
+        &:hover {
+
+            transform:
+                translateY(-3px);
+
+            box-shadow:
+                0 12px 30px
+                rgba($gold-primary, 0.3);
+        }
+    }
+}

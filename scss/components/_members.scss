@@ -1,0 +1,612 @@
+@use "../abstracts/variables" as *;
+
+
+// ==================================================
+// COMPONENT: MITGLIEDER
+// ==================================================
+
+.members-section {
+
+    position: relative;
+
+    padding: 120px 0 110px;
+
+    background:
+        linear-gradient(
+            180deg,
+            $bg-secondary 0%,
+            $bg-primary 100%
+        );
+
+    overflow: hidden;
+
+
+    // ==================================================
+    // DEZENTES HINTERGRUNDMUSTER
+    // ==================================================
+
+    &::before {
+
+        content: "";
+
+        position: absolute;
+
+        width: 700px;
+        height: 700px;
+
+        left: 50%;
+        top: 50%;
+
+        transform:
+            translate(-50%, -50%);
+
+        border: 1px solid
+            rgba($gold-primary, 0.035);
+
+        border-radius: 50%;
+
+        box-shadow:
+            0 0 0 80px rgba($gold-primary, 0.015),
+            0 0 0 160px rgba($gold-primary, 0.01);
+
+        pointer-events: none;
+    }
+
+
+    // ==================================================
+    // CONTAINER
+    // ==================================================
+
+    &__container {
+
+        position: relative;
+
+        z-index: 2;
+
+        width:
+            min(
+                calc(100% - 80px),
+                $content-width
+            );
+
+        margin: 0 auto;
+    }
+
+
+    // ==================================================
+    // HEADER
+    // ==================================================
+
+    &__header {
+
+        max-width: 700px;
+
+        margin: 0 auto 60px;
+
+        text-align: center;
+    }
+
+
+    // ==================================================
+    // SUBTITLE
+    // ==================================================
+
+    &__subtitle {
+
+        display: inline-block;
+
+        margin-bottom: 15px;
+
+        color: $gold-primary;
+
+        font-size: 11px;
+
+        font-weight: 700;
+
+        letter-spacing: 4px;
+
+        text-transform: uppercase;
+    }
+
+
+    // ==================================================
+    // TITLE
+    // ==================================================
+
+    &__title {
+
+        margin: 0;
+
+        color: $text-primary;
+
+        font-family:
+            Georgia,
+            "Times New Roman",
+            serif;
+
+        font-size:
+            clamp(
+                38px,
+                4vw,
+                58px
+            );
+
+        font-weight: 700;
+
+        letter-spacing: 2px;
+    }
+
+
+    // ==================================================
+    // DIVIDER
+    // ==================================================
+
+    &__divider {
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        gap: 18px;
+
+        margin: 25px 0;
+
+
+        span {
+
+            display: block;
+
+            width: 80px;
+
+            height: 1px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    transparent,
+                    rgba($gold-primary, 0.7)
+                );
+
+
+            &:last-child {
+
+                background:
+                    linear-gradient(
+                        90deg,
+                        rgba($gold-primary, 0.7),
+                        transparent
+                    );
+            }
+        }
+
+
+        .crown {
+
+            width: auto;
+
+            height: auto;
+
+            color: $gold-primary;
+
+            font-size: 18px;
+
+            background: none;
+        }
+    }
+
+
+    // ==================================================
+    // INTRO
+    // ==================================================
+
+    &__intro {
+
+        margin: 0 auto;
+
+        max-width: 620px;
+
+        color: $text-secondary;
+
+        font-size: 16px;
+
+        line-height: 1.8;
+    }
+
+
+    // ==================================================
+    // MEMBER GRID
+    // ==================================================
+
+    .members-grid {
+
+        display: grid;
+
+        grid-template-columns:
+            repeat(4, 1fr);
+
+        gap: 22px;
+    }
+
+
+    // ==================================================
+    // MEMBER CARD
+    // ==================================================
+
+    .member-card {
+
+        position: relative;
+
+        min-height: 330px;
+
+        display: flex;
+
+        flex-direction: column;
+
+        justify-content: space-between;
+
+        padding: 35px 30px 25px;
+
+        background:
+            linear-gradient(
+                145deg,
+                rgba(13, 31, 45, 0.95),
+                rgba(5, 11, 16, 0.98)
+            );
+
+        border:
+            1px solid
+            rgba($gold-primary, 0.22);
+
+        transition:
+            transform $transition,
+            border-color $transition,
+            box-shadow $transition;
+
+        overflow: hidden;
+
+
+        // ==================================================
+        // GOLDENE LINIE OBEN
+        // ==================================================
+
+        &::before {
+
+            content: "";
+
+            position: absolute;
+
+            top: 0;
+            left: 0;
+
+            width: 100%;
+            height: 2px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    transparent,
+                    $gold-primary,
+                    transparent
+                );
+
+            opacity: 0.5;
+        }
+
+
+        // ==================================================
+        // HOVER
+        // ==================================================
+
+        &:hover {
+
+            transform:
+                translateY(-7px);
+
+            border-color:
+                rgba($gold-primary, 0.6);
+
+            box-shadow:
+                0 20px 45px
+                rgba(0, 0, 0, 0.35);
+        }
+
+
+        // ==================================================
+        // LEADER
+        // ==================================================
+
+        &--leader {
+
+            border-color:
+                rgba($gold-primary, 0.45);
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(31, 43, 49, 0.98),
+                    rgba(8, 19, 29, 0.98)
+                );
+        }
+
+
+        // ==================================================
+        // ICON
+        // ==================================================
+
+        &__icon {
+
+            width: 65px;
+            height: 65px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            margin-bottom: 25px;
+
+            border:
+                1px solid
+                rgba($gold-primary, 0.45);
+
+            color: $gold-light;
+
+            background:
+                rgba($gold-primary, 0.06);
+
+            font-size: 27px;
+
+            box-shadow:
+                inset 0 0 20px
+                rgba($gold-primary, 0.04);
+        }
+
+
+        // ==================================================
+        // CONTENT
+        // ==================================================
+
+        &__content {
+
+            flex: 1;
+        }
+
+
+        // ==================================================
+        // ROLE
+        // ==================================================
+
+        &__role {
+
+            display: block;
+
+            margin-bottom: 10px;
+
+            color: $gold-primary;
+
+            font-size: 10px;
+
+            font-weight: 700;
+
+            letter-spacing: 2px;
+
+            text-transform: uppercase;
+        }
+
+
+        // ==================================================
+        // NAME
+        // ==================================================
+
+        &__name {
+
+            margin: 0 0 18px;
+
+            color: $text-primary;
+
+            font-family:
+                Georgia,
+                "Times New Roman",
+                serif;
+
+            font-size: 25px;
+
+            line-height: 1.2;
+        }
+
+
+        // ==================================================
+        // DESCRIPTION
+        // ==================================================
+
+        &__description {
+
+            margin: 0;
+
+            color: $text-secondary;
+
+            font-size: 14px;
+
+            line-height: 1.7;
+        }
+
+
+        // ==================================================
+        // FOOTER
+        // ==================================================
+
+        &__footer {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            margin-top: 30px;
+
+            padding-top: 15px;
+
+            border-top:
+                1px solid
+                rgba($gold-primary, 0.12);
+
+            color:
+                rgba($gold-primary, 0.65);
+
+            font-size: 10px;
+
+            font-weight: 700;
+
+            letter-spacing: 2px;
+        }
+    }
+
+
+    // ==================================================
+    // MEMBER COUNT
+    // ==================================================
+
+    &__count {
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        gap: 15px;
+
+        margin-top: 45px;
+
+        color: $text-secondary;
+
+        font-size: 13px;
+
+        letter-spacing: 1px;
+    }
+
+
+    &__count-number {
+
+        color: $gold-light;
+
+        font-family:
+            Georgia,
+            "Times New Roman",
+            serif;
+
+        font-size: 25px;
+
+        font-weight: 700;
+    }
+
+
+    &__count-label {
+
+        text-transform: uppercase;
+
+        letter-spacing: 2px;
+    }
+}
+
+
+// ==================================================
+// TABLET
+// ==================================================
+
+@media (max-width: 1050px) {
+
+    .members-section {
+
+        .members-grid {
+
+            grid-template-columns:
+                repeat(2, 1fr);
+        }
+    }
+}
+
+
+// ==================================================
+// MOBILE
+// ==================================================
+
+@media (max-width: 650px) {
+
+    .members-section {
+
+        padding: 85px 0;
+
+
+        &__container {
+
+            width:
+                calc(100% - 35px);
+        }
+
+
+        &__header {
+
+            margin-bottom: 40px;
+        }
+
+
+        &__subtitle {
+
+            font-size: 9px;
+
+            letter-spacing: 2.5px;
+        }
+
+
+        &__title {
+
+            font-size: 34px;
+        }
+
+
+        &__divider {
+
+            gap: 10px;
+
+
+            span {
+
+                width: 45px;
+            }
+        }
+
+
+        &__intro {
+
+            font-size: 14px;
+        }
+
+
+        .members-grid {
+
+            grid-template-columns: 1fr;
+
+            gap: 16px;
+        }
+
+
+        .member-card {
+
+            min-height: 290px;
+        }
+
+
+        &__count {
+
+            flex-direction: column;
+
+            gap: 5px;
+
+            text-align: center;
+        }
+    }
+}

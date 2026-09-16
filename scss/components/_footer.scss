@@ -1,0 +1,367 @@
+@use "../abstracts/variables" as *;
+
+
+// ==================================================
+// FOOTER
+// ==================================================
+
+.site-footer {
+
+    background:
+        $bg-dark;
+
+    border-top:
+        1px solid
+        rgba($gold-primary, 0.25);
+
+
+    // ==================================================
+    // MAIN FOOTER
+    // ==================================================
+
+    &__main {
+
+        width:
+            min(
+                calc(100% - 80px),
+                $content-width
+            );
+
+        margin: 0 auto;
+
+        padding:
+            75px 0 65px;
+
+        display: grid;
+
+        grid-template-columns:
+            1.5fr 1fr 1.2fr;
+
+        gap: 80px;
+    }
+
+
+    // ==================================================
+    // BRAND
+    // ==================================================
+
+    &__brand {
+
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+
+
+    &__logo {
+
+        display: block;
+
+        margin-bottom: 15px;
+
+
+        img {
+
+            width: 95px;
+
+            height: auto;
+
+            display: block;
+        }
+    }
+
+
+    &__brand p {
+
+        margin: 0;
+
+        color: $text-primary;
+
+        font-family:
+            Georgia,
+            "Times New Roman",
+            serif;
+
+        font-size: 21px;
+
+        font-weight: 700;
+
+
+        span {
+
+            color: $gold-primary;
+
+            font-size: 16px;
+        }
+    }
+
+
+    &__brand small {
+
+        margin-top: 8px;
+
+        color: $text-secondary;
+
+        font-size: 11px;
+
+        letter-spacing: 2px;
+
+        text-transform: uppercase;
+    }
+
+
+    // ==================================================
+    // HEADINGS
+    // ==================================================
+
+    &__navigation h3,
+    &__guild h3 {
+
+        margin:
+            0 0 20px;
+
+        color: $gold-light;
+
+        font-size: 12px;
+
+        letter-spacing: 2px;
+
+        text-transform: uppercase;
+    }
+
+
+    // ==================================================
+    // NAVIGATION
+    // ==================================================
+
+    &__navigation {
+
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 10px;
+
+
+        a {
+
+            position: relative;
+
+            color: $text-secondary;
+
+            font-size: 13px;
+
+            transition:
+                color $transition,
+                transform $transition;
+
+
+            &:hover {
+
+                color: $gold-light;
+
+                transform:
+                    translateX(4px);
+            }
+        }
+    }
+
+
+    // ==================================================
+    // GUILD
+    // ==================================================
+
+    &__guild {
+
+        p {
+
+            max-width: 300px;
+
+            margin:
+                0 0 25px;
+
+            color: $text-secondary;
+
+            font-size: 14px;
+
+            line-height: 1.7;
+        }
+    }
+
+
+    // ==================================================
+    // JOIN
+    // ==================================================
+
+    &__join {
+
+        display: inline-flex;
+
+        align-items: center;
+
+        gap: 9px;
+
+        padding:
+            12px 20px;
+
+        border:
+            1px solid
+            rgba($gold-primary, 0.5);
+
+        color: $gold-light;
+
+        font-size: 11px;
+
+        font-weight: 700;
+
+        letter-spacing: 1.3px;
+
+        text-transform: uppercase;
+
+        transition:
+            background $transition,
+            color $transition;
+
+
+        &:hover {
+
+            color: $bg-primary;
+
+            background:
+                $gold-light;
+        }
+    }
+
+
+    // ==================================================
+    // BOTTOM
+    // ==================================================
+
+    &__bottom {
+
+        width:
+            min(
+                calc(100% - 80px),
+                $content-width
+            );
+
+        margin: 0 auto;
+
+        padding:
+            22px 0;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        border-top:
+            1px solid
+            rgba($gold-primary, 0.12);
+
+
+        p {
+
+            margin: 0;
+
+            color:
+                rgba($text-secondary, 0.6);
+
+            font-size: 11px;
+        }
+
+
+        div {
+
+            display: flex;
+
+            gap: 25px;
+        }
+
+
+        a {
+
+            color:
+                rgba($text-secondary, 0.6);
+
+            font-size: 11px;
+
+            transition:
+                color $transition;
+
+
+            &:hover {
+
+                color: $gold-light;
+            }
+        }
+    }
+}
+
+
+// ==================================================
+// TABLET
+// ==================================================
+
+@media (max-width: 850px) {
+
+    .site-footer {
+
+        &__main {
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 50px;
+        }
+
+
+        &__brand {
+
+            grid-column:
+                1 / -1;
+        }
+    }
+}
+
+
+// ==================================================
+// MOBILE
+// ==================================================
+
+@media (max-width: 600px) {
+
+    .site-footer {
+
+        &__main {
+
+            width:
+                calc(100% - 40px);
+
+            padding:
+                55px 0 45px;
+
+            grid-template-columns: 1fr;
+
+            gap: 40px;
+        }
+
+
+        &__bottom {
+
+            width:
+                calc(100% - 40px);
+
+            flex-direction: column;
+
+            gap: 15px;
+
+            text-align: center;
+        }
+    }
+}
