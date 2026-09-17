@@ -1,0 +1,327 @@
+@use "../abstracts/variables" as *;
+
+// =========================
+// NEWS SECTION
+// =========================
+
+.news-section {
+    position: relative;
+    padding: 65px 60px 55px;
+
+    background:
+        linear-gradient(
+            rgba(5, 15, 23, 0.88),
+            rgba(5, 15, 23, 0.88)
+        ),
+        url("../assets/img/background/hero-background.webp");
+
+    background-size: cover;
+    background-position: center;
+
+    color: $text-primary;
+}
+
+.news-container {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 232px;
+    gap: 30px;
+
+    max-width: $content-width;
+    margin: 0 auto;
+}
+
+
+// =========================
+// ÜBERSCHRIFT
+// =========================
+
+.news-heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 18px;
+
+    .section-subtitle {
+        display: block;
+        margin-bottom: 8px;
+
+        color: $gold-primary;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 2px;
+    }
+
+    h2 {
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(23px, 2.3vw, 30px);
+        line-height: 1.1;
+        letter-spacing: 0.5px;
+    }
+}
+
+.all-news-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+
+    margin-bottom: 19px;
+
+    color: $gold-light;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+
+    transition: color $transition;
+
+    span {
+        font-size: 16px;
+    }
+
+    &:hover {
+        color: $gold-primary;
+    }
+}
+
+
+// =========================
+// NEWS-KARTEN
+// =========================
+
+.news-cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.news-card {
+    overflow: hidden;
+
+    border: 1px solid rgba($gold-primary, 0.75);
+    border-radius: 4px;
+
+    background: rgba($bg-primary, 0.82);
+
+    transition:
+        transform $transition,
+        border-color $transition;
+
+    &:hover {
+        transform: translateY(-4px);
+        border-color: $gold-light;
+    }
+
+    > img {
+        display: block;
+
+        width: 100%;
+        height: 88px;
+
+        object-fit: cover;
+    }
+}
+
+.news-card-content {
+    padding: 10px 15px 15px;
+
+    time {
+        display: block;
+        margin-bottom: 7px;
+
+        color: $text-secondary;
+        font-size: 9px;
+        letter-spacing: 0.5px;
+    }
+
+    h3 {
+        min-height: 30px;
+        margin-bottom: 8px;
+
+        color: $text-primary;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 12px;
+        line-height: 1.3;
+    }
+
+    p {
+        min-height: 65px;
+        margin-bottom: 12px;
+
+        color: $text-secondary;
+        font-size: 11px;
+        line-height: 1.65;
+    }
+
+    a {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+
+        color: $gold-light;
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.6px;
+
+        span {
+            font-size: 15px;
+        }
+
+        &:hover {
+            color: $gold-primary;
+        }
+    }
+}
+
+
+// =========================
+// GILDEN-STATISTIK
+// =========================
+
+.guild-statistics {
+    align-self: stretch;
+
+    padding: 23px 25px;
+
+    border: 1px solid rgba($gold-primary, 0.75);
+    border-radius: 4px;
+
+    background: rgba($bg-primary, 0.65);
+
+    .section-subtitle {
+        display: block;
+        margin-bottom: 25px;
+
+        color: $gold-light;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 2px;
+    }
+}
+
+.statistic-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    margin-bottom: 22px;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+
+    .statistic-icon {
+        width: 34px;
+
+        color: $gold-light;
+        font-size: 28px;
+        text-align: center;
+    }
+
+    strong {
+        display: block;
+        margin-bottom: 3px;
+
+        color: $gold-light;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 20px;
+    }
+
+    p {
+        color: $text-secondary;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 10px;
+        white-space: nowrap;
+    }
+}
+
+
+// =========================
+// RESPONSIVE DESIGN
+// =========================
+
+@media (max-width: 1100px) {
+
+    .news-section {
+        padding: 55px 35px 45px;
+    }
+
+    .news-container {
+        grid-template-columns: minmax(0, 1fr) 205px;
+        gap: 20px;
+    }
+
+    .news-cards {
+        gap: 12px;
+    }
+
+    .news-card-content {
+        padding: 10px;
+
+        p {
+            font-size: 10px;
+        }
+    }
+
+    .guild-statistics {
+        padding: 20px 15px;
+    }
+}
+
+
+@media (max-width: 850px) {
+
+    .news-container {
+        grid-template-columns: 1fr;
+    }
+
+    .guild-statistics {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+
+        .section-subtitle {
+            grid-column: 1 / -1;
+            margin-bottom: 0;
+        }
+    }
+}
+
+
+@media (max-width: 600px) {
+
+    .news-section {
+        padding: 45px 20px 40px;
+    }
+
+    .news-heading {
+        display: block;
+    }
+
+    .news-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .news-card {
+        display: grid;
+        grid-template-columns: 125px 1fr;
+
+        > img {
+            height: 100%;
+            min-height: 155px;
+        }
+    }
+
+    .news-card-content {
+
+        h3,
+        p {
+            min-height: auto;
+        }
+    }
+
+    .guild-statistics {
+        grid-template-columns: 1fr;
+    }
+}
