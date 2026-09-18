@@ -3,9 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-    "sass": "sass scss/main.scss css/main.css",
-    "sass:watch": "sass --watch scss/main.scss:css/main.css"
+  
+"scripts": {
+  "sass": "sass scss/main.scss css/main.css",
+  "sass:watch": "sass --watch scss/main.scss:css/main.css",
+  "ts": "tsc",
+  "ts:watch": "tsc --watch"
 },
   "repository": {
     "type": "git",

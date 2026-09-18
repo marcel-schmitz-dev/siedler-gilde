@@ -43,7 +43,7 @@
 
                 <!-- NAVIGATION -->
 
-                <nav class="main-navigation">
+                <nav class="main-navigation" id="main-navigation">
                     <a href="#home" class="nav-link active"> Home </a>
 
                     <a href="#about" class="nav-link"> Über uns </a>
@@ -67,7 +67,13 @@
 
                 <!-- MOBILE MENU BUTTON -->
 
-                <button class="menu-button" aria-label="Menü öffnen">
+                <<button
+                    class="menu-button"
+                    aria-label="Menü öffnen"
+                    aria-expanded="false"
+                    aria-controls="main-navigation"
+                    type="button"
+                >
                     <span></span>
                     <span></span>
                     <span></span>
