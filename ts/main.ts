@@ -1,5 +1,7 @@
 import { initAuth } from "./auth.js";
+import { initMember } from "./member.js";
 
+initMember();
 initAuth();
 
 // =========================
