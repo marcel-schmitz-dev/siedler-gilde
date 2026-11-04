@@ -1,4 +1,8 @@
 import { supabase } from "./supabase.js";
+const sessionListeners = new Set();
+export function onSessionChange(listener) {
+    sessionListeners.add(listener);
+}
 export function initAuth() {
     const modal = document.querySelector("#auth-modal");
     const title = document.querySelector("#auth-title");
@@ -186,6 +190,7 @@ export function initAuth() {
             const meta = session?.user.user_metadata;
             userName.textContent = meta?.username ?? session?.user.email ?? "";
         }
+        sessionListeners.forEach((listener) => listener(session));
     }
     supabase.auth.onAuthStateChange((_event, session) => {
         updateUi(session);
