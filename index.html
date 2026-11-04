@@ -12,6 +12,15 @@
 
         <title>Gründer von Goldenau | GvG</title>
 
+        <!-- SUPABASE (läuft ohne Bundler im Browser) -->
+        <script type="importmap">
+            {
+                "imports": {
+                    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2"
+                }
+            }
+        </script>
+
         <!-- CSS -->
 
         <link rel="stylesheet" href="./css/main.css" />
@@ -55,19 +64,57 @@
                     <a href="#news" class="nav-link"> News </a>
 
                     <a href="#contact" class="nav-link"> Kontakt </a>
+
+                    <a href="#" class="nav-link nav-link--auth" data-auth-open="login">
+                        Anmelden
+                    </a>
+
+                    <a href="#" class="nav-link nav-link--auth" data-auth-open="signup">
+                        Jetzt beitreten
+                    </a>
                 </nav>
 
-                <!-- JOIN BUTTON -->
+                <!-- AUTH BUTTONS -->
 
-                <a href="#contact" class="join-button">
-                    <span class="crown"> ♛ </span>
+                <div class="header-actions">
+                    <button
+                        type="button"
+                        class="login-button"
+                        data-auth-open="login"
+                        aria-label="Anmelden"
+                    >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <circle cx="12" cy="8" r="4" />
+                            <path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" />
+                        </svg>
+                    </button>
 
-                    Jetzt beitreten
-                </a>
+                    <button
+                        type="button"
+                        class="join-button"
+                        data-auth-open="signup"
+                    >
+                        <span class="crown"> ♛ </span>
+
+                        Jetzt beitreten
+                    </button>
+
+                    <div class="auth-user">
+                        <span class="auth-user__name" id="auth-user-name"></span>
+
+                        <button
+                            type="button"
+                            class="auth-user__logout"
+                            id="auth-logout"
+                        >
+                            Abmelden
+                        </button>
+                    </div>
+                </div>
 
                 <!-- MOBILE MENU BUTTON -->
 
-                <<button
+                <button
                     class="menu-button"
                     aria-label="Menü öffnen"
                     aria-expanded="false"
@@ -137,7 +184,7 @@
                     <!-- BUTTONS -->
 
                     <div class="hero-buttons">
-                        <a href="#contact" class="primary-button">
+                        <a href="#" class="primary-button" data-auth-open="signup">
                             <span> ♛ </span>
 
                             Jetzt beitreten
@@ -537,7 +584,7 @@
                         Gemeinsam bauen. Gemeinsam wachsen. Gemeinsam stärker.
                     </p>
 
-                    <a href="#contact" class="join-section__button">
+                    <a href="#" class="join-section__button" data-auth-open="signup">
                         <span>♛</span>
                         Jetzt beitreten
                     </a>
@@ -595,7 +642,7 @@
                             stärker.
                         </p>
 
-                        <a href="#contact" class="site-footer__join">
+                        <a href="#" class="site-footer__join" data-auth-open="signup">
                             ♛ Jetzt beitreten
                         </a>
                     </div>
@@ -622,8 +669,150 @@
             </footer>
         </main>
 
+        <!-- =========================
+         AUTH MODAL (Registrieren / Anmelden)
+    ========================== -->
+
+        <div class="auth-modal" id="auth-modal" hidden>
+            <div class="auth-modal__backdrop" data-auth-close></div>
+
+            <div
+                class="auth-modal__dialog"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="auth-title"
+            >
+                <button
+                    type="button"
+                    class="auth-modal__close"
+                    data-auth-close
+                    aria-label="Fenster schließen"
+                >
+                    ×
+                </button>
+
+                <img
+                    class="auth-modal__crest"
+                    src="./assets/img/logo/gvg-wappen.webp"
+                    alt="Wappen der Gründer von Goldenau"
+                />
+
+                <span class="auth-modal__eyebrow">Die Siedler Online Gilde</span>
+
+                <h2 id="auth-title">Werde Teil der Gilde</h2>
+
+                <div class="auth-tabs" role="tablist">
+                    <button
+                        type="button"
+                        class="auth-tab is-active"
+                        role="tab"
+                        aria-selected="true"
+                        data-auth-view="signup"
+                    >
+                        Registrieren
+                    </button>
+
+                    <button
+                        type="button"
+                        class="auth-tab"
+                        role="tab"
+                        aria-selected="false"
+                        data-auth-view="login"
+                    >
+                        Anmelden
+                    </button>
+                </div>
+
+                <!-- REGISTRIEREN -->
+
+                <form id="signup-form" class="auth-form" novalidate>
+                    <label class="auth-field">
+                        <span>Spielername</span>
+                        <input
+                            type="text"
+                            name="username"
+                            placeholder="Dein Name in Die Siedler Online"
+                            autocomplete="username"
+                            minlength="3"
+                            maxlength="20"
+                            required
+                        />
+                    </label>
+
+                    <label class="auth-field">
+                        <span>E-Mail</span>
+                        <input
+                            type="email"
+                            name="email"
+                            placeholder="name@beispiel.de"
+                            autocomplete="email"
+                            required
+                        />
+                    </label>
+
+                    <label class="auth-field">
+                        <span>Passwort</span>
+                        <input
+                            type="password"
+                            name="password"
+                            placeholder="Mindestens 8 Zeichen"
+                            autocomplete="new-password"
+                            minlength="8"
+                            required
+                        />
+                    </label>
+
+                    <label class="auth-field">
+                        <span>Passwort wiederholen</span>
+                        <input
+                            type="password"
+                            name="passwordRepeat"
+                            autocomplete="new-password"
+                            minlength="8"
+                            required
+                        />
+                    </label>
+
+                    <button type="submit" class="auth-submit">
+                        <span>♛</span> Registrieren
+                    </button>
+                </form>
+
+                <!-- ANMELDEN -->
+
+                <form id="login-form" class="auth-form" novalidate hidden>
+                    <label class="auth-field">
+                        <span>E-Mail</span>
+                        <input
+                            type="email"
+                            name="email"
+                            placeholder="name@beispiel.de"
+                            autocomplete="email"
+                            required
+                        />
+                    </label>
+
+                    <label class="auth-field">
+                        <span>Passwort</span>
+                        <input
+                            type="password"
+                            name="password"
+                            autocomplete="current-password"
+                            required
+                        />
+                    </label>
+
+                    <button type="submit" class="auth-submit">
+                        <span>♛</span> Anmelden
+                    </button>
+                </form>
+
+                <p class="auth-message" id="auth-message" role="alert"></p>
+            </div>
+        </div>
+
         <!-- JAVASCRIPT -->
 
-        <script src="./js/script.js"></script>
+        <script type="module" src="./js/main.js"></script>
     </body>
 </html>
