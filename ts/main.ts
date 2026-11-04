@@ -1,4 +1,6 @@
-export {};
+import { initAuth } from "./auth.js";
+
+initAuth();
 
 // =========================
 // MOBILE NAVIGATION
