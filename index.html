@@ -53,17 +53,27 @@
                 <!-- NAVIGATION -->
 
                 <nav class="main-navigation" id="main-navigation">
-                    <a href="#home" class="nav-link active"> Home </a>
+                    <a href="#home" class="nav-link nav-link--public active"> Home </a>
 
-                    <a href="#about" class="nav-link"> Über uns </a>
+                    <a href="#about" class="nav-link nav-link--public"> Über uns </a>
 
-                    <a href="#guild" class="nav-link"> Gilde </a>
+                    <a href="#guild" class="nav-link nav-link--public"> Gilde </a>
 
-                    <a href="#activities" class="nav-link"> Aktivitäten </a>
+                    <a href="#activities" class="nav-link nav-link--public"> Aktivitäten </a>
 
-                    <a href="#news" class="nav-link"> News </a>
+                    <a href="#news" class="nav-link nav-link--public"> News </a>
 
-                    <a href="#contact" class="nav-link"> Kontakt </a>
+                    <a href="#contact" class="nav-link nav-link--public"> Kontakt </a>
+
+                    <a href="#member-area" class="nav-link nav-link--member active"> Mitgliederbereich </a>
+
+                    <a href="#member-cards" class="nav-link nav-link--member"> Abenteuer </a>
+
+                    <a href="#member-skills" class="nav-link nav-link--member"> Skills </a>
+
+                    <a href="#member-news" class="nav-link nav-link--member"> Infos </a>
+
+                    <a href="#member-stats" class="nav-link nav-link--member"> Statistik </a>
 
                     <a href="#" class="nav-link nav-link--auth" data-auth-open="login">
                         Anmelden
@@ -100,6 +110,8 @@
                     </button>
 
                     <div class="auth-user">
+                        <span class="auth-user__avatar" id="auth-user-avatar" aria-hidden="true"></span>
+
                         <span class="auth-user__name" id="auth-user-name"></span>
 
                         <button
@@ -129,6 +141,8 @@
         </header>
 
         <main>
+            <!-- ÖFFENTLICHE SEITE (nur ausgeloggt sichtbar) -->
+            <div class="public-site">
             <!-- =========================
              HERO
         ========================== -->
@@ -667,6 +681,390 @@
                     </div>
                 </div>
             </footer>
+            </div>
+
+        <!-- =========================
+         MITGLIEDERBEREICH (nur eingeloggt sichtbar)
+         Wird über body.is-authenticated ein-/ausgeblendet.
+    ========================== -->
+
+        <div class="member-area" id="member-area">
+            <div class="member-area__bg" aria-hidden="true"></div>
+
+            <!-- SVG-Icons (werden per <use> eingebunden) -->
+            <svg class="icon-sprite" aria-hidden="true" focusable="false">
+                <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5M5.5 10v10h13V10M10 20v-6h4v6" /></symbol>
+                <symbol id="i-map" viewBox="0 0 24 24"><path d="M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20zM9 4v13.5M15 6.5V20" /></symbol>
+                <symbol id="i-tools" viewBox="0 0 24 24"><path d="M4 20 14 10M14.5 5.5l4 4M12 8l4-4 4 4-4 4M20 20 10 10M5 4l5 5" /></symbol>
+                <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z" /></symbol>
+                <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3M12 14v4M8 20h8" /></symbol>
+                <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" /><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1" /></symbol>
+                <symbol id="i-logout" viewBox="0 0 24 24"><path d="M10 4H5v16h5M14 8l4 4-4 4M18 12H9" /></symbol>
+                <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 3v18M3 12h18M12 7l1.8 3.2L17 12l-3.2 1.8L12 17l-1.8-3.2L7 12l3.2-1.8z" /></symbol>
+                <symbol id="i-helmet" viewBox="0 0 24 24"><path d="M4 14a8 8 0 0 1 16 0v6h-4v-4H8v4H4zM12 6v5M9 14h6" /></symbol>
+                <symbol id="i-swords" viewBox="0 0 24 24"><path d="M5 19 15 9M4 4l5 1 7 7-1 1-7-7zM19 19 9 9M20 4l-5 1-1.5 1.5" /></symbol>
+                <symbol id="i-sail" viewBox="0 0 24 24"><path d="M12 3v14M12 4c4 2 6 6 6 11h-6M12 6c-3 2-5 5-5 9h5M4 19c3 2 5 2 8 0 3 2 5 2 8 0" /></symbol>
+                <symbol id="i-gem" viewBox="0 0 24 24"><path d="M6 4h12l3 5-9 11L3 9zM3 9h18M9 4l-1.5 5L12 20M15 4l1.5 5L12 20" /></symbol>
+                <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z" /></symbol>
+                <symbol id="i-ext" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4 10 14M18 14v6H4V6h6" /></symbol>
+                <symbol id="i-code" viewBox="0 0 24 24"><path d="m8 8-4 4 4 4M16 8l4 4-4 4M14 5l-4 14" /></symbol>
+                <symbol id="i-news" viewBox="0 0 24 24"><path d="M4 10v4h3l8 4V6L7 10zM18 9a4 4 0 0 1 0 6" /></symbol>
+                <symbol id="i-chart" viewBox="0 0 24 24"><path d="M5 20V10M12 20V4M19 20v-7" /></symbol>
+                <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3" /><circle cx="17" cy="9" r="2.5" /><path d="M3 20a6 6 0 0 1 12 0M15 14.5a5 5 0 0 1 6 5" /></symbol>
+                <symbol id="i-coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M12 8v8M9.5 10h5M9.5 14h5" /></symbol>
+                <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8" /><path d="M12 9v4l3 2M9 3h6" /></symbol>
+                <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" /><path d="M4 21a8 8 0 0 1 16 0" /></symbol>
+                <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></symbol>
+                <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6" /></symbol>
+            </svg>
+
+            <div class="member-shell">
+                <!-- ===== OBEN: SIDEBAR + WILLKOMMEN + KARTEN ===== -->
+
+                <div class="member-top">
+                    <!-- SIDEBAR -->
+
+                    <aside class="member-sidebar" aria-label="Mitgliederbereich Navigation">
+                        <div class="member-profile">
+                            <span class="member-profile__avatar" data-member-initials>GvG</span>
+                            <strong class="member-profile__name" data-member-name>Siedler</strong>
+                            <span class="member-profile__status">
+                                <i aria-hidden="true"></i> Online
+                            </span>
+                        </div>
+
+                        <nav class="member-menu">
+                            <a href="#member-area" class="member-menu__link is-active" data-member-link>
+                                <svg class="icon"><use href="#i-home" /></svg>
+                                Mitgliederbereich
+                            </a>
+
+                            <a href="#member-cards" class="member-menu__link" data-member-link>
+                                <svg class="icon"><use href="#i-map" /></svg>
+                                Abenteuer Karten
+                            </a>
+
+                            <a href="#member-skills" class="member-menu__link" data-member-link>
+                                <svg class="icon"><use href="#i-tools" /></svg>
+                                Skills &amp; Wissen
+                            </a>
+
+                            <a href="#" class="member-menu__link is-soon" data-soon>
+                                <svg class="icon"><use href="#i-chat" /></svg>
+                                Gilden-Chat
+                            </a>
+
+                            <a href="#" class="member-menu__link is-soon" data-soon>
+                                <svg class="icon"><use href="#i-trophy" /></svg>
+                                Rangliste
+                            </a>
+
+                            <a href="#" class="member-menu__link is-soon" data-soon>
+                                <svg class="icon"><use href="#i-gear" /></svg>
+                                Einstellungen
+                            </a>
+
+                            <button type="button" class="member-menu__link member-menu__link--logout" id="member-logout">
+                                <svg class="icon"><use href="#i-logout" /></svg>
+                                Abmelden
+                            </button>
+                        </nav>
+                    </aside>
+
+                    <!-- HAUPTBEREICH -->
+
+                    <div class="member-main">
+                        <!-- WILLKOMMEN -->
+
+                        <header class="member-welcome">
+                            <div class="member-welcome__text">
+                                <p class="member-welcome__eyebrow">Willkommen im</p>
+                                <h1>Mitgliederbereich</h1>
+                                <p class="member-welcome__greeting">
+                                    Schön, dass du da bist,
+                                    <span data-member-name>Siedler</span>!
+                                </p>
+                            </div>
+
+                            <blockquote class="member-quote">
+                                <p>Gemeinsam sind wir stärker – für eine erfolgreiche Gilde!</p>
+                                <cite>– Gründer von Goldenau [GvG]</cite>
+                            </blockquote>
+                        </header>
+
+                        <!-- ABENTEUER KARTEN -->
+
+                        <section class="member-panel" id="member-cards" aria-labelledby="member-cards-title">
+                            <div class="member-panel__head">
+                                <svg class="member-panel__icon"><use href="#i-compass" /></svg>
+
+                                <div>
+                                    <h2 id="member-cards-title">Abenteuer Karten</h2>
+                                    <p>Starte spannende Abenteuer und teste deine Strategie!</p>
+                                </div>
+
+                                <a href="#" class="member-outline-button" data-soon>
+                                    Alle Karten anzeigen
+                                    <svg class="icon"><use href="#i-arrow" /></svg>
+                                </a>
+                            </div>
+
+                            <!--
+                                TODO: Die Links bei "Spiel starten" auf deine echten
+                                GitHub-Pages-Adressen ändern. Eigene Kartenbilder gehen
+                                über style="--card-image: url('../assets/img/karten/…')".
+                            -->
+
+                            <div class="adventure-grid">
+                                <article class="adventure-card adventure-card--combat is-featured">
+                                    <div class="adventure-card__media">
+                                        <span class="adventure-card__tag">
+                                            <svg class="icon"><use href="#i-swords" /></svg> Kampf
+                                        </span>
+                                    </div>
+                                    <div class="adventure-card__body">
+                                        <h3>Kampfsimulator</h3>
+                                        <p>Teste deine Kampfkraft in verschiedenen Szenarien.</p>
+                                        <a href="https://marcel-schmitz-dev.github.io/" class="adventure-card__button" target="_blank" rel="noopener noreferrer">
+                                            <svg class="icon"><use href="#i-ext" /></svg> Spiel starten
+                                        </a>
+                                    </div>
+                                    <footer class="adventure-card__foot">
+                                        <span><svg class="icon"><use href="#i-code" /></svg> GitHub Page</span>
+                                        <span class="adventure-card__online"><i aria-hidden="true"></i> Online</span>
+                                    </footer>
+                                </article>
+
+                                <article class="adventure-card adventure-card--explore">
+                                    <div class="adventure-card__media">
+                                        <span class="adventure-card__tag">
+                                            <svg class="icon"><use href="#i-compass" /></svg> Erkundung
+                                        </span>
+                                    </div>
+                                    <div class="adventure-card__body">
+                                        <h3>Insel-Expedition</h3>
+                                        <p>Entdecke neue Inseln und sichere dir Belohnungen.</p>
+                                        <a href="https://marcel-schmitz-dev.github.io/" class="adventure-card__button" target="_blank" rel="noopener noreferrer">
+                                            <svg class="icon"><use href="#i-ext" /></svg> Spiel starten
+                                        </a>
+                                    </div>
+                                    <footer class="adventure-card__foot">
+                                        <span><svg class="icon"><use href="#i-code" /></svg> GitHub Page</span>
+                                        <span class="adventure-card__online"><i aria-hidden="true"></i> Online</span>
+                                    </footer>
+                                </article>
+
+                                <article class="adventure-card adventure-card--strategy">
+                                    <div class="adventure-card__media">
+                                        <span class="adventure-card__tag">
+                                            <svg class="icon"><use href="#i-gem" /></svg> Strategie
+                                        </span>
+                                    </div>
+                                    <div class="adventure-card__body">
+                                        <h3>Kristallhöhle</h3>
+                                        <p>Plane deine Strategie und finde die wertvollen Kristalle.</p>
+                                        <a href="https://marcel-schmitz-dev.github.io/" class="adventure-card__button" target="_blank" rel="noopener noreferrer">
+                                            <svg class="icon"><use href="#i-ext" /></svg> Spiel starten
+                                        </a>
+                                    </div>
+                                    <footer class="adventure-card__foot">
+                                        <span><svg class="icon"><use href="#i-code" /></svg> GitHub Page</span>
+                                        <span class="adventure-card__online"><i aria-hidden="true"></i> Online</span>
+                                    </footer>
+                                </article>
+
+                                <article class="adventure-card adventure-card--event">
+                                    <div class="adventure-card__media">
+                                        <span class="adventure-card__tag">
+                                            <svg class="icon"><use href="#i-star" /></svg> Event
+                                        </span>
+                                    </div>
+                                    <div class="adventure-card__body">
+                                        <h3>Sommerevent</h3>
+                                        <p>Stelle dich der besonderen Herausforderung.</p>
+                                        <a href="https://marcel-schmitz-dev.github.io/" class="adventure-card__button" target="_blank" rel="noopener noreferrer">
+                                            <svg class="icon"><use href="#i-ext" /></svg> Spiel starten
+                                        </a>
+                                    </div>
+                                    <footer class="adventure-card__foot">
+                                        <span><svg class="icon"><use href="#i-code" /></svg> GitHub Page</span>
+                                        <span class="adventure-card__online"><i aria-hidden="true"></i> Online</span>
+                                    </footer>
+                                </article>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+
+                <!-- ===== SKILLS & WISSEN TEILEN ===== -->
+
+                <section class="member-panel member-skills" id="member-skills" aria-labelledby="member-skills-title">
+                    <div class="member-panel__head">
+                        <svg class="member-panel__icon"><use href="#i-tools" /></svg>
+
+                        <div>
+                            <h2 id="member-skills-title">Skills &amp; Wissen teilen</h2>
+                            <p>Teile deine Skills mit der Gilde – ob für Generäle oder Entdecker!</p>
+                        </div>
+
+                        <a href="#" class="member-outline-button" data-soon>
+                            Neue Skill-Anfrage
+                            <svg class="icon"><use href="#i-arrow" /></svg>
+                        </a>
+                    </div>
+
+                    <div class="skill-grid">
+                        <article class="skill-card skill-card--generals">
+                            <div class="skill-card__content">
+                                <svg class="skill-card__icon"><use href="#i-helmet" /></svg>
+
+                                <div>
+                                    <h3>Generäle Skills</h3>
+                                    <p>Strategien, Taktiken und Tipps für die Armeeführung.</p>
+                                    <a href="#" class="skill-card__button" data-soon>
+                                        Skills ansehen
+                                        <svg class="icon"><use href="#i-arrow" /></svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="skill-card skill-card--explorers">
+                            <div class="skill-card__content">
+                                <svg class="skill-card__icon"><use href="#i-compass" /></svg>
+
+                                <div>
+                                    <h3>Entdecker Skills</h3>
+                                    <p>Tipps und Tricks für die Entdeckung der Welt.</p>
+                                    <a href="#" class="skill-card__button" data-soon>
+                                        Skills ansehen
+                                        <svg class="icon"><use href="#i-arrow" /></svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+
+                <!-- ===== AKTUELLE INFOS + STATISTIK ===== -->
+
+                <div class="member-bottom">
+                    <section class="member-panel" id="member-news" aria-labelledby="member-news-title">
+                        <div class="member-panel__head member-panel__head--compact">
+                            <svg class="member-panel__icon member-panel__icon--small"><use href="#i-news" /></svg>
+                            <h2 id="member-news-title">Aktuelle Infos</h2>
+                            <a href="#" class="member-text-link" data-soon>
+                                Alle News
+                                <svg class="icon"><use href="#i-arrow" /></svg>
+                            </a>
+                        </div>
+
+                        <ul class="member-news">
+                            <li>
+                                <a href="#" class="member-news__item" data-soon>
+                                    <img src="./assets/img/news/gilden-expedition.webp" alt="" loading="lazy" />
+                                    <div>
+                                        <time datetime="2025-10-12">12. Okt. 2025</time>
+                                        <h3>Neuer Kampfsimulator verfügbar!</h3>
+                                        <p>Ab sofort könnt ihr den neuen Kampfsimulator auf unserer Gilde-Seite testen.</p>
+                                    </div>
+                                    <svg class="icon"><use href="#i-chevron" /></svg>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="#" class="member-news__item" data-soon>
+                                    <img src="./assets/img/news/bauettbewerb.webp" alt="" loading="lazy" />
+                                    <div>
+                                        <time datetime="2025-10-05">05. Okt. 2025</time>
+                                        <h3>Gilden-Event: Bauwettbewerb</h3>
+                                        <p>Zeigt uns eure kreativsten Bauwerke und sichert euch tolle Preise!</p>
+                                    </div>
+                                    <svg class="icon"><use href="#i-chevron" /></svg>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="#" class="member-news__item" data-soon>
+                                    <img src="./assets/img/news/neue-mitglieder.webp" alt="" loading="lazy" />
+                                    <div>
+                                        <time datetime="2025-09-28">28. Sep. 2025</time>
+                                        <h3>Skills-Update</h3>
+                                        <p>Neue Skills für Generäle und Entdecker wurden hinzugefügt.</p>
+                                    </div>
+                                    <svg class="icon"><use href="#i-chevron" /></svg>
+                                </a>
+                            </li>
+                        </ul>
+                    </section>
+
+                    <section class="member-panel" id="member-stats" aria-labelledby="member-stats-title">
+                        <div class="member-panel__head member-panel__head--compact">
+                            <svg class="member-panel__icon member-panel__icon--small"><use href="#i-chart" /></svg>
+                            <h2 id="member-stats-title">Deine Gilden-Statistik</h2>
+                        </div>
+
+                        <!-- Platzhalterwerte: noch nicht aus der Datenbank, nur "Letzter Login" ist echt -->
+
+                        <dl class="member-stats">
+                            <div>
+                                <dt><svg class="icon"><use href="#i-users" /></svg> Rang in der Gilde</dt>
+                                <dd>12. <small>▲ +1</small></dd>
+                            </div>
+                            <div>
+                                <dt><svg class="icon"><use href="#i-coin" /></svg> Beitragspunkte</dt>
+                                <dd>1.250</dd>
+                            </div>
+                            <div>
+                                <dt><svg class="icon"><use href="#i-clock" /></svg> Aktive Tage</dt>
+                                <dd>24</dd>
+                            </div>
+                            <div>
+                                <dt><svg class="icon"><use href="#i-user" /></svg> Letzter Login</dt>
+                                <dd id="member-last-login">–</dd>
+                            </div>
+                        </dl>
+
+                        <p class="member-motto">
+                            <span aria-hidden="true">♛</span>
+                            Gemeinsam. Stark. Für Goldenau.
+                        </p>
+                    </section>
+                </div>
+            </div>
+
+            <!-- ===== FOOTER ===== -->
+
+            <footer class="member-footer">
+                <div class="member-footer__inner">
+                    <div class="member-footer__brand">
+                        <img src="./assets/img/logo/gvg-wappen.webp" alt="Wappen der Gründer von Goldenau" />
+                        <div>
+                            <strong>Gründer von Goldenau [GvG]</strong>
+                            <span>Gemeinsam. Stark. Für Goldenau.</span>
+                        </div>
+                    </div>
+
+                    <div class="member-footer__links">
+                        <h3>Schnellzugriff</h3>
+                        <a href="#member-area">Mitgliederbereich</a>
+                        <a href="#member-cards">Abenteuer Karten</a>
+                        <a href="#member-skills">Skills &amp; Wissen</a>
+                        <a href="#member-news">Aktuelle Infos</a>
+                    </div>
+
+                    <div class="member-footer__links">
+                        <h3>Folge uns</h3>
+                        <a href="https://github.com/marcel-schmitz-dev" target="_blank" rel="noopener noreferrer">GitHub</a>
+                        <a href="./impressum.html">Impressum</a>
+                    </div>
+                </div>
+
+                <p class="member-footer__copy">
+                    © 2026 Gründer von Goldenau [GvG] – Die Siedler Online | Alle Rechte vorbehalten.
+                </p>
+            </footer>
+        </div>
         </main>
 
         <!-- =========================
