@@ -1,11 +1,12 @@
 import { isMapCategory, renderMaps } from "./maps.js";
 import { setActiveMenu } from "./member.js";
 import { renderMinigames, renderMinigamesTeaser } from "./minigames.js";
+import { renderSimulator, renderSimulatorTeaser } from "./simulator.js";
 import { renderSpecialists } from "./specialists.js";
 
 // ==================================================
 // UNTERSEITEN IM MITGLIEDERBEREICH
-// #generaele, #entdecker, #minigames, #karten-<kategorie>
+// #generaele, #entdecker, #kampfsimulator, #minigames, #karten-<kategorie>
 // Alles andere zeigt das Dashboard (und scrollt zu einem Abschnitt).
 // ==================================================
 
@@ -21,6 +22,12 @@ export function initViews(): void {
 
     if (teaser) {
         renderMinigamesTeaser(teaser);
+    }
+
+    const simTeaser = document.querySelector<HTMLElement>("#sim-teaser");
+
+    if (simTeaser) {
+        renderSimulatorTeaser(simTeaser);
     }
 
     function showView(menuHref: string): void {
@@ -42,6 +49,12 @@ export function initViews(): void {
         if (hash === "entdecker") {
             renderSpecialists(view!, "explorers");
             showView("#member-skills");
+            return;
+        }
+
+        if (hash === "kampfsimulator") {
+            renderSimulator(view!);
+            showView("#kampfsimulator");
             return;
         }
 
