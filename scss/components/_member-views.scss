@@ -1,0 +1,989 @@
+@use "../abstracts/variables" as *;
+@use "../abstracts/mixins" as *;
+
+// ==================================================
+// COMPONENT: UNTERSEITEN IM MITGLIEDERBEREICH
+// (Generäle, Entdecker, Mini Games, Abenteuer-Karten)
+// ==================================================
+
+$serif: Georgia, "Times New Roman", serif;
+$panel-bg: rgba($bg-dark, 0.86);
+$panel-border: rgba($gold-primary, 0.38);
+
+.member-dashboard[hidden],
+.member-view[hidden] {
+    display: none;
+}
+
+.member-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.member-view {
+    min-height: 60vh;
+
+    padding: 24px 26px 30px;
+
+    border: 1px solid $panel-border;
+    border-radius: 10px;
+
+    background: $panel-bg;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.4);
+
+    @include respond(sm) {
+        padding: 18px 14px 24px;
+    }
+}
+
+.img-fallback {
+    display: grid;
+    place-items: center;
+
+    width: 100%;
+    height: 100%;
+
+    padding: 4px;
+
+    color: $text-secondary;
+    font-size: 11px;
+    line-height: 1.2;
+    text-align: center;
+}
+
+// --------------------------------------------------
+// Kopf der Unterseiten
+// --------------------------------------------------
+
+.view-back {
+    display: inline-block;
+
+    margin-bottom: 18px;
+
+    color: $gold-primary;
+    font-size: 14px;
+    font-weight: 600;
+
+    transition: color $transition;
+
+    &:hover {
+        color: $gold-light;
+    }
+}
+
+.view-title {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    margin-bottom: 22px;
+
+    h2 {
+        color: $gold-primary;
+        font-family: $serif;
+        font-size: clamp(22px, 3vw, 30px);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    p {
+        margin-top: 4px;
+
+        color: $text-secondary;
+        line-height: 1.5;
+    }
+}
+
+.view-toolbar {
+    display: flex;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 16px;
+
+    margin-bottom: 22px;
+    padding: 14px 16px;
+
+    border: 1px solid rgba($gold-primary, 0.25);
+    border-radius: 8px;
+
+    background: rgba($bg-primary, 0.7);
+}
+
+.view-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    span {
+        color: $gold-light;
+        font-size: 12px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    input,
+    select {
+        padding: 10px 12px;
+
+        border: 1px solid rgba($gold-primary, 0.45);
+        border-radius: 5px;
+
+        background: rgba($bg-dark, 0.9);
+
+        color: $text-primary;
+        font: inherit;
+
+        &:focus {
+            outline: 2px solid $gold-light;
+            outline-offset: 1px;
+        }
+    }
+
+    &--search {
+        flex: 1 1 260px;
+    }
+}
+
+.view-count {
+    margin-left: auto;
+    padding-bottom: 10px;
+
+    color: $text-secondary;
+    font-size: 13px;
+}
+
+.view-empty {
+    grid-column: 1 / -1;
+
+    padding: 30px 10px;
+
+    color: $text-secondary;
+    text-align: center;
+
+    code {
+        color: $gold-light;
+    }
+}
+
+.view-source {
+    margin-top: 26px;
+
+    color: $text-secondary;
+    font-size: 12px;
+    line-height: 1.5;
+
+    a {
+        color: $gold-primary;
+        text-decoration: underline;
+    }
+}
+
+// --------------------------------------------------
+// Generäle / Entdecker: Karten
+// --------------------------------------------------
+
+.spec-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 16px;
+}
+
+.spec-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    padding: 16px;
+
+    border: 1px solid rgba($gold-primary, 0.3);
+    border-radius: 8px;
+
+    background: linear-gradient(180deg, rgba($bg-secondary, 0.95), rgba($bg-dark, 0.98));
+
+    cursor: pointer;
+
+    transition:
+        transform $transition,
+        border-color $transition,
+        box-shadow $transition;
+
+    &:hover,
+    &:focus-visible {
+        outline: none;
+
+        transform: translateY(-3px);
+
+        border-color: $gold-light;
+
+        box-shadow: 0 10px 28px rgba($gold-primary, 0.2);
+    }
+
+    header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    h3 {
+        font-family: $serif;
+        font-size: 17px;
+        line-height: 1.25;
+    }
+
+    &__special {
+        color: $text-secondary;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    &__more {
+        margin-top: auto;
+        padding: 9px 12px;
+
+        border: 1px solid rgba($gold-primary, 0.6);
+        border-radius: 5px;
+
+        background: transparent;
+
+        color: $gold-light;
+        font: inherit;
+        font-size: 13px;
+        font-weight: 600;
+
+        cursor: pointer;
+
+        transition:
+            background $transition,
+            color $transition;
+    }
+
+    &:hover &__more {
+        background: $gold-primary;
+
+        color: $bg-primary;
+    }
+}
+
+.spec-avatar {
+    display: grid;
+    place-items: center;
+
+    width: 44px;
+    height: 44px;
+
+    flex-shrink: 0;
+
+    border: 1px solid rgba($gold-primary, 0.8);
+    border-radius: 50%;
+
+    background: radial-gradient(circle, rgba($gold-primary, 0.25), rgba($bg-dark, 0.95));
+
+    color: $gold-light;
+    font-family: $serif;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.spec-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.spec-tag {
+    padding: 3px 9px;
+
+    border: 1px solid rgba($gold-primary, 0.4);
+    border-radius: 20px;
+
+    background: rgba($gold-primary, 0.08);
+
+    color: $text-primary;
+    font-size: 12px;
+
+    &--gold {
+        border-color: $gold-primary;
+
+        color: $gold-light;
+        font-weight: 600;
+    }
+}
+
+.spec-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 14px;
+
+    div {
+        display: flex;
+        flex-direction: column;
+
+        padding-top: 6px;
+
+        border-top: 1px solid rgba($gold-primary, 0.15);
+    }
+
+    dt {
+        color: $text-secondary;
+        font-size: 11px;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+    }
+
+    dd {
+        color: $gold-light;
+        font-weight: 600;
+    }
+}
+
+// --------------------------------------------------
+// Dialog (Details, Karten-Großansicht)
+// --------------------------------------------------
+
+.member-dialog {
+    // Das globale Reset entfernt margin:auto – ohne das sitzt das Fenster links oben
+    margin: auto;
+
+    width: min(760px, calc(100vw - 24px));
+    max-height: calc(100vh - 24px);
+
+    padding: 0;
+
+    overflow: hidden;
+
+    border: 1px solid $gold-primary;
+    border-radius: 12px;
+
+    background: $bg-primary;
+
+    color: $text-primary;
+
+    box-shadow: 0 30px 90px rgba(0, 0, 0, 0.8);
+
+    &::backdrop {
+        background: rgba(2, 6, 10, 0.78);
+        backdrop-filter: blur(3px);
+    }
+
+    &--wide {
+        width: min(920px, calc(100vw - 24px));
+    }
+
+    &--map {
+        width: min(1200px, calc(100vw - 24px));
+    }
+
+    &__panel {
+        position: relative;
+
+        max-height: calc(100vh - 26px);
+
+        padding: 26px 28px 28px;
+
+        overflow-y: auto;
+
+        @include respond(sm) {
+            padding: 22px 16px 22px;
+        }
+    }
+
+    &__close {
+        position: absolute;
+
+        top: 10px;
+        right: 12px;
+
+        z-index: 2;
+
+        width: 36px;
+        height: 36px;
+
+        border: 1px solid rgba($gold-primary, 0.6);
+        border-radius: 50%;
+
+        background: rgba($bg-dark, 0.9);
+
+        color: $gold-light;
+        font-size: 22px;
+        line-height: 1;
+
+        cursor: pointer;
+
+        &:hover {
+            background: $gold-primary;
+
+            color: $bg-primary;
+        }
+    }
+}
+
+.dlg-head {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    margin-bottom: 20px;
+    padding-right: 40px;
+
+    h3 {
+        margin-bottom: 8px;
+
+        color: $gold-primary;
+        font-family: $serif;
+        font-size: 26px;
+    }
+
+    .spec-avatar {
+        width: 56px;
+        height: 56px;
+
+        font-size: 19px;
+    }
+
+    &--simple h3 {
+        margin-bottom: 2px;
+    }
+}
+
+.dlg-cols {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+    gap: 22px;
+
+    @include respond(md) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.dlg-visual {
+    display: grid;
+    place-items: center;
+
+    min-height: 200px;
+
+    padding: 14px;
+
+    border: 1px solid rgba($gold-primary, 0.3);
+    border-radius: 8px;
+
+    background: radial-gradient(circle at 50% 40%, rgba($gold-primary, 0.14), rgba($bg-dark, 0.95));
+
+    img {
+        max-width: 100%;
+        max-height: 230px;
+
+        object-fit: contain;
+    }
+
+    .dlg-crest {
+        width: 90px;
+
+        opacity: 0.55;
+    }
+}
+
+.dlg-special {
+    margin-bottom: 14px;
+
+    padding: 10px 12px;
+
+    border-left: 3px solid $gold-primary;
+
+    background: rgba($gold-primary, 0.07);
+
+    line-height: 1.55;
+}
+
+.dlg-section {
+    margin-top: 26px;
+
+    h4 {
+        margin-bottom: 4px;
+
+        color: $gold-primary;
+        font-family: $serif;
+        font-size: 18px;
+        letter-spacing: 0.5px;
+    }
+}
+
+.dlg-note {
+    color: $text-secondary;
+    font-size: 14px;
+}
+
+.dlg-hint {
+    margin-top: 22px;
+    padding: 12px 14px;
+
+    border: 1px dashed rgba($gold-primary, 0.45);
+    border-radius: 6px;
+
+    color: $text-secondary;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.dlg-list {
+    margin-top: 10px;
+
+    list-style: none;
+
+    li {
+        padding: 10px 14px;
+
+        border: 1px solid rgba($gold-primary, 0.2);
+        border-radius: 6px;
+
+        background: rgba($bg-secondary, 0.7);
+
+        font-size: 14px;
+
+        + li {
+            margin-top: 8px;
+        }
+    }
+}
+
+.dlg-link {
+    display: inline-block;
+
+    margin-top: 24px;
+
+    color: $gold-primary;
+    font-weight: 600;
+    text-decoration: underline;
+
+    &:hover {
+        color: $gold-light;
+    }
+}
+
+.dlg-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+
+    margin-top: 18px;
+}
+
+// Fähigkeiten-Raster (4 Spalten x 5 Zeilen)
+
+.skill-matrix {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 76px));
+    gap: 8px;
+
+    justify-content: center;
+
+    margin-top: 14px;
+    padding: 14px;
+
+    border: 1px solid rgba($gold-primary, 0.25);
+    border-radius: 8px;
+
+    background: rgba($bg-dark, 0.8);
+}
+
+.skill-tile {
+    position: relative;
+
+    display: grid;
+    place-items: center;
+
+    aspect-ratio: 1;
+
+    border: 1px solid rgba($gold-primary, 0.3);
+    border-radius: 6px;
+
+    background: rgba($bg-secondary, 0.9);
+
+    img {
+        width: 70%;
+        height: 70%;
+
+        object-fit: contain;
+    }
+
+    &__level {
+        position: absolute;
+
+        right: 3px;
+        bottom: 2px;
+
+        color: $gold-light;
+        font-size: 11px;
+        font-weight: 700;
+
+        text-shadow: 0 1px 3px #000;
+    }
+
+    &.is-empty {
+        opacity: 0.4;
+
+        .skill-tile__level {
+            color: $text-secondary;
+        }
+    }
+
+    &.is-full {
+        border-color: $gold-primary;
+
+        box-shadow: 0 0 10px rgba($gold-primary, 0.25);
+    }
+}
+
+// --------------------------------------------------
+// Mini Games
+// --------------------------------------------------
+
+.game-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 22px;
+}
+
+.game-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+
+    padding: 16px 16px 20px;
+
+    border: 1px solid rgba($gold-primary, 0.3);
+    border-radius: 12px;
+
+    background: linear-gradient(180deg, rgba($bg-secondary, 0.95), rgba($bg-dark, 0.98));
+
+    text-align: center;
+
+    transition:
+        transform $transition,
+        box-shadow $transition,
+        border-color $transition;
+
+    &:hover {
+        transform: translateY(-3px);
+
+        border-color: $gold-light;
+
+        box-shadow: 0 10px 28px rgba($gold-primary, 0.2);
+    }
+
+    &__image {
+        width: 100%;
+        aspect-ratio: 3 / 2;
+
+        overflow: hidden;
+
+        border-radius: 14px;
+
+        background: $bg-dark;
+
+        img {
+            width: 100%;
+            height: 100%;
+
+            object-fit: cover;
+        }
+    }
+
+    h3 {
+        color: $gold-primary;
+        font-family: $serif;
+        font-size: 22px;
+    }
+
+    p {
+        color: $text-secondary;
+        font-size: 14px;
+    }
+
+    &__actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+
+        margin-top: auto;
+        padding-top: 6px;
+    }
+
+    &--placeholder {
+        justify-content: center;
+
+        min-height: 260px;
+
+        border-style: dashed;
+
+        color: $text-secondary;
+
+        span {
+            font-size: 46px;
+            line-height: 1;
+
+            color: rgba($gold-primary, 0.6);
+        }
+
+        &:hover {
+            transform: none;
+
+            box-shadow: none;
+        }
+    }
+}
+
+.game-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 110px;
+    padding: 11px 22px;
+
+    border: 1px solid rgba($gold-primary, 0.7);
+    border-radius: 30px;
+
+    color: $gold-light;
+    font-size: 15px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background $transition,
+        color $transition,
+        transform $transition;
+
+    &:hover {
+        background: rgba($gold-primary, 0.18);
+
+        transform: translateY(-1px);
+    }
+
+    &--primary {
+        border-color: transparent;
+
+        background: linear-gradient(135deg, $gold-primary, $gold-light);
+
+        color: $bg-primary;
+
+        &:hover {
+            background: linear-gradient(135deg, $gold-light, $gold-primary);
+        }
+    }
+}
+
+// Dashboard-Vorschau
+
+.member-minigames {
+    display: flex;
+    flex-direction: column;
+
+    &__text {
+        margin-bottom: 14px;
+
+        color: $text-secondary;
+        line-height: 1.5;
+    }
+}
+
+.teaser-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    align-content: start;
+    gap: 12px;
+
+    flex: 1;
+}
+
+.teaser-game {
+    position: relative;
+
+    display: block;
+
+    aspect-ratio: 4 / 3;
+
+    overflow: hidden;
+
+    border: 1px solid rgba($gold-primary, 0.35);
+    border-radius: 8px;
+
+    img {
+        width: 100%;
+        height: 100%;
+
+        object-fit: cover;
+    }
+
+    span {
+        position: absolute;
+
+        left: 0;
+        right: 0;
+        bottom: 0;
+
+        padding: 18px 10px 8px;
+
+        background: linear-gradient(transparent, rgba($bg-dark, 0.92));
+
+        font-family: $serif;
+        font-weight: 700;
+    }
+
+    &:hover {
+        border-color: $gold-light;
+    }
+}
+
+.member-motto--link {
+    transition:
+        filter $transition,
+        transform $transition;
+
+    &:hover {
+        filter: brightness(1.15);
+
+        transform: translateY(-2px);
+    }
+}
+
+// --------------------------------------------------
+// Abenteuer-Karten
+// --------------------------------------------------
+
+.map-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    margin-bottom: 22px;
+}
+
+.map-tab {
+    padding: 9px 18px;
+
+    border: 1px solid rgba($gold-primary, 0.45);
+    border-radius: 30px;
+
+    color: $text-primary;
+    font-size: 14px;
+    font-weight: 600;
+
+    transition:
+        background $transition,
+        color $transition;
+
+    &:hover {
+        background: rgba($gold-primary, 0.15);
+    }
+
+    &.is-active {
+        border-color: transparent;
+
+        background: linear-gradient(135deg, $gold-primary, $gold-light);
+
+        color: $bg-primary;
+    }
+}
+
+.map-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 18px;
+}
+
+.map-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    padding: 12px;
+
+    border: 1px solid rgba($gold-primary, 0.3);
+    border-radius: 8px;
+
+    background: linear-gradient(180deg, rgba($bg-secondary, 0.95), rgba($bg-dark, 0.98));
+
+    color: inherit;
+    font: inherit;
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        transform $transition,
+        border-color $transition,
+        box-shadow $transition;
+
+    &:hover {
+        transform: translateY(-3px);
+
+        border-color: $gold-light;
+
+        box-shadow: 0 10px 28px rgba($gold-primary, 0.2);
+    }
+
+    &__image {
+        display: block;
+
+        aspect-ratio: 16 / 9;
+
+        overflow: hidden;
+
+        border-radius: 5px;
+
+        background: $bg-dark;
+
+        img {
+            width: 100%;
+            height: 100%;
+
+            object-fit: cover;
+        }
+    }
+
+    &__title {
+        margin-top: 4px;
+
+        font-family: $serif;
+        font-weight: 700;
+    }
+
+    &__author {
+        color: $text-secondary;
+        font-size: 13px;
+    }
+}
+
+.member-dialog--map .map-zoom {
+    max-height: calc(100vh - 220px);
+
+    overflow: auto;
+
+    border: 1px solid rgba($gold-primary, 0.3);
+    border-radius: 6px;
+
+    cursor: zoom-in;
+
+    img {
+        display: block;
+
+        width: 100%;
+        height: auto;
+    }
+
+    &.is-zoomed {
+        cursor: zoom-out;
+
+        img {
+            width: auto;
+            max-width: none;
+        }
+    }
+}

@@ -576,16 +576,8 @@ body:not(.is-authenticated) .nav-link--member {
 
 .adventure-grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
     gap: 16px;
-
-    @include respond(lg) {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    @include respond(sm) {
-        grid-template-columns: 1fr;
-    }
 }
 
 .adventure-card {
@@ -604,6 +596,8 @@ body:not(.is-authenticated) .nav-link--member {
         box-shadow $transition,
         border-color $transition;
 
+    cursor: pointer;
+
     &:hover,
     &.is-featured {
         border-color: $gold-light;
@@ -620,7 +614,7 @@ body:not(.is-authenticated) .nav-link--member {
     &__media {
         position: relative;
 
-        height: 150px;
+        height: 120px;
 
         background:
             var(--card-image, linear-gradient(transparent, transparent)),
@@ -639,28 +633,34 @@ body:not(.is-authenticated) .nav-link--member {
         }
     }
 
-    &--combat {
+    &--klassisch {
         --card-gradient:
-            radial-gradient(circle at 70% 30%, #{rgba(#ff8a3c, 0.55)}, transparent 55%),
-            linear-gradient(135deg, #5a1d14, #1c2a3b);
+            #{radial-gradient(circle at 70% 30%, rgba(#ffd27a, 0.55), transparent 55%)},
+            #{linear-gradient(135deg, #6b4a1c, #1c2a3b)};
     }
 
-    &--explore {
+    &--maerchen {
         --card-gradient:
-            radial-gradient(circle at 30% 25%, #{rgba(#7fd4ff, 0.6)}, transparent 55%),
-            linear-gradient(135deg, #0f5b86, #1d3f2e);
+            #{radial-gradient(circle at 50% 60%, rgba(#a56bff, 0.65), transparent 55%)},
+            #{linear-gradient(135deg, #2a1650, #0c1830)};
     }
 
-    &--strategy {
+    &--szenario {
         --card-gradient:
-            radial-gradient(circle at 50% 60%, #{rgba(#a56bff, 0.65)}, transparent 55%),
-            linear-gradient(135deg, #1a1040, #0c1830);
+            #{radial-gradient(circle at 70% 30%, rgba(#ff8a3c, 0.55), transparent 55%)},
+            #{linear-gradient(135deg, #5a1d14, #1c2a3b)};
     }
 
-    &--event {
+    &--unternehmungen {
         --card-gradient:
-            radial-gradient(circle at 60% 25%, #{rgba(#ffd27a, 0.65)}, transparent 55%),
-            linear-gradient(135deg, #8a5a22, #2a3f5f);
+            #{radial-gradient(circle at 30% 25%, rgba(#7fd4ff, 0.6), transparent 55%)},
+            #{linear-gradient(135deg, #0f5b86, #1d3f2e)};
+    }
+
+    &--koop {
+        --card-gradient:
+            #{radial-gradient(circle at 60% 30%, rgba(#7dff9a, 0.5), transparent 55%)},
+            #{linear-gradient(135deg, #1d5a2c, #12263a)};
     }
 
     &__tag {
@@ -809,6 +809,8 @@ body:not(.is-authenticated) .nav-link--member {
 
     border: 1px solid rgba($gold-primary, 0.4);
     border-radius: 8px;
+
+    cursor: pointer;
 
     background-color: $bg-dark;
     background-size: cover;
