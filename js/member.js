@@ -10,8 +10,18 @@ const SECTION_IDS = [
     "member-cards",
     "member-skills",
     "member-news",
-    "member-stats",
+    "member-minigames",
 ];
+// Markiert den passenden Menüpunkt (Sidebar + Header) anhand seines href, z. B. "#member-skills"
+export function setActiveMenu(href) {
+    document
+        .querySelectorAll(".member-menu__link[data-member-link], .nav-link--member")
+        .forEach((link) => {
+        const isActive = link.getAttribute("href") === href;
+        link.classList.toggle("is-active", link.classList.contains("member-menu__link") && isActive);
+        link.classList.toggle("active", link.classList.contains("nav-link") && isActive);
+    });
+}
 export function initMember() {
     const area = document.querySelector("#member-area");
     if (!area) {
@@ -94,17 +104,14 @@ export function initMember() {
     // =========================
     // AKTIVEN MENÜPUNKT MARKIEREN
     // =========================
-    const menuLinks = document.querySelectorAll(".member-menu__link[data-member-link], .nav-link--member");
     function setActive(id) {
-        menuLinks.forEach((link) => {
-            const isActive = link.getAttribute("href") === `#${id}`;
-            link.classList.toggle("is-active", link.classList.contains("member-menu__link") && isActive);
-            link.classList.toggle("active", link.classList.contains("nav-link") && isActive);
-        });
+        setActiveMenu(`#${id}`);
     }
     const observer = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
-            if (entry.isIntersecting) {
+            // Ganz oben bleibt "Mitgliederbereich" aktiv, sonst nur wenn das Dashboard sichtbar ist
+            const dashboardVisible = !document.querySelector("#member-dashboard")?.hidden;
+            if (entry.isIntersecting && dashboardVisible && window.scrollY >= 160) {
                 setActive(entry.target.id);
             }
         });
@@ -115,8 +122,10 @@ export function initMember() {
             observer.observe(section);
         }
     });
+    setActive("member-area");
     window.addEventListener("scroll", () => {
-        if (window.scrollY < 160) {
+        const dashboardVisible = !document.querySelector("#member-dashboard")?.hidden;
+        if (dashboardVisible && window.scrollY < 160) {
             setActive("member-area");
         }
     });

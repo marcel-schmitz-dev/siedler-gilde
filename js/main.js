@@ -1,6 +1,8 @@
 import { initAuth } from "./auth.js";
 import { initMember } from "./member.js";
+import { initViews } from "./views.js";
 initMember();
+initViews();
 initAuth();
 // =========================
 // MOBILE NAVIGATION
