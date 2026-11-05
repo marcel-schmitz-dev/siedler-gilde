@@ -44,12 +44,4 @@ export const MINIGAMES: MiniGame[] = [
         liveUrl: `${PAGES}/Crystal-Caos/`,
         githubUrl: `${GITHUB}/Crystal-Caos`,
     },
-    {
-        title: "Sharkie",
-        description: "Jump-and-Run unter Wasser.",
-        image: "./assets/img/minigames/sharkie.webp",
-        // TODO: echte Links eintragen
-        liveUrl: "",
-        githubUrl: "",
-    },
 ];
