@@ -614,12 +614,9 @@ body:not(.is-authenticated) .nav-link--member {
     &__media {
         position: relative;
 
-        height: 120px;
+        height: 150px;
 
-        background:
-            var(--card-image, linear-gradient(transparent, transparent)),
-            var(--card-gradient);
-
+        background-color: $bg-dark;
         background-size: cover;
         background-position: center;
 
@@ -629,38 +626,14 @@ body:not(.is-authenticated) .nav-link--member {
             position: absolute;
             inset: 0;
 
-            background: linear-gradient(180deg, transparent 45%, rgba($bg-dark, 0.85));
+            background: linear-gradient(180deg, transparent 50%, rgba($bg-dark, 0.85));
         }
     }
 
-    &--klassisch {
-        --card-gradient:
-            #{radial-gradient(circle at 70% 30%, rgba(#ffd27a, 0.55), transparent 55%)},
-            #{linear-gradient(135deg, #6b4a1c, #1c2a3b)};
-    }
-
-    &--maerchen {
-        --card-gradient:
-            #{radial-gradient(circle at 50% 60%, rgba(#a56bff, 0.65), transparent 55%)},
-            #{linear-gradient(135deg, #2a1650, #0c1830)};
-    }
-
-    &--szenario {
-        --card-gradient:
-            #{radial-gradient(circle at 70% 30%, rgba(#ff8a3c, 0.55), transparent 55%)},
-            #{linear-gradient(135deg, #5a1d14, #1c2a3b)};
-    }
-
-    &--unternehmungen {
-        --card-gradient:
-            #{radial-gradient(circle at 30% 25%, rgba(#7fd4ff, 0.6), transparent 55%)},
-            #{linear-gradient(135deg, #0f5b86, #1d3f2e)};
-    }
-
-    &--koop {
-        --card-gradient:
-            #{radial-gradient(circle at 60% 30%, rgba(#7dff9a, 0.5), transparent 55%)},
-            #{linear-gradient(135deg, #1d5a2c, #12263a)};
+    @each $name in klassisch, maerchen, szenario, unternehmungen, koop {
+        &--#{$name} .adventure-card__media {
+            background-image: url("../assets/img/abenteuer/#{$name}.webp");
+        }
     }
 
     &__tag {

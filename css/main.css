@@ -2150,8 +2150,8 @@ body:not(.is-authenticated) .nav-link--member {
 }
 .adventure-card__media {
   position: relative;
-  height: 120px;
-  background: var(--card-image, linear-gradient(transparent, transparent)), var(--card-gradient);
+  height: 150px;
+  background-color: #050B10;
   background-size: cover;
   background-position: center;
 }
@@ -2159,32 +2159,22 @@ body:not(.is-authenticated) .nav-link--member {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, transparent 45%, rgba(5, 11, 16, 0.85));
+  background: linear-gradient(180deg, transparent 50%, rgba(5, 11, 16, 0.85));
 }
-.adventure-card--klassisch {
-  --card-gradient:
-      radial-gradient(circle at 70% 30%, rgba(255, 210, 122, 0.55), transparent 55%),
-      linear-gradient(135deg, #6b4a1c, #1c2a3b);
+.adventure-card--klassisch .adventure-card__media {
+  background-image: url("../assets/img/abenteuer/klassisch.webp");
 }
-.adventure-card--maerchen {
-  --card-gradient:
-      radial-gradient(circle at 50% 60%, rgba(165, 107, 255, 0.65), transparent 55%),
-      linear-gradient(135deg, #2a1650, #0c1830);
+.adventure-card--maerchen .adventure-card__media {
+  background-image: url("../assets/img/abenteuer/maerchen.webp");
 }
-.adventure-card--szenario {
-  --card-gradient:
-      radial-gradient(circle at 70% 30%, rgba(255, 138, 60, 0.55), transparent 55%),
-      linear-gradient(135deg, #5a1d14, #1c2a3b);
+.adventure-card--szenario .adventure-card__media {
+  background-image: url("../assets/img/abenteuer/szenario.webp");
 }
-.adventure-card--unternehmungen {
-  --card-gradient:
-      radial-gradient(circle at 30% 25%, rgba(127, 212, 255, 0.6), transparent 55%),
-      linear-gradient(135deg, #0f5b86, #1d3f2e);
+.adventure-card--unternehmungen .adventure-card__media {
+  background-image: url("../assets/img/abenteuer/unternehmungen.webp");
 }
-.adventure-card--koop {
-  --card-gradient:
-      radial-gradient(circle at 60% 30%, rgba(125, 255, 154, 0.5), transparent 55%),
-      linear-gradient(135deg, #1d5a2c, #12263a);
+.adventure-card--koop .adventure-card__media {
+  background-image: url("../assets/img/abenteuer/koop.webp");
 }
 .adventure-card__tag {
   position: absolute;
