@@ -1,0 +1,1 @@
+{"version":3,"file":"minigames.js","sourceRoot":"","sources":["../../ts/data/minigames.ts"],"names":[],"mappings":"AAAA,qDAAqD;AACrD,oBAAoB;AACpB,iEAAiE;AACjE,sEAAsE;AACtE,wDAAwD;AACxD,qDAAqD;AAUrD,MAAM,CAAC,MAAM,SAAS,GAAe;IACjC;QACI,KAAK,EAAE,SAAS;QAChB,WAAW,EAAE,4BAA4B;QACzC,KAAK,EAAE,qCAAqC;QAC5C,8BAA8B;QAC9B,OAAO,EAAE,EAAE;QACX,SAAS,EAAE,EAAE;KAChB;CACJ,CAAC"}
