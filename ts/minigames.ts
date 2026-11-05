@@ -15,6 +15,7 @@ function gameCard(game: MiniGame): string {
         <article class="game-card">
             <div class="game-card__image">
                 <img src="${esc(game.image)}" alt="${esc(game.title)}" loading="lazy" data-fallback="${esc(game.title)}" />
+                ${game.badge ? `<span class="game-card__badge">${esc(game.badge)}</span>` : ""}
             </div>
             <h3>${esc(game.title)}</h3>
             ${game.description ? `<p>${esc(game.description)}</p>` : ""}
