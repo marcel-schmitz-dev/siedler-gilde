@@ -73,7 +73,7 @@
 
                     <a href="#member-news" class="nav-link nav-link--member"> Infos </a>
 
-                    <a href="#member-stats" class="nav-link nav-link--member"> Statistik </a>
+                    <a href="#minigames" class="nav-link nav-link--member"> Mini Games </a>
 
                     <a href="#" class="nav-link nav-link--auth" data-auth-open="login">
                         Anmelden
@@ -714,11 +714,13 @@
                 <symbol id="i-coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M12 8v8M9.5 10h5M9.5 14h5" /></symbol>
                 <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8" /><path d="M12 9v4l3 2M9 3h6" /></symbol>
                 <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" /><path d="M4 21a8 8 0 0 1 16 0" /></symbol>
+                <symbol id="i-gamepad" viewBox="0 0 24 24"><path d="M7 8h10a4 4 0 0 1 4 4v2a3 3 0 0 1-5.2 2L14.5 14h-5L8.200 16A3 3 0 0 1 3 14v-2a4 4 0 0 1 4-4zM8 10.500v3M6.500 12h3M16 11.500h.01M18 13h.01" /></symbol>
                 <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></symbol>
                 <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6" /></symbol>
             </svg>
 
             <div class="member-shell">
+                <div class="member-dashboard" id="member-dashboard">
                 <!-- ===== OBEN: SIDEBAR + WILLKOMMEN + KARTEN ===== -->
 
                 <div class="member-top">
@@ -754,9 +756,9 @@
                                 Gilden-Chat
                             </a>
 
-                            <a href="#" class="member-menu__link is-soon" data-soon>
-                                <svg class="icon"><use href="#i-trophy" /></svg>
-                                Rangliste
+                            <a href="#minigames" class="member-menu__link" data-member-link>
+                                <svg class="icon"><use href="#i-gamepad" /></svg>
+                                Mini Games
                             </a>
 
                             <a href="#" class="member-menu__link is-soon" data-soon>
@@ -800,96 +802,84 @@
 
                                 <div>
                                     <h2 id="member-cards-title">Abenteuer Karten</h2>
-                                    <p>Starte spannende Abenteuer und teste deine Strategie!</p>
+                                    <p>Taktikkarten der Gilde – ansehen, vergrößern und herunterladen.</p>
                                 </div>
-
-                                <a href="#" class="member-outline-button" data-soon>
-                                    Alle Karten anzeigen
-                                    <svg class="icon"><use href="#i-arrow" /></svg>
-                                </a>
                             </div>
 
-                            <!--
-                                TODO: Die Links bei "Spiel starten" auf deine echten
-                                GitHub-Pages-Adressen ändern. Eigene Kartenbilder gehen
-                                über style="--card-image: url('../assets/img/karten/…')".
-                            -->
-
                             <div class="adventure-grid">
-                                <article class="adventure-card adventure-card--combat is-featured">
+                                <article class="adventure-card adventure-card--klassisch" data-go="karten-klassisch">
                                     <div class="adventure-card__media">
                                         <span class="adventure-card__tag">
-                                            <svg class="icon"><use href="#i-swords" /></svg> Kampf
+                                            <svg class="icon"><use href="#i-swords" /></svg> Klassisch
                                         </span>
                                     </div>
                                     <div class="adventure-card__body">
-                                        <h3>Kampfsimulator</h3>
-                                        <p>Teste deine Kampfkraft in verschiedenen Szenarien.</p>
-                                        <a href="https://marcel-schmitz-dev.github.io/" class="adventure-card__button" target="_blank" rel="noopener noreferrer">
-                                            <svg class="icon"><use href="#i-ext" /></svg> Spiel starten
+                                        <h3>Klassisch</h3>
+                                        <p>Taktikkarten und Aufstellungen für klassische Abenteuer.</p>
+                                        <a href="#karten-klassisch" class="adventure-card__button">
+                                            <svg class="icon"><use href="#i-map" /></svg> Karten ansehen
                                         </a>
                                     </div>
-                                    <footer class="adventure-card__foot">
-                                        <span><svg class="icon"><use href="#i-code" /></svg> GitHub Page</span>
-                                        <span class="adventure-card__online"><i aria-hidden="true"></i> Online</span>
-                                    </footer>
                                 </article>
 
-                                <article class="adventure-card adventure-card--explore">
+                                <article class="adventure-card adventure-card--maerchen" data-go="karten-maerchen">
                                     <div class="adventure-card__media">
                                         <span class="adventure-card__tag">
-                                            <svg class="icon"><use href="#i-compass" /></svg> Erkundung
+                                            <svg class="icon"><use href="#i-star" /></svg> Märchen
                                         </span>
                                     </div>
                                     <div class="adventure-card__body">
-                                        <h3>Insel-Expedition</h3>
-                                        <p>Entdecke neue Inseln und sichere dir Belohnungen.</p>
-                                        <a href="https://marcel-schmitz-dev.github.io/" class="adventure-card__button" target="_blank" rel="noopener noreferrer">
-                                            <svg class="icon"><use href="#i-ext" /></svg> Spiel starten
+                                        <h3>Märchen</h3>
+                                        <p>Taktikkarten und Aufstellungen für Märchen-Abenteuer.</p>
+                                        <a href="#karten-maerchen" class="adventure-card__button">
+                                            <svg class="icon"><use href="#i-map" /></svg> Karten ansehen
                                         </a>
                                     </div>
-                                    <footer class="adventure-card__foot">
-                                        <span><svg class="icon"><use href="#i-code" /></svg> GitHub Page</span>
-                                        <span class="adventure-card__online"><i aria-hidden="true"></i> Online</span>
-                                    </footer>
                                 </article>
 
-                                <article class="adventure-card adventure-card--strategy">
+                                <article class="adventure-card adventure-card--szenario" data-go="karten-szenario">
                                     <div class="adventure-card__media">
                                         <span class="adventure-card__tag">
-                                            <svg class="icon"><use href="#i-gem" /></svg> Strategie
+                                            <svg class="icon"><use href="#i-map" /></svg> Szenario
                                         </span>
                                     </div>
                                     <div class="adventure-card__body">
-                                        <h3>Kristallhöhle</h3>
-                                        <p>Plane deine Strategie und finde die wertvollen Kristalle.</p>
-                                        <a href="https://marcel-schmitz-dev.github.io/" class="adventure-card__button" target="_blank" rel="noopener noreferrer">
-                                            <svg class="icon"><use href="#i-ext" /></svg> Spiel starten
+                                        <h3>Szenario</h3>
+                                        <p>Taktikkarten und Aufstellungen für Szenario-Abenteuer.</p>
+                                        <a href="#karten-szenario" class="adventure-card__button">
+                                            <svg class="icon"><use href="#i-map" /></svg> Karten ansehen
                                         </a>
                                     </div>
-                                    <footer class="adventure-card__foot">
-                                        <span><svg class="icon"><use href="#i-code" /></svg> GitHub Page</span>
-                                        <span class="adventure-card__online"><i aria-hidden="true"></i> Online</span>
-                                    </footer>
                                 </article>
 
-                                <article class="adventure-card adventure-card--event">
+                                <article class="adventure-card adventure-card--unternehmungen" data-go="karten-unternehmungen">
                                     <div class="adventure-card__media">
                                         <span class="adventure-card__tag">
-                                            <svg class="icon"><use href="#i-star" /></svg> Event
+                                            <svg class="icon"><use href="#i-sail" /></svg> Unternehmungen
                                         </span>
                                     </div>
                                     <div class="adventure-card__body">
-                                        <h3>Sommerevent</h3>
-                                        <p>Stelle dich der besonderen Herausforderung.</p>
-                                        <a href="https://marcel-schmitz-dev.github.io/" class="adventure-card__button" target="_blank" rel="noopener noreferrer">
-                                            <svg class="icon"><use href="#i-ext" /></svg> Spiel starten
+                                        <h3>Unternehmungen</h3>
+                                        <p>Taktikkarten und Aufstellungen für Unternehmungen.</p>
+                                        <a href="#karten-unternehmungen" class="adventure-card__button">
+                                            <svg class="icon"><use href="#i-map" /></svg> Karten ansehen
                                         </a>
                                     </div>
-                                    <footer class="adventure-card__foot">
-                                        <span><svg class="icon"><use href="#i-code" /></svg> GitHub Page</span>
-                                        <span class="adventure-card__online"><i aria-hidden="true"></i> Online</span>
-                                    </footer>
+                                </article>
+
+                                <article class="adventure-card adventure-card--koop" data-go="karten-koop">
+                                    <div class="adventure-card__media">
+                                        <span class="adventure-card__tag">
+                                            <svg class="icon"><use href="#i-users" /></svg> Koop
+                                        </span>
+                                    </div>
+                                    <div class="adventure-card__body">
+                                        <h3>Koop</h3>
+                                        <p>Taktikkarten und Aufstellungen für Koop-Abenteuer.</p>
+                                        <a href="#karten-koop" class="adventure-card__button">
+                                            <svg class="icon"><use href="#i-map" /></svg> Karten ansehen
+                                        </a>
+                                    </div>
                                 </article>
                             </div>
                         </section>
@@ -914,14 +904,14 @@
                     </div>
 
                     <div class="skill-grid">
-                        <article class="skill-card skill-card--generals">
+                        <article class="skill-card skill-card--generals" data-go="generaele">
                             <div class="skill-card__content">
                                 <svg class="skill-card__icon"><use href="#i-helmet" /></svg>
 
                                 <div>
                                     <h3>Generäle Skills</h3>
                                     <p>Strategien, Taktiken und Tipps für die Armeeführung.</p>
-                                    <a href="#" class="skill-card__button" data-soon>
+                                    <a href="#generaele" class="skill-card__button">
                                         Skills ansehen
                                         <svg class="icon"><use href="#i-arrow" /></svg>
                                     </a>
@@ -929,14 +919,14 @@
                             </div>
                         </article>
 
-                        <article class="skill-card skill-card--explorers">
+                        <article class="skill-card skill-card--explorers" data-go="entdecker">
                             <div class="skill-card__content">
                                 <svg class="skill-card__icon"><use href="#i-compass" /></svg>
 
                                 <div>
                                     <h3>Entdecker Skills</h3>
                                     <p>Tipps und Tricks für die Entdeckung der Welt.</p>
-                                    <a href="#" class="skill-card__button" data-soon>
+                                    <a href="#entdecker" class="skill-card__button">
                                         Skills ansehen
                                         <svg class="icon"><use href="#i-arrow" /></svg>
                                     </a>
@@ -998,39 +988,32 @@
                         </ul>
                     </section>
 
-                    <section class="member-panel" id="member-stats" aria-labelledby="member-stats-title">
+                    <section class="member-panel member-minigames" id="member-minigames" aria-labelledby="member-minigames-title">
                         <div class="member-panel__head member-panel__head--compact">
-                            <svg class="member-panel__icon member-panel__icon--small"><use href="#i-chart" /></svg>
-                            <h2 id="member-stats-title">Deine Gilden-Statistik</h2>
+                            <svg class="member-panel__icon member-panel__icon--small"><use href="#i-gamepad" /></svg>
+                            <h2 id="member-minigames-title">Mini Games</h2>
+                            <a href="#minigames" class="member-text-link">
+                                Alle Mini Games
+                                <svg class="icon"><use href="#i-arrow" /></svg>
+                            </a>
                         </div>
 
-                        <!-- Platzhalterwerte: noch nicht aus der Datenbank, nur "Letzter Login" ist echt -->
-
-                        <dl class="member-stats">
-                            <div>
-                                <dt><svg class="icon"><use href="#i-users" /></svg> Rang in der Gilde</dt>
-                                <dd>12. <small>▲ +1</small></dd>
-                            </div>
-                            <div>
-                                <dt><svg class="icon"><use href="#i-coin" /></svg> Beitragspunkte</dt>
-                                <dd>1.250</dd>
-                            </div>
-                            <div>
-                                <dt><svg class="icon"><use href="#i-clock" /></svg> Aktive Tage</dt>
-                                <dd>24</dd>
-                            </div>
-                            <div>
-                                <dt><svg class="icon"><use href="#i-user" /></svg> Letzter Login</dt>
-                                <dd id="member-last-login">–</dd>
-                            </div>
-                        </dl>
-
-                        <p class="member-motto">
-                            <span aria-hidden="true">♛</span>
-                            Gemeinsam. Stark. Für Goldenau.
+                        <p class="member-minigames__text">
+                            Kleine Spiele aus der Gilde – direkt im Browser testen.
                         </p>
+
+                        <div class="teaser-grid" id="minigames-teaser"></div>
+
+                        <a href="#minigames" class="member-motto member-motto--link">
+                            <span aria-hidden="true">♛</span>
+                            Zu den Mini Games
+                        </a>
                     </section>
                 </div>
+                </div>
+
+                <!-- Unterseiten (Generäle, Entdecker, Mini Games, Karten) – wird per TypeScript befüllt -->
+                <section class="member-view" id="member-view" hidden></section>
             </div>
 
             <!-- ===== FOOTER ===== -->
@@ -1051,6 +1034,7 @@
                         <a href="#member-cards">Abenteuer Karten</a>
                         <a href="#member-skills">Skills &amp; Wissen</a>
                         <a href="#member-news">Aktuelle Infos</a>
+                        <a href="#minigames">Mini Games</a>
                     </div>
 
                     <div class="member-footer__links">
