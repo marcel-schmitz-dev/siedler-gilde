@@ -12,14 +12,8 @@
 
         <title>Gründer von Goldenau | GvG</title>
 
-        <!-- SUPABASE (läuft ohne Bundler im Browser) -->
-        <script type="importmap">
-            {
-                "imports": {
-                    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2"
-                }
-            }
-        </script>
+        <!-- SUPABASE: Bibliothek wird lokal ausgeliefert (npm run vendor), kein fremder CDN -->
+        <script src="./js/vendor/supabase.js"></script>
 
         <!-- CSS -->
 
@@ -694,7 +688,9 @@
                     <div>
                         <a href="./impressum.html">Impressum</a>
 
-                        <a href="#"> Datenschutz </a>
+                        <a href="./datenschutz.html"> Datenschutz </a>
+
+                        <a href="./haftungsausschluss.html"> Haftungsausschluss </a>
                     </div>
                 </div>
             </footer>
@@ -852,7 +848,7 @@
 
                                     <p>
                                         Seit den Anfängen der Gründer von Goldenau steht Franjo an unserer Seite. Mit
-                                        mittlerweile 68 Jahren bringt er nicht nur jede Menge Erfahrung mit, sondern auch
+                                        mittlerweile 72 Jahren bringt er nicht nur jede Menge Erfahrung mit, sondern auch
                                         etwas, das man nicht selbstverständlich findet: Herzblut, Zusammenhalt und die
                                         Freude am gemeinsamen Spiel.
                                     </p>
@@ -1152,9 +1148,11 @@
                     </div>
 
                     <div class="member-footer__links">
-                        <h3>Folge uns</h3>
-                        <a href="https://github.com/marcel-schmitz-dev" target="_blank" rel="noopener noreferrer">GitHub</a>
+                        <h3>Rechtliches</h3>
                         <a href="./impressum.html">Impressum</a>
+                        <a href="./datenschutz.html">Datenschutz</a>
+                        <a href="./haftungsausschluss.html">Haftungsausschluss</a>
+                        <a href="https://github.com/marcel-schmitz-dev" target="_blank" rel="noopener noreferrer">GitHub</a>
                     </div>
                 </div>
 
@@ -1268,6 +1266,12 @@
                             required
                         />
                     </label>
+
+                    <p class="auth-legal">
+                        Spielername, E-Mail und Passwort werden für den Zugang zum Mitgliederbereich bei Supabase
+                        gespeichert. Mehr dazu in der
+                        <a href="./datenschutz.html" target="_blank" rel="noopener noreferrer">Datenschutzerklärung</a>.
+                    </p>
 
                     <button type="submit" class="auth-submit">
                         <span>♛</span> Registrieren
