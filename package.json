@@ -7,7 +7,8 @@
     "sass": "sass scss/main.scss css/main.css",
     "sass:watch": "sass --watch scss/main.scss:css/main.css",
     "ts": "tsc",
-    "ts:watch": "tsc --watch"
+    "ts:watch": "tsc --watch",
+    "vendor": "node scripts/copy-vendor.js"
   },
   "repository": {
     "type": "git",
