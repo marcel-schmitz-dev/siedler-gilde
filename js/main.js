@@ -1,8 +1,10 @@
 import { initAuth } from "./auth.js";
 import { initMember } from "./member.js";
+import { initTribute } from "./tribute.js";
 import { initViews } from "./views.js";
 initMember();
 initViews();
+initTribute();
 initAuth();
 // =========================
 // MOBILE NAVIGATION
