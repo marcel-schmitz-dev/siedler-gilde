@@ -1,0 +1,363 @@
+@use "../abstracts/variables" as *;
+@use "../abstracts/mixins" as *;
+
+// ==================================================
+// COMPONENT: GRÜNDUNG "EST. 2012" + EHRUNG FÜR FRANJO
+// ==================================================
+
+$serif: Georgia, "Times New Roman", serif;
+
+// --------------------------------------------------
+// Est. 2012 – Header, Hero, Footer
+// --------------------------------------------------
+
+.site-header .logo .est-badge {
+    display: flex;
+    flex-direction: column;
+
+    margin-left: 14px;
+    padding-left: 14px;
+
+    border-left: 1px solid rgba($gold-primary, 0.65);
+
+    color: $gold-primary;
+    font-family: $serif;
+    line-height: 1.1;
+    text-transform: uppercase;
+
+    span {
+        font-size: 11px;
+        letter-spacing: 3px;
+    }
+
+    strong {
+        color: $gold-light;
+        font-size: 24px;
+        letter-spacing: 2px;
+    }
+
+    // Auf schmalen Bildschirmen ist kein Platz neben dem Wappen
+    @media (max-width: 1200px) {
+        display: none;
+    }
+}
+
+.hero-est {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 16px;
+
+    margin-top: 22px;
+
+    color: $gold-primary;
+
+    p {
+        font-family: $serif;
+        font-size: clamp(18px, 2.4vw, 26px);
+        letter-spacing: 6px;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    strong {
+        color: $gold-light;
+        font-weight: 700;
+    }
+
+    .ornament-line {
+        width: 60px;
+        height: 1px;
+
+        background-color: $gold-primary;
+        opacity: 0.8;
+
+        @media (max-width: 600px) {
+            width: 24px;
+        }
+    }
+}
+
+.est-line {
+    display: block;
+
+    margin-top: 6px;
+
+    color: $gold-primary;
+    font-family: $serif;
+    font-size: 13px;
+    font-style: normal;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+
+// --------------------------------------------------
+// Ehrung: Franjo
+// --------------------------------------------------
+
+.tribute {
+    position: relative;
+
+    display: grid;
+    grid-template-columns: minmax(250px, 0.85fr) minmax(0, 1.4fr);
+    gap: 10px;
+
+    overflow: hidden;
+
+    border: 1px solid rgba($gold-primary, 0.75);
+    border-radius: 12px;
+
+    background:
+        linear-gradient(90deg, rgba($bg-dark, 0.55) 0%, rgba($bg-dark, 0.82) 48%, rgba($bg-dark, 0.94) 100%),
+        url("../assets/img/background/hero-background.webp") center / cover;
+
+    // doppelte goldene Linie wie im Mockup
+    box-shadow:
+        inset 0 0 0 5px rgba($bg-dark, 0.6),
+        inset 0 0 0 6px rgba($gold-primary, 0.45),
+        0 18px 50px rgba(0, 0, 0, 0.45);
+
+    @include respond(md) {
+        grid-template-columns: 1fr;
+    }
+
+    // ---------- Bildbereich ----------
+
+    // Die Bühne hat das Seitenverhältnis des Porträts, so passt die Ausblendung genau an den Bildrand
+    &__stage {
+        position: relative;
+
+        align-self: end;
+
+        aspect-ratio: 900 / 933;
+
+        @include respond(md) {
+            width: min(100%, 380px);
+
+            margin: 0 auto;
+        }
+    }
+
+    &__img {
+        position: absolute;
+
+        left: 0;
+        bottom: 0;
+
+        width: 100%;
+        height: 100%;
+
+        object-fit: contain;
+        object-position: left bottom;
+
+        transition:
+            opacity 0.6s ease,
+            transform 0.6s ease;
+    }
+
+    // Schwarzer Bildhintergrund wird zu den Rändern hin ausgeblendet
+    &__img--portrait {
+        // alle Ränder (außer unten) weich ausblenden, damit der schwarze Hintergrund nicht als Kasten auffällt
+        -webkit-mask-image:
+            linear-gradient(90deg, transparent 0, #000 12%, #000 70%, transparent 100%),
+            linear-gradient(180deg, transparent 0, #000 16%);
+        -webkit-mask-composite: source-in;
+        mask-image:
+            linear-gradient(90deg, transparent 0, #000 12%, #000 70%, transparent 100%),
+            linear-gradient(180deg, transparent 0, #000 16%);
+        mask-composite: intersect;
+
+        opacity: 1;
+    }
+
+    &__img--bike {
+        opacity: 0;
+
+        transform: translateX(-16px) scale(0.98);
+
+        filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.55));
+    }
+
+    &__toggle {
+        position: absolute;
+
+        left: 20px;
+        bottom: 18px;
+
+        z-index: 2;
+
+        padding: 8px 16px;
+
+        border: 1px solid rgba($gold-primary, 0.8);
+        border-radius: 30px;
+
+        background: rgba($bg-dark, 0.85);
+
+        color: $gold-light;
+        font: inherit;
+        font-size: 13px;
+        font-weight: 600;
+
+        cursor: pointer;
+
+        transition:
+            background $transition,
+            color $transition;
+
+        &:hover,
+        &[aria-pressed="true"] {
+            background: $gold-primary;
+
+            color: $bg-primary;
+        }
+    }
+
+    // ---------- Text ----------
+
+    &__text {
+        position: relative;
+
+        display: grid;
+
+        padding: 32px 34px 30px 8px;
+
+        @include respond(md) {
+            padding: 6px 22px 26px;
+        }
+    }
+
+    // beide Texte liegen übereinander und werden überblendet
+    &__panel {
+        grid-area: 1 / 1;
+
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+
+        transition:
+            opacity 0.5s ease,
+            transform 0.5s ease,
+            visibility 0.5s;
+
+        h2 {
+            color: $gold-primary;
+            font-family: $serif;
+            font-size: clamp(28px, 3.6vw, 42px);
+            font-style: italic;
+            line-height: 1.1;
+
+            text-shadow: 0 3px 14px rgba(0, 0, 0, 0.8);
+        }
+
+        p {
+            line-height: 1.6;
+        }
+
+        &--alt {
+            opacity: 0;
+            visibility: hidden;
+
+            transform: translateX(14px);
+        }
+    }
+
+    &__eyebrow {
+        color: $gold-light;
+        font-size: 12px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+    }
+
+    &__lead {
+        color: $gold-light;
+        font-family: $serif;
+        font-size: 17px;
+        font-style: italic;
+        font-weight: 700;
+
+        padding-bottom: 12px;
+
+        border-bottom: 1px solid rgba($gold-primary, 0.45);
+    }
+
+    &__thanks {
+        margin-top: 4px;
+
+        color: $gold-primary;
+        font-family: $serif;
+        font-size: 20px;
+        font-style: italic;
+    }
+
+    // goldenes Namensschild
+    &__plate {
+        align-self: flex-start;
+
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+
+        min-width: 220px;
+        margin-top: 4px;
+        padding: 8px 26px 10px;
+
+        border: 1px solid $gold-light;
+        border-radius: 6px;
+
+        background: linear-gradient(135deg, #e7c46e, #b98a35);
+
+        color: #2a1a05;
+        text-align: center;
+
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+
+        strong {
+            font-family: $serif;
+            font-size: 24px;
+            line-height: 1.1;
+        }
+
+        span {
+            font-family: $serif;
+            font-size: 14px;
+            font-style: italic;
+            font-weight: 700;
+        }
+    }
+
+    // ---------- Umschalten: Hover auf das Bild oder Button ----------
+
+    &.is-alt {
+        .tribute__img--portrait {
+            opacity: 0;
+
+            transform: translateX(16px) scale(0.98);
+        }
+
+        .tribute__img--bike {
+            opacity: 1;
+
+            transform: none;
+        }
+
+        .tribute__panel--main {
+            opacity: 0;
+            visibility: hidden;
+
+            transform: translateX(-14px);
+        }
+
+        .tribute__panel--alt {
+            opacity: 1;
+            visibility: visible;
+
+            transform: none;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        * {
+            transition: none !important;
+        }
+    }
+}
