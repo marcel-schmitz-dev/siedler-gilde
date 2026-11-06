@@ -1,0 +1,199 @@
+@use "../abstracts/variables" as *;
+
+// =========================
+// LEGAL: ERGÄNZUNGEN
+// (Navigation zwischen den Rechtsseiten, Tabellen, Platzhalter, Footer)
+// =========================
+
+$serif: Georgia, "Times New Roman", serif;
+
+.legal-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    margin-bottom: 30px;
+
+    a {
+        padding: 8px 16px;
+
+        border: 1px solid rgba($gold-primary, 0.45);
+        border-radius: 30px;
+
+        color: $text-primary;
+        font-size: 14px;
+        font-weight: 600;
+
+        transition:
+            background $transition,
+            color $transition;
+
+        &:hover {
+            background: rgba($gold-primary, 0.15);
+        }
+
+        &[aria-current="page"] {
+            border-color: transparent;
+
+            background: linear-gradient(135deg, $gold-primary, $gold-light);
+
+            color: $bg-primary;
+        }
+    }
+}
+
+.legal-meta {
+    margin: -30px 0 36px;
+
+    color: $text-secondary;
+    font-size: 14px;
+}
+
+.legal-box {
+    h3 {
+        margin: 24px 0 10px;
+
+        color: $text-primary;
+        font-family: $serif;
+        font-size: 18px;
+    }
+
+    ul,
+    ol {
+        margin: 0 0 18px 22px;
+
+        color: $text-secondary;
+        line-height: 1.8;
+
+        li {
+            margin-bottom: 6px;
+        }
+    }
+
+    code {
+        padding: 1px 6px;
+
+        border-radius: 4px;
+
+        background: rgba($bg-dark, 0.8);
+
+        color: $gold-light;
+        font-size: 0.92em;
+    }
+}
+
+// Platzhalter, die du noch ausfüllen musst
+.todo {
+    padding: 1px 6px;
+
+    border-radius: 3px;
+
+    background: #f5d547;
+
+    color: #2a2200;
+    font-weight: 600;
+}
+
+.legal-note {
+    margin: 0 0 24px;
+    padding: 16px 20px;
+
+    border-left: 3px solid $gold-primary;
+
+    background: rgba($gold-primary, 0.08);
+
+    p:last-child {
+        margin-bottom: 0;
+    }
+}
+
+.legal-table-wrap {
+    margin-bottom: 22px;
+
+    overflow-x: auto;
+}
+
+.legal-table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    font-size: 14px;
+
+    th,
+    td {
+        padding: 10px 12px;
+
+        border: 1px solid rgba($gold-primary, 0.22);
+
+        color: $text-secondary;
+        line-height: 1.5;
+        text-align: left;
+        vertical-align: top;
+    }
+
+    th {
+        background: rgba($gold-primary, 0.1);
+
+        color: $gold-light;
+        font-family: $serif;
+    }
+}
+
+// Footer der Rechtsseiten
+
+.legal-footer {
+    padding: 36px 30px 28px;
+
+    border-top: 1px solid rgba($gold-primary, 0.3);
+
+    background: $bg-dark;
+
+    text-align: center;
+
+    &__links {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px 26px;
+
+        margin-bottom: 14px;
+
+        a {
+            color: $text-primary;
+            font-size: 14px;
+
+            transition: color $transition;
+
+            &:hover {
+                color: $gold-light;
+            }
+        }
+    }
+
+    p {
+        color: $text-secondary;
+        font-size: 13px;
+    }
+}
+
+// Hinweis unter dem Registrieren-Formular
+
+.auth-legal {
+    margin: 4px 0 10px;
+
+    color: $text-secondary;
+    font-size: 12px;
+    line-height: 1.5;
+
+    a {
+        color: $gold-light;
+        text-decoration: underline;
+    }
+}
+
+@media (max-width: 700px) {
+    .legal-meta {
+        margin-top: -20px;
+    }
+}
