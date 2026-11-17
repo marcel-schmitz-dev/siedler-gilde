@@ -13,7 +13,7 @@ export function renderSimulator(root: HTMLElement): void {
             <svg class="member-panel__icon"><use href="#i-swords" /></svg>
             <div>
                 <h2>Kampfsimulator</h2>
-                <p>${esc(SIMULATOR.title)} – ${esc(SIMULATOR.subtitle)}. Läuft live von GitHub Pages, deine Skillungen werden im Browser gespeichert.</p>
+                <p>${esc(SIMULATOR.title)} – ${esc(SIMULATOR.subtitle)}. Läuft live auf der Gilden-Subdomain, deine Skillungen werden im Browser gespeichert.</p>
             </div>
         </div>
 

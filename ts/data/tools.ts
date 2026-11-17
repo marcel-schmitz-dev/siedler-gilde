@@ -22,8 +22,8 @@ export const SIMULATOR: Tool = {
         "Einheitensuche: beste Armee pro Lager",
         "Plan direkt auf der Abenteuerkarte",
     ],
-    // Vorschaubild liegt in der Doku des Projekts; später gern lokal unter assets/img/ ablegen
-    image: "https://marcel-schmitz-dev.github.io/neonfront-Kampf-Simulator/docs/preview.png",
-    liveUrl: "https://marcel-schmitz-dev.github.io/neonfront-Kampf-Simulator/",
+    // Vorschaubild liegt lokal; der Simulator läuft auf einer eigenen IONOS-Subdomain
+    image: "./assets/img/minigames/neonfront.webp",
+    liveUrl: "https://neonfront-kampfsimulator.mschmitz-dev.de/",
     githubUrl: "https://github.com/marcel-schmitz-dev/neonfront-Kampf-Simulator",
 };

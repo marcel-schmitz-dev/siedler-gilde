@@ -47,7 +47,7 @@ Das Projekt entsteht im Rahmen meiner Weiterbildung zum Webentwickler (Frontend)
 - **Ehrung für Franjo, den Gründer:** Porträt mit Hover-Wechsel zu seinem Hobby (Motorrad)
 - **Abenteuer Karten** in fünf Kategorien (Klassisch, Märchen, Szenario, Unternehmungen, Koop): Grid, Großansicht und Download
 - **Generäle und Entdecker:** alle Einträge mit Werten, Besonderheiten, Suche, Sortierung und Detailfenster (Garnison, Fähigkeiten-Vorschlag, Herkunft)
-- **Kampfsimulator NEONFRONT:** direkt im Mitgliederbereich nutzbar (eingebettet per iframe von GitHub Pages)
+- **Kampfsimulator NEONFRONT:** direkt im Mitgliederbereich nutzbar (eingebettet per iframe von `neonfront-kampfsimulator.mschmitz-dev.de`, Vorschaubild lokal)
 - **Mini Games:** Grid mit eigenen Spielen, jeweils mit „Live Test“ und „GitHub“
 - **Unterseiten ohne Framework:** kleiner Hash-Router (`#generaele`, `#entdecker`, `#kampfsimulator`, `#minigames`, `#karten-…`; die Hashes der Startseite wie `#home` oder `#history` zeigen Mitgliedern die Startseite)
 
@@ -109,7 +109,15 @@ npm run ts:watch
 
 ## Veröffentlichen (IONOS)
 
-Die Dateien aus dem Projektordner (ohne `node_modules`, `src/`, `scss/`, `ts/`, `scripts/`, `.git`) per SFTP in das Web-Verzeichnis des IONOS-Webspace hochladen: `index.html`, die vier Rechtsseiten, `css/`, `js/` und `assets/`. HTTPS muss für die Domain aktiv sein (SSL-Zertifikat im IONOS-Kundenkonto).
+Auf den IONOS-Webspace gehören nur `index.html`, die vier Rechtsseiten, `css/`, `js/` und `assets/`. HTTPS muss für die Domain aktiv sein (SSL-Zertifikat im IONOS-Kundenkonto).
+
+Am einfachsten geht das mit einem Befehl:
+
+```bash
+npm run deploy   # baut html, sass, ts und erzeugt den Ordner dist/
+```
+
+`dist/` enthält nur, was der Server braucht (`index.html`, Rechtsseiten, `css/`, `js/`, `assets/`, ohne Source-Maps). Den **Inhalt** von `dist/` per SFTP in das Web-Verzeichnis hochladen. Der Ordner wird nicht committet (`.gitignore`).
 
 ### Früher: GitHub Pages
 

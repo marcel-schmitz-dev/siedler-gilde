@@ -10,7 +10,8 @@
     "ts:watch": "tsc --watch",
     "vendor": "node scripts/copy-vendor.js",
     "html": "node scripts/build-html.js",
-    "build": "npm run html && npm run sass && npm run ts"
+    "build": "npm run html && npm run sass && npm run ts",
+    "deploy": "npm run build && node scripts/deploy.js"
   },
   "repository": {
     "type": "git",
