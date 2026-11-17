@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="de">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta
+            name="description"
+            content="Gründer von Goldenau [GvG] – Die Siedler Online Gilde"
+        />
+
+        <title>Gründer von Goldenau | GvG</title>
+
+        <!-- SUPABASE: Bibliothek wird lokal ausgeliefert (npm run vendor), kein fremder CDN -->
+        <script src="./js/vendor/supabase.js"></script>
+
+        <link rel="stylesheet" href="./css/main.css" />
+
+        <link
+            rel="icon"
+            type="image/webp"
+            href="./assets/img/logo/gvg-wappen.webp"
+        />
+    </head>
+
+    <body>
+        <!-- SVG-Icons (per <use> überall nutzbar) -->
+        <!-- @include partials/layout/sprite.html -->
+
+        <!-- Kopfzeile + Navigation -->
+        <!-- @include partials/layout/header.html -->
+
+        <main>
+            <!-- Startseite (nur ausgeloggt sichtbar, oder per "Startseite" im Mitgliederbereich) -->
+            <!-- @include partials/home/home.html -->
+
+            <!-- Mitgliederbereich (nur eingeloggt sichtbar, gesteuert über body.is-authenticated) -->
+            <!-- @include partials/member/area.html -->
+        </main>
+
+        <!-- Fenster: Registrieren / Anmelden -->
+        <!-- @include partials/auth/modal.html -->
+
+        <script type="module" src="./js/main.js"></script>
+    </body>
+</html>

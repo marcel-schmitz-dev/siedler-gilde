@@ -10,7 +10,7 @@ Fan-Website unserer Siedler-Online-Gilde mit Mitgliederbereich, Abenteuer-Karten
 ![SCSS](https://img.shields.io/badge/SCSS-cc6699?logo=sass&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178c6?logo=typescript&logoColor=white)
 ![Supabase](https://img.shields.io/badge/Supabase-Auth-3ecf8e?logo=supabase&logoColor=white)
-![GitHub Pages](https://img.shields.io/badge/Hosting-GitHub%20Pages-222?logo=github&logoColor=white)
+![IONOS](https://img.shields.io/badge/Hosting-IONOS-003D8F)
 ![Kein Framework](https://img.shields.io/badge/Framework-keins-d4a84b)
 
 **[▶ Zur Live-Seite](https://marcel-schmitz-dev.github.io/siedler-gilde/)**
@@ -34,7 +34,8 @@ Das Projekt entsteht im Rahmen meiner Weiterbildung zum Webentwickler (Frontend)
 
 ### Öffentlicher Bereich
 
-- Hero mit Gründungsjahr, Über uns, Aktivitäten, News und Mitgliederübersicht
+- **Startseite** mit Hero („Gemeinsam sind wir stärker.“), „Wofür GvG steht“ (sechs Werte), **GvG History** (Zeitleiste seit 2012), Ehrung für Gründer Franjo, „Unser starkes Team“ und Footer
+- „Est. 2012“ neben dem Wappen im Header
 - Registrieren- und Anmelden-Fenster im Seitendesign
 - Responsive Layout mit mobilem Menü
 
@@ -42,12 +43,13 @@ Das Projekt entsteht im Rahmen meiner Weiterbildung zum Webentwickler (Frontend)
 
 ![Vorschau des Mitgliederbereichs](docs/mitgliederbereich.webp)
 
+- **Zurück zur Startseite:** Mitglieder erreichen die Startseite jederzeit über „Startseite“ (Header und Sidebar) und kommen mit „Mitgliederbereich“ wieder zurück
 - **Ehrung für Franjo, den Gründer:** Porträt mit Hover-Wechsel zu seinem Hobby (Motorrad)
 - **Abenteuer Karten** in fünf Kategorien (Klassisch, Märchen, Szenario, Unternehmungen, Koop): Grid, Großansicht und Download
 - **Generäle und Entdecker:** alle Einträge mit Werten, Besonderheiten, Suche, Sortierung und Detailfenster (Garnison, Fähigkeiten-Vorschlag, Herkunft)
 - **Kampfsimulator NEONFRONT:** direkt im Mitgliederbereich nutzbar (eingebettet per iframe von GitHub Pages)
 - **Mini Games:** Grid mit eigenen Spielen, jeweils mit „Live Test“ und „GitHub“
-- **Unterseiten ohne Framework:** kleiner Hash-Router (`#generaele`, `#entdecker`, `#kampfsimulator`, `#minigames`, `#karten-…`)
+- **Unterseiten ohne Framework:** kleiner Hash-Router (`#generaele`, `#entdecker`, `#kampfsimulator`, `#minigames`, `#karten-…`; die Hashes der Startseite wie `#home` oder `#history` zeigen Mitgliedern die Startseite)
 
 ### Rechtliches
 
@@ -61,7 +63,7 @@ Das Projekt entsteht im Rahmen meiner Weiterbildung zum Webentwickler (Frontend)
 | Styling    | SCSS (7-1-ähnliche Struktur), kompiliert nach `css/main.css`                     |
 | Logik      | TypeScript (ES-Module im Browser), kompiliert nach `js/`                         |
 | Login      | Supabase Auth, Datenbank mit Row Level Security                                  |
-| Hosting    | GitHub Pages (kompiliertes `css/` und `js/` liegen im Repository)                |
+| Hosting    | IONOS (Webspace), Code und Versionierung auf GitHub; kompiliertes `css/` und `js/` liegen im Repository |
 | Werkzeuge  | `sass`, `tsc`, VS Code Live Server                                               |
 
 Es gibt keinen Bundler. Die Supabase-Bibliothek wird als Browser-Bundle lokal unter `js/vendor/supabase.js` ausgeliefert, damit beim Seitenaufruf keine Anfrage an einen fremden CDN-Server geht.
@@ -76,8 +78,10 @@ cd siedler-gilde
 npm install
 
 npm run vendor   # Supabase-Bundle nach js/vendor/ kopieren (einmalig und nach Updates)
+npm run html     # src/index.html + src/partials/ -> index.html
 npm run sass     # SCSS -> css/main.css
 npm run ts       # TypeScript -> js/
+npm run build    # alle drei nacheinander
 ```
 
 Dann `index.html` mit **Live Server** (Port 5501) öffnen. Ein Doppelklick auf die Datei funktioniert nicht, weil die Seite ES-Module nutzt.
@@ -89,7 +93,9 @@ npm run sass:watch
 npm run ts:watch
 ```
 
-> Nach Änderungen an SCSS oder TypeScript immer neu kompilieren und die kompilierten Dateien mit committen, sonst liefert GitHub Pages den alten Stand aus. Online hilft danach **Strg + F5** gegen den Browser-Cache.
+> Die `index.html` im Hauptordner wird **erzeugt** (nicht von Hand ändern). Die HTML-Quellen liegen in `src/`, jede Seite und jeder Abschnitt in einer eigenen Datei.
+
+> Nach Änderungen an HTML-Teilen, SCSS oder TypeScript immer neu kompilieren und die kompilierten Dateien mit committen, sonst liefert der Webspace den alten Stand aus. Online hilft danach **Strg + F5** gegen den Browser-Cache.
 
 ## Supabase einrichten
 
@@ -101,7 +107,11 @@ npm run ts:watch
     - `https://marcel-schmitz-dev.github.io/siedler-gilde/` (online)
 5. **Confirm email** ist aktuell ausgeschaltet, weil der eingebaute Mailversand von Supabase stark begrenzt ist. Dadurch kann sich jeder mit beliebiger E-Mail registrieren. Für den Dauerbetrieb einen eigenen SMTP-Dienst einrichten (z. B. Brevo oder Resend) und die Bestätigung wieder einschalten.
 
-## Veröffentlichen mit GitHub Pages
+## Veröffentlichen (IONOS)
+
+Die Dateien aus dem Projektordner (ohne `node_modules`, `src/`, `scss/`, `ts/`, `scripts/`, `.git`) per SFTP in das Web-Verzeichnis des IONOS-Webspace hochladen: `index.html`, die vier Rechtsseiten, `css/`, `js/` und `assets/`. HTTPS muss für die Domain aktiv sein (SSL-Zertifikat im IONOS-Kundenkonto).
+
+### Früher: GitHub Pages
 
 *Settings → Pages → Branch `main`, Ordner `/ (root)`.* Die Seite ist danach unter `https://marcel-schmitz-dev.github.io/siedler-gilde/` erreichbar. Alle Pfade im Projekt sind relativ, deshalb funktioniert sie auch im Unterordner.
 
@@ -114,26 +124,35 @@ npm run ts:watch
 | Mini Games                | Eintrag in `ts/data/minigames.ts`, Vorschaubild in `assets/img/minigames/`                  |
 | Kampfsimulator            | Link und Beschreibung in `ts/data/tools.ts`                                                 |
 | Generäle und Entdecker    | `ts/data/specialists.ts` (optional pro General: Garnison-Bild, Fähigkeiten, Herkunft)       |
-| Ehrung für Franjo         | Text in `index.html` (Abschnitt `#member-tribute`), Bilder in `assets/img/franjo/`          |
+| Startseite (Zeitleiste)   | `src/partials/home/history.html` (Texte und Bilder aus `assets/img/abenteuer/`)           |
+| Ehrung für Franjo         | Texte in `src/partials/home/founder.html` (Startseite) und `src/partials/member/tribute.html` (Mitgliederbereich), Bilder in `assets/img/franjo/` |
 | Rechtstexte               | `impressum.html`, `datenschutz.html`, `privacy.html`, `haftungsausschluss.html`             |
 
 ## Projektstruktur
 
 ```
-index.html              Öffentliche Seite + Mitgliederbereich + Login-Fenster
+index.html              ERZEUGT (npm run html) aus src/
+src/
+  index.html            Grundgerüst (head, body, Einbindung der Teile)
+  partials/
+    layout/             sprite (Icons), header
+    home/               home (Rahmen), hero, values, history, founder, team, footer
+    member/             area (Rahmen), sidebar, welcome, tribute, cards, skills,
+                        simulator, news, minigames, footer
+    auth/               modal (Registrieren / Anmelden)
 impressum.html          Rechtliche Seiten
 datenschutz.html
 privacy.html
 haftungsausschluss.html
 supabase-setup.sql      Tabelle profiles, Row Level Security, Trigger
 scripts/copy-vendor.js  kopiert das Supabase-Bundle nach js/vendor/
+scripts/build-html.js   setzt index.html aus src/ zusammen
 
 scss/
   abstracts/            Variablen, Mixins
   base/                 Reset
   layout/               Header
-  components/           hero, about, news, members, join, footer, auth,
-                        member, member-views, tribute
+  components/           auth, home, home-footer, member, member-views, tribute
   pages/                legal, legal-extra
   main.scss             Einstiegspunkt
 
@@ -160,7 +179,7 @@ docs/                   Screenshots für diese README
 ## Datenschutz und Sicherheit
 
 - Es werden **keine Cookies zu Werbe- oder Analysezwecken** und keine Tracking-Dienste verwendet.
-- Gespeichert werden nur Daten für den Login: Spielername, E-Mail, Passwort (als Hash) und technische Sitzungsdaten, verarbeitet über **Supabase**. Hosting über **GitHub Pages**.
+- Gespeichert werden nur Daten für den Login: Spielername, E-Mail, Passwort (als Hash) und technische Sitzungsdaten, verarbeitet über **Supabase**. Hosting über **IONOS**. Im Mitgliederbereich werden einzelne Inhalte von GitHub Pages und TSOwiki geladen (siehe Datenschutzerklärung).
 - Der Mitgliederbereich wird im Browser ein- und ausgeblendet. Das ist **kein echter Zugriffsschutz**. Inhalte, die wirklich geschützt sein müssen, gehören hinter Row Level Security in die Datenbank.
 - Von TSOwiki werden Icons direkt geladen (`TSOWIKI_BASE` in `ts/data/specialists.ts`). Für einen vollständig fremdserverfreien Betrieb die Icons lokal ablegen und den Wert anpassen.
 

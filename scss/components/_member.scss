@@ -17,7 +17,10 @@ $serif: Georgia, "Times New Roman", serif;
     display: none;
 }
 
-body.is-authenticated {
+// Angemeldet: standardmäßig der Mitgliederbereich.
+// Mit dem Hash einer Startseiten-Sektion (z. B. #home) schaltet views.ts "is-home-view" ein
+// und die öffentliche Startseite wird auch für Mitglieder angezeigt.
+body.is-authenticated:not(.is-home-view) {
     .public-site {
         display: none;
     }
@@ -33,8 +36,107 @@ body.is-authenticated {
     }
 }
 
-body:not(.is-authenticated) .nav-link--member {
+// Nav-Links je Ansicht
+.nav-link--to-member {
     display: none;
+}
+
+body.is-authenticated.is-home-view .nav-link--to-member {
+    display: inline-block;
+
+    padding: 8px 14px;
+
+    border: 1px solid rgba($gold-primary, 0.7);
+    border-radius: 6px;
+
+    color: $gold-light;
+}
+
+body:not(.is-authenticated) .nav-link--member,
+body.is-home-view .nav-link--member {
+    display: none;
+}
+
+// Navigationstexte brechen nicht mitten im Wort um
+.site-header .nav-link {
+    white-space: nowrap;
+}
+
+// Desktop-Navigation: Abstände und Schrift passen sich der Breite an.
+// Ab 1440 px bleibt alles wie im Original (Abstand 45 px, Schrift 14 px).
+@media (min-width: 951px) {
+    .site-header {
+        .header-content {
+            padding: 0 clamp(16px, 4.2vw, 60px);
+            gap: clamp(12px, 2vw, 30px);
+        }
+
+        .main-navigation {
+            gap: clamp(10px, 2.6vw, 45px);
+
+            .nav-link {
+                font-size: clamp(10px, 0.97vw, 14px);
+                letter-spacing: clamp(0.6px, 0.1vw, 1.5px);
+            }
+        }
+    }
+}
+
+// Angemeldet hat die Navigation bis zu 7 Einträge und braucht etwas engere Abstände
+@media (min-width: 1181px) {
+    body.is-authenticated .site-header {
+        .header-content {
+            padding: 0 clamp(16px, 3vw, 60px);
+        }
+
+        .main-navigation {
+            gap: clamp(14px, 2vw, 30px);
+
+            .nav-link {
+                font-size: clamp(11px, 1.05vw, 14px);
+            }
+        }
+    }
+}
+
+// Auf Laptops zeigt der Benutzer-Chip nur Avatar und "Abmelden" (der Name steht in der Sidebar)
+@media (max-width: 1366px) {
+    .site-header .auth-user__name {
+        display: none;
+    }
+}
+
+// Angemeldet gibt es mehr Navigationspunkte: das Burger-Menü startet deshalb früher (statt erst bei 950 px)
+@media (max-width: 1180px) {
+    body.is-authenticated .site-header {
+        .main-navigation {
+            display: none;
+        }
+
+        .main-navigation.is-open {
+            display: flex;
+            position: absolute;
+            top: $header-height;
+            left: 0;
+
+            width: 100%;
+
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+
+            padding: 30px 20px;
+
+            border-bottom: 1px solid rgba($gold-primary, 0.25);
+
+            background: rgba($bg-primary, 0.98);
+            backdrop-filter: blur(12px);
+        }
+
+        .menu-button {
+            display: flex;
+        }
+    }
 }
 
 // Mobile Menü: Auth-Links bleiben ausgeblendet, wenn eingeloggt
@@ -241,6 +343,7 @@ body:not(.is-authenticated) .nav-link--member {
 
         overflow-wrap: anywhere;
 
+
         font-family: $serif;
         font-size: 17px;
         letter-spacing: 0.4px;
@@ -369,14 +472,17 @@ body:not(.is-authenticated) .nav-link--member {
 
 .member-welcome {
     display: flex;
+    flex-wrap: wrap;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 24px;
+    gap: 16px 24px;
 
     padding: 10px 0 4px;
 
-    @include respond(md) {
-        flex-direction: column;
+    &__text {
+        flex: 1 1 420px;
+
+        min-width: 0;
     }
 
     &__eyebrow {
@@ -394,9 +500,13 @@ body:not(.is-authenticated) .nav-link--member {
         font-family: $serif;
         font-size: clamp(24px, 4.2vw, 52px);
         line-height: 1.05;
-        overflow-wrap: anywhere;
         letter-spacing: 1px;
         text-transform: uppercase;
+
+        // "Mitglieder­bereich" bricht nur an der Silbengrenze ("Mitglieder-" / "bereich"), nie mitten im Wort
+        hyphens: manual;
+        overflow-wrap: normal;
+        word-break: normal;
 
         text-shadow: 0 3px 14px rgba(0, 0, 0, 0.85);
     }

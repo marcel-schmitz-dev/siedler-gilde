@@ -1,10 +1,10 @@
 <!doctype html>
+<!-- AUTOMATISCH ERZEUGT aus src/index.html und src/partials/.
+     Nicht hier ändern, sondern in src/ und danach: npm run html -->
 <html lang="de">
     <head>
         <meta charset="UTF-8" />
-
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
         <meta
             name="description"
             content="Gründer von Goldenau [GvG] – Die Siedler Online Gilde"
@@ -15,11 +15,7 @@
         <!-- SUPABASE: Bibliothek wird lokal ausgeliefert (npm run vendor), kein fremder CDN -->
         <script src="./js/vendor/supabase.js"></script>
 
-        <!-- CSS -->
-
         <link rel="stylesheet" href="./css/main.css" />
-
-        <!-- FAVICON -->
 
         <link
             rel="icon"
@@ -29,10 +25,41 @@
     </head>
 
     <body>
-        <!-- =========================
-         HEADER
-    ========================== -->
+        <!-- SVG-Icons (per <use> überall nutzbar) -->
+        <svg class="icon-sprite" aria-hidden="true" focusable="false">
+            <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5M5.5 10v10h13V10M10 20v-6h4v6" /></symbol>
+            <symbol id="i-map" viewBox="0 0 24 24"><path d="M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20zM9 4v13.5M15 6.5V20" /></symbol>
+            <symbol id="i-tools" viewBox="0 0 24 24"><path d="M4 20 14 10M14.5 5.5l4 4M12 8l4-4 4 4-4 4M20 20 10 10M5 4l5 5" /></symbol>
+            <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z" /></symbol>
+            <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3M12 14v4M8 20h8" /></symbol>
+            <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" /><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1" /></symbol>
+            <symbol id="i-logout" viewBox="0 0 24 24"><path d="M10 4H5v16h5M14 8l4 4-4 4M18 12H9" /></symbol>
+            <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 3v18M3 12h18M12 7l1.8 3.2L17 12l-3.2 1.8L12 17l-1.8-3.2L7 12l3.2-1.8z" /></symbol>
+            <symbol id="i-helmet" viewBox="0 0 24 24"><path d="M4 14a8 8 0 0 1 16 0v6h-4v-4H8v4H4zM12 6v5M9 14h6" /></symbol>
+            <symbol id="i-swords" viewBox="0 0 24 24"><path d="M5 19 15 9M4 4l5 1 7 7-1 1-7-7zM19 19 9 9M20 4l-5 1-1.5 1.5" /></symbol>
+            <symbol id="i-sail" viewBox="0 0 24 24"><path d="M12 3v14M12 4c4 2 6 6 6 11h-6M12 6c-3 2-5 5-5 9h5M4 19c3 2 5 2 8 0 3 2 5 2 8 0" /></symbol>
+            <symbol id="i-gem" viewBox="0 0 24 24"><path d="M6 4h12l3 5-9 11L3 9zM3 9h18M9 4l-1.5 5L12 20M15 4l1.5 5L12 20" /></symbol>
+            <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z" /></symbol>
+            <symbol id="i-ext" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4 10 14M18 14v6H4V6h6" /></symbol>
+            <symbol id="i-code" viewBox="0 0 24 24"><path d="m8 8-4 4 4 4M16 8l4 4-4 4M14 5l-4 14" /></symbol>
+            <symbol id="i-news" viewBox="0 0 24 24"><path d="M4 10v4h3l8 4V6L7 10zM18 9a4 4 0 0 1 0 6" /></symbol>
+            <symbol id="i-chart" viewBox="0 0 24 24"><path d="M5 20V10M12 20V4M19 20v-7" /></symbol>
+            <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3" /><circle cx="17" cy="9" r="2.5" /><path d="M3 20a6 6 0 0 1 12 0M15 14.5a5 5 0 0 1 6 5" /></symbol>
+            <symbol id="i-coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M12 8v8M9.5 10h5M9.5 14h5" /></symbol>
+            <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8" /><path d="M12 9v4l3 2M9 3h6" /></symbol>
+            <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" /><path d="M4 21a8 8 0 0 1 16 0" /></symbol>
+            <symbol id="i-gamepad" viewBox="0 0 24 24"><path d="M7 8h10a4 4 0 0 1 4 4v2a3 3 0 0 1-5.2 2L14.5 14h-5L8.200 16A3 3 0 0 1 3 14v-2a4 4 0 0 1 4-4zM8 10.500v3M6.500 12h3M16 11.500h.01M18 13h.01" /></symbol>
+            <symbol id="i-handshake" viewBox="0 0 24 24"><path d="M2 10l4-4 5 1 3-1 4 3M22 10l-4-4M2 10l5 6 3 2 2-1M22 10l-3 6-4 3-2.500-1M9.500 14l2.500 2.500M11 12l3 3" /></symbol>
+            <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.500-3 7.500-7 9-4-1.500-7-4.500-7-9V6zM12 8v8M8.500 11.500h7" /></symbol>
+            <symbol id="i-sprout" viewBox="0 0 24 24"><path d="M12 21v-9M12 12c0-4 3-6 8-6 0 4-3 6-8 6zM12 16c0-3-2-5-7-5 0 3 2 5 7 5z" /></symbol>
+            <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14-4M4 4v4h4M4 13a8 8 0 0 0 14 4M20 20v-4h-4" /></symbol>
+            <symbol id="i-castle" viewBox="0 0 24 24"><path d="M4 21V9h3V6h2v3h2V6h2v3h2V6h2v3h3v12zM10 21v-5h4v5" /></symbol>
+            <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></symbol>
+            <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6" /></symbol>
+            <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.300a4.300 4.300 0 0 1 7.500 2.500C19.500 15.400 12 20 12 20z" /></symbol>
+        </svg>
 
+        <!-- Kopfzeile + Navigation -->
         <header class="site-header">
             <div class="header-content">
                 <!-- LOGO -->
@@ -54,17 +81,17 @@
                 <nav class="main-navigation" id="main-navigation">
                     <a href="#home" class="nav-link nav-link--public active"> Home </a>
 
-                    <a href="#about" class="nav-link nav-link--public"> Über uns </a>
+                    <a href="#history" class="nav-link nav-link--public"> Geschichte </a>
 
-                    <a href="#guild" class="nav-link nav-link--public"> Gilde </a>
+                    <a href="#founder" class="nav-link nav-link--public"> Franjo </a>
 
-                    <a href="#activities" class="nav-link nav-link--public"> Aktivitäten </a>
+                    <a href="#team" class="nav-link nav-link--public"> Team </a>
 
-                    <a href="#news" class="nav-link nav-link--public"> News </a>
+                    <a href="#member-area" class="nav-link nav-link--to-member"> Mitglieder&shy;bereich </a>
 
-                    <a href="#contact" class="nav-link nav-link--public"> Kontakt </a>
+                    <a href="#home" class="nav-link nav-link--member"> Startseite </a>
 
-                    <a href="#member-area" class="nav-link nav-link--member active"> Mitgliederbereich </a>
+                    <a href="#member-area" class="nav-link nav-link--member active"> Mitglieder&shy;bereich </a>
 
                     <a href="#member-cards" class="nav-link nav-link--member"> Abenteuer </a>
 
@@ -140,1033 +167,628 @@
         </header>
 
         <main>
-            <!-- ÖFFENTLICHE SEITE (nur ausgeloggt sichtbar) -->
+            <!-- Startseite (nur ausgeloggt sichtbar, oder per "Startseite" im Mitgliederbereich) -->
             <div class="public-site">
-            <!-- =========================
-             HERO
-        ========================== -->
+                <section id="home" class="home-hero">
+                    <div class="home-hero__bg" aria-hidden="true"></div>
 
-            <section id="home" class="hero-section">
-                <!-- OVERLAY -->
+                    <div class="home-hero__inner">
+                        <div class="home-hero__text">
+                            <h1>
+                                <span class="home-hero__small">Gründer von</span>
+                                <span class="home-hero__title">Goldenau <span class="home-hero__tag">[GvG]</span></span>
+                            </h1>
 
-                <div class="hero-overlay"></div>
+                            <p class="home-hero__claim">Gemeinsam sind wir stärker.</p>
 
-                <!-- WATERMARK -->
+                            <div class="home-ornament" aria-hidden="true"><span></span><i>⚜&#xFE0E;</i><span></span></div>
 
-                <div class="hero-watermark">
-                    <img src="./assets/img/logo/gvg-wappen.webp" alt="" />
-                </div>
-
-                <!-- CONTENT -->
-
-                <div class="hero-content">
-                    <!-- PRETITLE -->
-
-                    <div class="hero-pretitle">
-                        <span class="ornament-line"></span>
-
-                        <p>Die Siedler Online Gilde</p>
-
-                        <span class="ornament-line"></span>
-                    </div>
-
-                    <!-- TITLE -->
-
-                    <h1>
-                        <span class="title-small"> Gründer von </span>
-
-                        <span class="title-main"> Goldenau </span>
-                    </h1>
-
-                    <!-- GUILD TAG -->
-
-                    <div class="guild-tag-container">
-                        <span></span>
-
-                        <p class="guild-tag">[GvG]</p>
-
-                        <span></span>
-                    </div>
-
-                    <!-- GRÜNDUNG -->
-
-                    <div class="hero-est">
-                        <span class="ornament-line"></span>
-
-                        <p>Est. <strong>2012</strong></p>
-
-                        <span class="ornament-line"></span>
-                    </div>
-
-                    <!-- DESCRIPTION -->
-
-                    <p class="hero-description">
-                        Gemeinsam bauen. Gemeinsam wachsen. Gemeinsam stärker.
-                    </p>
-
-                    <!-- BUTTONS -->
-
-                    <div class="hero-buttons">
-                        <a href="#" class="primary-button" data-auth-open="signup">
-                            <span> ♛ </span>
-
-                            Jetzt beitreten
-                        </a>
-
-                        <a href="#about" class="secondary-button">
-                            Mehr erfahren
-
-                            <span> ↓ </span>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- SCROLL INDICATOR -->
-
-                <a href="#about" class="scroll-indicator">
-                    <span class="scroll-line"></span>
-
-                    <span class="scroll-icon"> ↓ </span>
-
-                    <span class="scroll-text"> Entdecken </span>
-
-                    <span class="scroll-line"></span>
-                </a>
-            </section>
-
-            <!-- =========================
-             UNSERE GILDE
-        ========================== -->
-
-            <section id="about" class="about-section">
-                <div class="about-container">
-                    <div class="guild-about__content-box">
-                        <div class="guild-about__text">
-                            <span class="guild-about__eyebrow"> ÜBER UNS </span>
-
-                            <h3 class="guild-about__main-title">
-                                Unsere Gilde
-                            </h3>
-
-                            <p>
-                                Die Gründer von Goldenau (GvG) ist eine aktive
-                                und ambitionierte Gilde in Die Siedler Online.
-                                Bei uns stehen Teamgeist, Fairness und
-                                gemeinschaftlicher Fortschritt im Mittelpunkt.
-                                Wir bauen nicht nur Siedlungen – wir bauen eine
-                                starke Gemeinschaft.
+                            <p class="home-hero__lead">
+                                Eine Gilde, eine Gemeinschaft,<br />
+                                ein Zuhause in der Welt von Die Siedler Online.
                             </p>
 
-                            <a href="#" class="btn">
-                                Mehr über uns <span>→</span>
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- FEATURES GRID (Die 4 Kacheln nebeneinander) -->
-                    <div class="about-features">
-                        <div class="feature-card">
-                            <div class="feature-icon">
-                                <img
-                                    src="./assets/img/icons/teamgeist.webp"
-                                    alt="Teamgeist Icon"
-                                />
-                            </div>
-                            <h3>Teamgeist</h3>
-                            <p>Zusammen erreichen wir mehr – immer!</p>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-icon">
-                                <img
-                                    src="./assets/img/icons/fairness.webp"
-                                    alt="Fairness Icon"
-                                />
-                            </div>
-                            <h3>Fairness</h3>
-                            <p>
-                                Respekt und Vertrauen stehen bei uns an erster
-                                Stelle.
-                            </p>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-icon">
-                                <img
-                                    src="./assets/img/icons/aktive-gemeinschaft.webp"
-                                    alt="Aktive Gemeinschaft Icon"
-                                />
-                            </div>
-                            <h3>Aktive Gemeinschaft</h3>
-                            <p>
-                                Ob Aufbau, Events oder Hilfe – wir sind
-                                füreinander da.
-                            </p>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-icon">
-                                <img
-                                    src="./assets/img/icons/langfristiger-erfolg.webp"
-                                    alt="Langfristiger Erfolg Icon"
-                                />
-                            </div>
-                            <h3>Langfristiger Erfolg</h3>
-                            <p>Gemeinsam wachsen und unsere Ziele erreichen.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- =========================
-     AKTUELLES AUS DER GILDE
-========================= -->
-
-            <section class="news-section" id="news">
-                <div class="news-container">
-                    <!-- News-Bereich -->
-                    <div class="news-content">
-                        <div class="news-heading">
-                            <span class="section-subtitle">
-                                ✦ NEWS & EVENTS
-                            </span>
-
-                            <h2>AKTUELLES AUS DER GILDE</h2>
-                        </div>
-
-                        <a href="#news" class="all-news-link">
-                            ALLE NEWS
-                            <span>→</span>
-                        </a>
-
-                        <div class="news-cards">
-                            <!-- News 1 -->
-                            <article class="news-card">
-                                <img
-                                    src="./assets/img/news/bauettbewerb.webp"
-                                    alt="Gilden-Event Bauwettbewerb"
-                                />
-
-                                <div class="news-card-content">
-                                    <time datetime="2025-04-12">
-                                        12. APR 2025
-                                    </time>
-
-                                    <h3>Gilden-Event: Bauwettbewerb</h3>
-
-                                    <p>
-                                        Am kommenden Wochenende starten wir
-                                        unseren großen Bauwettbewerb! Zeigt, was
-                                        ihr drauf habt!
-                                    </p>
-
-                                    <a href="#news">
-                                        MEHR LESEN
-                                        <span>→</span>
-                                    </a>
-                                </div>
-                            </article>
-
-                            <!-- News 2 -->
-                            <article class="news-card">
-                                <img
-                                    src="./assets/img/news/neue-mitglieder.webp"
-                                    alt="Neue Mitglieder der Gilde"
-                                />
-
-                                <div class="news-card-content">
-                                    <time datetime="2025-04-05">
-                                        05. APR 2025
-                                    </time>
-
-                                    <h3>Neue Mitglieder willkommen</h3>
-
-                                    <p>
-                                        Wir freuen uns über mehrere neue aktive
-                                        Spieler in unserer Gilde! Willkommen bei
-                                        GvG!
-                                    </p>
-
-                                    <a href="#news">
-                                        MEHR LESEN
-                                        <span>→</span>
-                                    </a>
-                                </div>
-                            </article>
-
-                            <!-- News 3 -->
-                            <article class="news-card">
-                                <img
-                                    src="./assets/img/news/gilden-expedition.webp"
-                                    alt="Gemeinsame Gilden-Expedition"
-                                />
-
-                                <div class="news-card-content">
-                                    <time datetime="2025-03-28">
-                                        28. MÄR 2025
-                                    </time>
-
-                                    <h3>Gilden-Expedition</h3>
-
-                                    <p>
-                                        Unsere nächste gemeinsame Expedition
-                                        steht an. Alle Infos findet ihr im
-                                        Gilden-Forum.
-                                    </p>
-
-                                    <a href="#news">
-                                        MEHR LESEN
-                                        <span>→</span>
-                                    </a>
-                                </div>
-                            </article>
-                        </div>
-                    </div>
-
-                    <!-- Statistik -->
-                    <aside class="guild-statistics">
-                        <span class="section-subtitle"> GILDEN-STATISTIK </span>
-
-                        <div class="statistic-item">
-                            <span class="statistic-icon">♟</span>
-                            <div>
-                                <strong>45</strong>
-                                <p>Aktive Mitglieder</p>
+                            <div class="home-hero__actions">
+                                <a href="#history" class="home-btn home-btn--primary">
+                                    <svg class="icon"><use href="#i-compass" /></svg>
+                                    Mehr über uns erfahren
+                                    <svg class="icon"><use href="#i-arrow" /></svg>
+                                </a>
                             </div>
                         </div>
-
-                        <div class="statistic-item">
-                            <span class="statistic-icon">♜</span>
-                            <div>
-                                <strong>15</strong>
-                                <p>Gemeinsame Siedlungen</p>
-                            </div>
-                        </div>
-
-                        <div class="statistic-item">
-                            <span class="statistic-icon">♜</span>
-                            <div>
-                                <strong>12</strong>
-                                <p>Gilden-Events</p>
-                            </div>
-                        </div>
-
-                        <div class="statistic-item">
-                            <span class="statistic-icon">★</span>
-                            <div>
-                                <strong>100%</strong>
-                                <p>Teamgeist</p>
-                            </div>
-                        </div>
-                    </aside>
-                </div>
-            </section>
-            <!-- =========================
-     UNSERE MITGLIEDER
-========================== -->
-
-            <section class="members-section" id="guild">
-                <div class="members-container">
-                    <!-- Linker Textbereich -->
-                    <div class="members-intro">
-                        <span class="section-subtitle">
-                            ✦ UNSERE MITGLIEDER
-                        </span>
-
-                        <h2>STARKES TEAM</h2>
-
-                        <p>
-                            Unsere Gilde besteht aus engagierten Spielern, die
-                            mit Herz und Strategie bei der Sache sind. Jeder
-                            bringt seine Stärken ein – und genau das macht uns
-                            aus.
-                        </p>
-
-                        <a href="#contact" class="members-button">
-                            UNSERE MITGLIEDER
-                            <span>→</span>
-                        </a>
                     </div>
+                </section>
 
-                    <!-- Rechter Mitgliederbereich -->
-                    <div class="members-showcase">
-                        <div class="members-list">
-                            <article class="member-card">
-                                <div class="member-avatar">
-                                    <img
-                                        src="./assets/img/members/farmerjoe.webp"
-                                        alt="FarmerJoe"
-                                    />
+                <div class="home-band">
+                    <div class="home-wrap">
+                        <section class="home-panel home-values" aria-labelledby="values-title">
+                            <div class="home-panel__head">
+                                <svg class="home-panel__icon home-panel__icon--small"><use href="#i-compass" /></svg>
+
+                                <div>
+                                    <h2 id="values-title">Wofür GvG steht</h2>
+                                    <p class="home-panel__sub">Gemeinsam bauen. Gemeinsam wachsen. Gemeinsam stärker.</p>
                                 </div>
-
-                                <h3>FarmerJoe</h3>
-                                <span>Diplomat</span>
-                            </article>
-
-                            <article class="member-card">
-                                <div class="member-avatar">
-                                    <img
-                                        src="./assets/img/members/lunakeks.webp"
-                                        alt="LunaKeks"
-                                    />
-                                </div>
-
-                                <h3>LunaKeks</h3>
-                                <span>Baumeisterin</span>
-                            </article>
-
-                            <article class="member-card">
-                                <div class="member-avatar">
-                                    <img
-                                        src="./assets/img/members/bauernbubi.webp"
-                                        alt="BauernBubi"
-                                    />
-                                </div>
-
-                                <h3>BauernBubi</h3>
-                                <span>Stratege</span>
-                            </article>
-
-                            <article class="member-card">
-                                <div class="member-avatar">
-                                    <img
-                                        src="./assets/img/members/sonnenblume.webp"
-                                        alt="Sonnenblume"
-                                    />
-                                </div>
-
-                                <h3>Sonnenblume</h3>
-                                <span>Helferin</span>
-                            </article>
-
-                            <article class="member-card">
-                                <div class="member-avatar">
-                                    <img
-                                        src="./assets/img/members/ritterrudi.webp"
-                                        alt="RitterRudi"
-                                    />
-                                </div>
-
-                                <h3>RitterRudi</h3>
-                                <span>Kämpfer</span>
-                            </article>
-
-                            <article class="member-card">
-                                <div class="member-avatar">
-                                    <img
-                                        src="./assets/img/members/waldgeist.webp"
-                                        alt="Waldgeist"
-                                    />
-                                </div>
-
-                                <h3>Waldgeist</h3>
-                                <span>Scout</span>
-                            </article>
-                        </div>
-
-                        <!-- Slider-Navigation -->
-                        <div class="members-navigation">
-                            <button
-                                class="members-arrow"
-                                aria-label="Vorherige Mitglieder"
-                            >
-                                ‹
-                            </button>
-
-                            <div class="members-dots">
-                                <span class="active"></span>
-                                <span></span>
-                                <span></span>
-                                <span></span>
-                                <span></span>
                             </div>
 
-                            <button
-                                class="members-arrow"
-                                aria-label="Nächste Mitglieder"
-                            >
-                                ›
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <!-- =========================
-     JOIN CTA
-========================== -->
+                            <ul class="home-values__list">
+                                <li class="home-values__item">
+                                    <svg class="home-values__icon"><use href="#i-shield" /></svg>
+                                    <h3>Fairness &amp; Vertrauen</h3>
+                                    <p>Jeder ist willkommen und wird respektiert.</p>
+                                </li>
 
-            <section class="join-section">
-                <div class="join-section__content">
-                    <span class="join-section__subtitle">
-                        + DEINE REISE BEGINNT HIER +
-                    </span>
+                                <li class="home-values__item">
+                                    <svg class="home-values__icon"><use href="#i-handshake" /></svg>
+                                    <h3>Zusammenhalt</h3>
+                                    <p>Wir spielen miteinander und halten zusammen.</p>
+                                </li>
 
-                    <h2>
-                        Werde Teil von
-                        <span>Gründer von Goldenau</span>
-                    </h2>
+                                <li class="home-values__item">
+                                    <svg class="home-values__icon"><use href="#i-heart" /></svg>
+                                    <h3>Hilfsbereitschaft</h3>
+                                    <p>Ob Buffpartner oder Tipps – wir helfen uns.</p>
+                                </li>
 
-                    <p>
-                        Gemeinsam bauen. Gemeinsam wachsen. Gemeinsam stärker.
-                    </p>
+                                <li class="home-values__item">
+                                    <svg class="home-values__icon"><use href="#i-chat" /></svg>
+                                    <h3>Respekt &amp; Offenheit</h3>
+                                    <p>Ein freundlicher Umgang steht bei uns an erster Stelle.</p>
+                                </li>
 
-                    <a href="#" class="join-section__button" data-auth-open="signup">
-                        <span>♛</span>
-                        Jetzt beitreten
-                    </a>
-                </div>
-            </section>
-            <!-- =========================
-     FOOTER
-========================== -->
+                                <li class="home-values__item">
+                                    <svg class="home-values__icon"><use href="#i-users" /></svg>
+                                    <h3>Familiäre Gemeinschaft</h3>
+                                    <p>Bei uns zählt der Mensch.</p>
+                                </li>
 
-            <footer class="site-footer">
-                <div class="site-footer__main">
-                    <!-- BRAND -->
+                                <li class="home-values__item">
+                                    <svg class="home-values__icon"><use href="#i-swords" /></svg>
+                                    <h3>Gemeinsame Abenteuer</h3>
+                                    <p>Erleben, entdecken und Spaß haben.</p>
+                                </li>
+                            </ul>
+                        </section>
+                        <section class="home-panel home-history" id="history" aria-labelledby="history-title">
+                            <div class="home-panel__head">
+                                <svg class="home-panel__icon"><use href="#i-compass" /></svg>
 
-                    <div class="site-footer__brand">
-                        <a href="#home" class="site-footer__logo">
-                            <img
-                                src="./assets/img/logo/gvg-wappen.webp"
-                                alt="Wappen der Gründer von Goldenau"
-                            />
-                        </a>
+                                <div>
+                                    <h2 id="history-title">GvG History</h2>
+                                    <p class="home-panel__sub">Eine Geschichte seit 2012</p>
+                                    <p class="home-panel__text">Manche gründen eine Gilde. Andere schaffen eine Gemeinschaft.</p>
+                                </div>
+                            </div>
 
-                        <p>
-                            Gründer von Goldenau
-                            <span>[GvG]</span>
-                        </p>
+                            <ol class="timeline">
+                                <li class="timeline__item">
+                                    <span class="timeline__icon"><svg class="icon"><use href="#i-sprout" /></svg></span>
+                                    <h3><time datetime="2012">2012</time> <span>Die Gründung</span></h3>
+                                    <p>Franjo taucht in die DSO-Welt ein und gründet die GvG.</p>
+                                    <img src="./assets/img/abenteuer/szenario.webp" alt="" loading="lazy" />
+                                </li>
 
-                        <p class="est-line">Est. 2012</p>
+                                <li class="timeline__item">
+                                    <span class="timeline__icon"><svg class="icon"><use href="#i-users" /></svg></span>
+                                    <h3><time datetime="2012/2022">2012 – 2022</time> <span>Höhen und Tiefen</span></h3>
+                                    <p>Gemeinsam durch gute und schwierige Zeiten.</p>
+                                    <img src="./assets/img/abenteuer/unternehmungen.webp" alt="" loading="lazy" />
+                                </li>
 
-                        <small> Die Siedler Online Gilde </small>
-                    </div>
+                                <li class="timeline__item">
+                                    <span class="timeline__icon"><svg class="icon"><use href="#i-refresh" /></svg></span>
+                                    <h3><time datetime="2023">2023</time> <span>Neuer Anfang</span></h3>
+                                    <p>Die Reset-Taste und ein starker Wiederaufbau.</p>
+                                    <img src="./assets/img/abenteuer/klassisch.webp" alt="" loading="lazy" />
+                                </li>
 
-                    <!-- NAVIGATION -->
+                                <li class="timeline__item">
+                                    <span class="timeline__icon"><svg class="icon"><use href="#i-trophy" /></svg></span>
+                                    <h3><time>Heute</time> <span>Eine starke Gemeinschaft</span></h3>
+                                    <p>Mit Zusammenhalt und Tatendrang in die Zukunft.</p>
+                                    <img src="./assets/img/abenteuer/maerchen.webp" alt="" loading="lazy" />
+                                </li>
+                            </ol>
+                        </section>
+                        <section class="home-panel home-founder" id="founder" aria-labelledby="founder-title">
+                            <div class="home-founder__portrait">
+                                <img src="./assets/img/franjo/franjo.webp" alt="Porträt von Franjo im blauen Gildenumhang" loading="lazy" />
+                            </div>
 
-                    <div class="site-footer__navigation">
-                        <h3>Navigation</h3>
+                            <div class="home-founder__text">
+                                <h2 id="founder-title">Franjo – unser Gilden-Opa</h2>
 
-                        <a href="#home"> Home </a>
-
-                        <a href="#about"> Über uns </a>
-
-                        <a href="#members"> Mitglieder </a>
-
-                        <a href="#activities"> Aktivitäten </a>
-
-                        <a href="#news"> News </a>
-
-                        <a href="#contact"> Kontakt </a>
-                    </div>
-
-                    <!-- GILDE -->
-
-                    <div class="site-footer__guild">
-                        <h3>Unsere Gilde</h3>
-
-                        <p>
-                            Gemeinsam bauen. Gemeinsam wachsen. Gemeinsam
-                            stärker.
-                        </p>
-
-                        <a href="#" class="site-footer__join" data-auth-open="signup">
-                            ♛ Jetzt beitreten
-                        </a>
-                    </div>
-                </div>
-
-                <!-- FOOTER BOTTOM -->
-
-                <div class="site-footer__bottom">
-                    <p>© Marcel Schmitz 2026 Gründer von Goldenau [GvG]</p>
-                    <a
-                        href="https://github.com/marcel-schmitz-dev"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        GitHub
-                    </a>
-
-                    <div>
-                        <a href="./impressum.html">Impressum</a>
-
-                        <a href="./datenschutz.html"> Datenschutz </a>
-
-                        <a href="./haftungsausschluss.html"> Haftungsausschluss </a>
-                    </div>
-                </div>
-            </footer>
-            </div>
-
-        <!-- =========================
-         MITGLIEDERBEREICH (nur eingeloggt sichtbar)
-         Wird über body.is-authenticated ein-/ausgeblendet.
-    ========================== -->
-
-        <div class="member-area" id="member-area">
-            <div class="member-area__bg" aria-hidden="true"></div>
-
-            <!-- SVG-Icons (werden per <use> eingebunden) -->
-            <svg class="icon-sprite" aria-hidden="true" focusable="false">
-                <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5M5.5 10v10h13V10M10 20v-6h4v6" /></symbol>
-                <symbol id="i-map" viewBox="0 0 24 24"><path d="M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20zM9 4v13.5M15 6.5V20" /></symbol>
-                <symbol id="i-tools" viewBox="0 0 24 24"><path d="M4 20 14 10M14.5 5.5l4 4M12 8l4-4 4 4-4 4M20 20 10 10M5 4l5 5" /></symbol>
-                <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z" /></symbol>
-                <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3M12 14v4M8 20h8" /></symbol>
-                <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" /><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1" /></symbol>
-                <symbol id="i-logout" viewBox="0 0 24 24"><path d="M10 4H5v16h5M14 8l4 4-4 4M18 12H9" /></symbol>
-                <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 3v18M3 12h18M12 7l1.8 3.2L17 12l-3.2 1.8L12 17l-1.8-3.2L7 12l3.2-1.8z" /></symbol>
-                <symbol id="i-helmet" viewBox="0 0 24 24"><path d="M4 14a8 8 0 0 1 16 0v6h-4v-4H8v4H4zM12 6v5M9 14h6" /></symbol>
-                <symbol id="i-swords" viewBox="0 0 24 24"><path d="M5 19 15 9M4 4l5 1 7 7-1 1-7-7zM19 19 9 9M20 4l-5 1-1.5 1.5" /></symbol>
-                <symbol id="i-sail" viewBox="0 0 24 24"><path d="M12 3v14M12 4c4 2 6 6 6 11h-6M12 6c-3 2-5 5-5 9h5M4 19c3 2 5 2 8 0 3 2 5 2 8 0" /></symbol>
-                <symbol id="i-gem" viewBox="0 0 24 24"><path d="M6 4h12l3 5-9 11L3 9zM3 9h18M9 4l-1.5 5L12 20M15 4l1.5 5L12 20" /></symbol>
-                <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z" /></symbol>
-                <symbol id="i-ext" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4 10 14M18 14v6H4V6h6" /></symbol>
-                <symbol id="i-code" viewBox="0 0 24 24"><path d="m8 8-4 4 4 4M16 8l4 4-4 4M14 5l-4 14" /></symbol>
-                <symbol id="i-news" viewBox="0 0 24 24"><path d="M4 10v4h3l8 4V6L7 10zM18 9a4 4 0 0 1 0 6" /></symbol>
-                <symbol id="i-chart" viewBox="0 0 24 24"><path d="M5 20V10M12 20V4M19 20v-7" /></symbol>
-                <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3" /><circle cx="17" cy="9" r="2.5" /><path d="M3 20a6 6 0 0 1 12 0M15 14.5a5 5 0 0 1 6 5" /></symbol>
-                <symbol id="i-coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M12 8v8M9.5 10h5M9.5 14h5" /></symbol>
-                <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8" /><path d="M12 9v4l3 2M9 3h6" /></symbol>
-                <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" /><path d="M4 21a8 8 0 0 1 16 0" /></symbol>
-                <symbol id="i-gamepad" viewBox="0 0 24 24"><path d="M7 8h10a4 4 0 0 1 4 4v2a3 3 0 0 1-5.2 2L14.5 14h-5L8.200 16A3 3 0 0 1 3 14v-2a4 4 0 0 1 4-4zM8 10.500v3M6.500 12h3M16 11.500h.01M18 13h.01" /></symbol>
-                <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></symbol>
-                <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6" /></symbol>
-            </svg>
-
-            <div class="member-shell">
-                <div class="member-dashboard" id="member-dashboard">
-                <!-- ===== OBEN: SIDEBAR + WILLKOMMEN + KARTEN ===== -->
-
-                <div class="member-top">
-                    <!-- SIDEBAR -->
-
-                    <aside class="member-sidebar" aria-label="Mitgliederbereich Navigation">
-                        <div class="member-profile">
-                            <span class="member-profile__avatar" data-member-initials>GvG</span>
-                            <strong class="member-profile__name" data-member-name>Siedler</strong>
-                            <span class="member-profile__status">
-                                <i aria-hidden="true"></i> Online
-                            </span>
-                        </div>
-
-                        <nav class="member-menu">
-                            <a href="#member-area" class="member-menu__link is-active" data-member-link>
-                                <svg class="icon"><use href="#i-home" /></svg>
-                                Mitgliederbereich
-                            </a>
-
-                            <a href="#member-cards" class="member-menu__link" data-member-link>
-                                <svg class="icon"><use href="#i-map" /></svg>
-                                Abenteuer Karten
-                            </a>
-
-                            <a href="#member-skills" class="member-menu__link" data-member-link>
-                                <svg class="icon"><use href="#i-tools" /></svg>
-                                Skills &amp; Wissen
-                            </a>
-
-                            <a href="#kampfsimulator" class="member-menu__link" data-member-link>
-                                <svg class="icon"><use href="#i-swords" /></svg>
-                                Kampfsimulator
-                            </a>
-
-                            <a href="#" class="member-menu__link is-soon" data-soon>
-                                <svg class="icon"><use href="#i-chat" /></svg>
-                                Gilden-Chat
-                            </a>
-
-                            <a href="#minigames" class="member-menu__link" data-member-link>
-                                <svg class="icon"><use href="#i-gamepad" /></svg>
-                                Mini Games
-                            </a>
-
-                            <a href="#" class="member-menu__link is-soon" data-soon>
-                                <svg class="icon"><use href="#i-gear" /></svg>
-                                Einstellungen
-                            </a>
-
-                            <button type="button" class="member-menu__link member-menu__link--logout" id="member-logout">
-                                <svg class="icon"><use href="#i-logout" /></svg>
-                                Abmelden
-                            </button>
-                        </nav>
-                    </aside>
-
-                    <!-- HAUPTBEREICH -->
-
-                    <div class="member-main">
-                        <!-- WILLKOMMEN -->
-
-                        <header class="member-welcome">
-                            <div class="member-welcome__text">
-                                <p class="member-welcome__eyebrow">Willkommen im</p>
-                                <h1>Mitgliederbereich</h1>
-                                <p class="member-welcome__greeting">
-                                    Schön, dass du da bist,
-                                    <span data-member-name>Siedler</span>!
+                                <p class="home-founder__lead">
+                                    68 Jahre Lebenserfahrung, jede Menge Geschichten und seit 2012 mit Herzblut dabei.
                                 </p>
+
+                                <p>
+                                    Franjo hat die GvG nicht einfach nur gegründet – er hat den Grundstein für eine Gemeinschaft
+                                    gelegt, die bis heute zusammenhält.
+                                </p>
+
+                                <p class="home-founder__quote">
+                                    Lieber Franjo, danke für deine Idee, deine Ausdauer und dafür, dass du uns diese
+                                    Gemeinschaft ermöglicht hast.
+                                </p>
+
+                                <p class="home-founder__script">Auf dich und viele weitere gemeinsame Abenteuer!</p>
+
+                                <div class="home-ornament" aria-hidden="true"><span></span><i>⚜&#xFE0E;</i><span></span></div>
                             </div>
 
-                            <blockquote class="member-quote">
-                                <p>Gemeinsam sind wir stärker – für eine erfolgreiche Gilde!</p>
-                                <cite>– Gründer von Goldenau [GvG]</cite>
-                            </blockquote>
-                        </header>
-
-                        <!-- EHRUNG: FRANJO -->
-
-                        <section class="tribute" id="member-tribute" aria-labelledby="tribute-title">
-                            <div class="tribute__stage" id="tribute-stage">
-                                <img
-                                    class="tribute__img tribute__img--portrait"
-                                    src="./assets/img/franjo/franjo.webp"
-                                    alt="Porträt von Franjo im blauen Gildenumhang"
-                                    loading="lazy"
-                                />
-                                <img
-                                    class="tribute__img tribute__img--bike"
-                                    src="./assets/img/franjo/franjo-motorrad.webp"
-                                    alt="Franjo auf seinem Motorrad"
-                                    loading="lazy"
-                                />
-
-                                <button type="button" class="tribute__toggle" id="tribute-toggle" aria-pressed="false">
-                                    Franjos Hobby
-                                </button>
-                            </div>
-
-                            <div class="tribute__text">
-                                <!-- Standard-Text -->
-
-                                <div class="tribute__panel tribute__panel--main" id="tribute-main">
-                                    <p class="tribute__eyebrow">Est. 2012 · Gründer von Goldenau</p>
-
-                                    <h2 id="tribute-title">Eine Legende unserer Gilde</h2>
-
-                                    <p class="tribute__lead">
-                                        Manche gründen eine Gilde. Andere schaffen eine Gemeinschaft.
-                                    </p>
-
-                                    <p>
-                                        Seit den Anfängen der Gründer von Goldenau steht Franjo an unserer Seite. Mit
-                                        mittlerweile 68 Jahren bringt er nicht nur jede Menge Erfahrung mit, sondern auch
-                                        etwas, das man nicht selbstverständlich findet: Herzblut, Zusammenhalt und die
-                                        Freude am gemeinsamen Spiel.
-                                    </p>
-
-                                    <p>
-                                        Für viele von uns ist er nicht einfach nur unser Gildenleiter, sondern auch ein
-                                        guter Freund und unser geschätzter Gilden-Opa.
-                                    </p>
-
-                                    <p class="tribute__thanks">Lieber Franjo, danke für deinen Einsatz!</p>
-
-                                    <p class="tribute__plate"><strong>Franjo</strong> <span>Gründer &amp; Gilden-Opa</span></p>
-                                </div>
-
-                                <!-- Hover-/Hobby-Text -->
-
-                                <div class="tribute__panel tribute__panel--alt" id="tribute-alt" aria-hidden="true">
-                                    <p class="tribute__eyebrow">Abseits von Goldenau</p>
-
-                                    <h2>Ride free!</h2>
-
-                                    <p class="tribute__lead">
-                                        Wenn Franjo nicht für die Gilde unterwegs ist, dann auf zwei Rädern.
-                                    </p>
-
-                                    <p>
-                                        Das Motorrad ist seine große Leidenschaft: Fahrtwind, offene Straße und die
-                                        Freiheit, einfach loszufahren. Ob im Sattel oder in Goldenau – Franjo bleibt
-                                        immer in Bewegung.
-                                    </p>
-
-                                    <p class="tribute__thanks">Gute Fahrt, Franjo – und danke für alles!</p>
-
-                                    <p class="tribute__plate"><strong>Franjo</strong> <span>Biker &amp; Gilden-Opa</span></p>
-                                </div>
+                            <div class="home-founder__note" aria-label="Danke Franjo">
+                                <span class="home-founder__crown" aria-hidden="true">♛</span>
+                                <strong>Danke Franjo!</strong>
+                                <small>— GvG Est. 2012 —</small>
                             </div>
                         </section>
-
-                        <!-- ABENTEUER KARTEN -->
-
-                        <section class="member-panel" id="member-cards" aria-labelledby="member-cards-title">
-                            <div class="member-panel__head">
-                                <svg class="member-panel__icon"><use href="#i-compass" /></svg>
+                        <section class="home-panel home-team" id="team" aria-labelledby="team-title">
+                            <div class="home-team__head">
+                                <svg class="home-panel__icon home-panel__icon--small"><use href="#i-users" /></svg>
 
                                 <div>
-                                    <h2 id="member-cards-title">Abenteuer Karten</h2>
-                                    <p>Taktikkarten der Gilde – ansehen, vergrößern und herunterladen.</p>
+                                    <h2 id="team-title">Unser starkes Team</h2>
+                                    <p class="home-panel__text">Gemeinsam spielen, helfen und Abenteuer erleben.</p>
                                 </div>
-                            </div>
-
-                            <div class="adventure-grid">
-                                <article class="adventure-card adventure-card--klassisch" data-go="karten-klassisch">
-                                    <div class="adventure-card__media">
-                                        <span class="adventure-card__tag">
-                                            <svg class="icon"><use href="#i-swords" /></svg> Klassisch
-                                        </span>
-                                    </div>
-                                    <div class="adventure-card__body">
-                                        <h3>Klassisch</h3>
-                                        <p>Taktikkarten und Aufstellungen für klassische Abenteuer.</p>
-                                        <a href="#karten-klassisch" class="adventure-card__button">
-                                            <svg class="icon"><use href="#i-map" /></svg> Karten ansehen
-                                        </a>
-                                    </div>
-                                </article>
-
-                                <article class="adventure-card adventure-card--maerchen" data-go="karten-maerchen">
-                                    <div class="adventure-card__media">
-                                        <span class="adventure-card__tag">
-                                            <svg class="icon"><use href="#i-star" /></svg> Märchen
-                                        </span>
-                                    </div>
-                                    <div class="adventure-card__body">
-                                        <h3>Märchen</h3>
-                                        <p>Taktikkarten und Aufstellungen für Märchen-Abenteuer.</p>
-                                        <a href="#karten-maerchen" class="adventure-card__button">
-                                            <svg class="icon"><use href="#i-map" /></svg> Karten ansehen
-                                        </a>
-                                    </div>
-                                </article>
-
-                                <article class="adventure-card adventure-card--szenario" data-go="karten-szenario">
-                                    <div class="adventure-card__media">
-                                        <span class="adventure-card__tag">
-                                            <svg class="icon"><use href="#i-map" /></svg> Szenario
-                                        </span>
-                                    </div>
-                                    <div class="adventure-card__body">
-                                        <h3>Szenario</h3>
-                                        <p>Taktikkarten und Aufstellungen für Szenario-Abenteuer.</p>
-                                        <a href="#karten-szenario" class="adventure-card__button">
-                                            <svg class="icon"><use href="#i-map" /></svg> Karten ansehen
-                                        </a>
-                                    </div>
-                                </article>
-
-                                <article class="adventure-card adventure-card--unternehmungen" data-go="karten-unternehmungen">
-                                    <div class="adventure-card__media">
-                                        <span class="adventure-card__tag">
-                                            <svg class="icon"><use href="#i-sail" /></svg> Unternehmungen
-                                        </span>
-                                    </div>
-                                    <div class="adventure-card__body">
-                                        <h3>Unternehmungen</h3>
-                                        <p>Taktikkarten und Aufstellungen für Unternehmungen.</p>
-                                        <a href="#karten-unternehmungen" class="adventure-card__button">
-                                            <svg class="icon"><use href="#i-map" /></svg> Karten ansehen
-                                        </a>
-                                    </div>
-                                </article>
-
-                                <article class="adventure-card adventure-card--koop" data-go="karten-koop">
-                                    <div class="adventure-card__media">
-                                        <span class="adventure-card__tag">
-                                            <svg class="icon"><use href="#i-users" /></svg> Koop
-                                        </span>
-                                    </div>
-                                    <div class="adventure-card__body">
-                                        <h3>Koop</h3>
-                                        <p>Taktikkarten und Aufstellungen für Koop-Abenteuer.</p>
-                                        <a href="#karten-koop" class="adventure-card__button">
-                                            <svg class="icon"><use href="#i-map" /></svg> Karten ansehen
-                                        </a>
-                                    </div>
-                                </article>
                             </div>
                         </section>
                     </div>
                 </div>
 
-                <!-- ===== SKILLS & WISSEN TEILEN ===== -->
-
-                <section class="member-panel member-skills" id="member-skills" aria-labelledby="member-skills-title">
-                    <div class="member-panel__head">
-                        <svg class="member-panel__icon"><use href="#i-tools" /></svg>
-
-                        <div>
-                            <h2 id="member-skills-title">Skills &amp; Wissen teilen</h2>
-                            <p>Teile deine Skills mit der Gilde – ob für Generäle oder Entdecker!</p>
-                        </div>
-
-                        <a href="#" class="member-outline-button" data-soon>
-                            Neue Skill-Anfrage
-                            <svg class="icon"><use href="#i-arrow" /></svg>
-                        </a>
-                    </div>
-
-                    <div class="skill-grid">
-                        <article class="skill-card skill-card--generals" data-go="generaele">
-                            <div class="skill-card__content">
-                                <svg class="skill-card__icon"><use href="#i-helmet" /></svg>
-
-                                <div>
-                                    <h3>Generäle Skills</h3>
-                                    <p>Strategien, Taktiken und Tipps für die Armeeführung.</p>
-                                    <a href="#generaele" class="skill-card__button">
-                                        Skills ansehen
-                                        <svg class="icon"><use href="#i-arrow" /></svg>
-                                    </a>
-                                </div>
-                            </div>
-                        </article>
-
-                        <article class="skill-card skill-card--explorers" data-go="entdecker">
-                            <div class="skill-card__content">
-                                <svg class="skill-card__icon"><use href="#i-compass" /></svg>
-
-                                <div>
-                                    <h3>Entdecker Skills</h3>
-                                    <p>Tipps und Tricks für die Entdeckung der Welt.</p>
-                                    <a href="#entdecker" class="skill-card__button">
-                                        Skills ansehen
-                                        <svg class="icon"><use href="#i-arrow" /></svg>
-                                    </a>
-                                </div>
-                            </div>
-                        </article>
-                    </div>
-                </section>
-
-                <!-- ===== KAMPFSIMULATOR (NEONFRONT) ===== -->
-
-                <section class="member-panel member-sim" id="member-sim" aria-labelledby="member-sim-title">
-                    <div class="member-panel__head">
-                        <svg class="member-panel__icon"><use href="#i-swords" /></svg>
-
-                        <div>
-                            <h2 id="member-sim-title">Kampfsimulator</h2>
-                            <p>Direkt im Mitgliederbereich nutzen – ohne Umweg.</p>
-                        </div>
-                    </div>
-
-                    <div class="sim-feature" id="sim-teaser"></div>
-                </section>
-
-                <!-- ===== AKTUELLE INFOS + STATISTIK ===== -->
-
-                <div class="member-bottom">
-                    <section class="member-panel" id="member-news" aria-labelledby="member-news-title">
-                        <div class="member-panel__head member-panel__head--compact">
-                            <svg class="member-panel__icon member-panel__icon--small"><use href="#i-news" /></svg>
-                            <h2 id="member-news-title">Aktuelle Infos</h2>
-                            <a href="#" class="member-text-link" data-soon>
-                                Alle News
-                                <svg class="icon"><use href="#i-arrow" /></svg>
+                <footer class="home-footer">
+                    <div class="home-footer__inner">
+                        <div class="home-footer__brand">
+                            <a href="#home" class="home-footer__logo">
+                                <img src="./assets/img/logo/gvg-wappen.webp" alt="Wappen der Gründer von Goldenau" />
                             </a>
+
+                            <div>
+                                <strong>Gründer von Goldenau [GvG]</strong>
+                                <span>Gemeinschaft. Stärke. Für Goldenau.</span>
+                            </div>
                         </div>
 
-                        <ul class="member-news">
-                            <li>
-                                <a href="#" class="member-news__item" data-soon>
-                                    <img src="./assets/img/news/gilden-expedition.webp" alt="" loading="lazy" />
-                                    <div>
-                                        <time datetime="2025-10-12">12. Okt. 2025</time>
-                                        <h3>Neuer Kampfsimulator verfügbar!</h3>
-                                        <p>Ab sofort könnt ihr den neuen Kampfsimulator auf unserer Gilde-Seite testen.</p>
-                                    </div>
-                                    <svg class="icon"><use href="#i-chevron" /></svg>
-                                </a>
-                            </li>
+                        <nav class="home-footer__col" aria-label="Schnellzugriff">
+                            <h3>Schnellzugriff</h3>
+                            <a href="#home">Home</a>
+                            <a href="#history">Geschichte</a>
+                            <a href="#founder">Franjo</a>
+                            <a href="#team">Team</a>
+                        </nav>
 
-                            <li>
-                                <a href="#" class="member-news__item" data-soon>
-                                    <img src="./assets/img/news/bauettbewerb.webp" alt="" loading="lazy" />
-                                    <div>
-                                        <time datetime="2025-10-05">05. Okt. 2025</time>
-                                        <h3>Gilden-Event: Bauwettbewerb</h3>
-                                        <p>Zeigt uns eure kreativsten Bauwerke und sichert euch tolle Preise!</p>
-                                    </div>
-                                    <svg class="icon"><use href="#i-chevron" /></svg>
-                                </a>
-                            </li>
+                        <nav class="home-footer__col" aria-label="Rechtliches">
+                            <h3>Rechtliches</h3>
+                            <a href="./impressum.html">Impressum</a>
+                            <a href="./datenschutz.html">Datenschutz</a>
+                            <a href="./haftungsausschluss.html">Haftungsausschluss</a>
+                        </nav>
 
-                            <li>
-                                <a href="#" class="member-news__item" data-soon>
-                                    <img src="./assets/img/news/neue-mitglieder.webp" alt="" loading="lazy" />
-                                    <div>
-                                        <time datetime="2025-09-28">28. Sep. 2025</time>
-                                        <h3>Skills-Update</h3>
-                                        <p>Neue Skills für Generäle und Entdecker wurden hinzugefügt.</p>
-                                    </div>
-                                    <svg class="icon"><use href="#i-chevron" /></svg>
-                                </a>
-                            </li>
-                        </ul>
-                    </section>
-
-                    <section class="member-panel member-minigames" id="member-minigames" aria-labelledby="member-minigames-title">
-                        <div class="member-panel__head member-panel__head--compact">
-                            <svg class="member-panel__icon member-panel__icon--small"><use href="#i-gamepad" /></svg>
-                            <h2 id="member-minigames-title">Mini Games</h2>
-                            <a href="#minigames" class="member-text-link">
-                                Alle Mini Games
-                                <svg class="icon"><use href="#i-arrow" /></svg>
-                            </a>
-                        </div>
-
-                        <p class="member-minigames__text">
-                            Kleine Spiele aus der Gilde – direkt im Browser testen.
+                        <p class="home-footer__copy">
+                            © 2026 Gründer von Goldenau [GvG] – Die Siedler Online<br />
+                            Alle Rechte vorbehalten.
                         </p>
-
-                        <div class="teaser-grid" id="minigames-teaser"></div>
-
-                        <a href="#minigames" class="member-motto member-motto--link">
-                            <span aria-hidden="true">♛</span>
-                            Zu den Mini Games
-                        </a>
-                    </section>
-                </div>
-                </div>
-
-                <!-- Unterseiten (Generäle, Entdecker, Mini Games, Karten) – wird per TypeScript befüllt -->
-                <section class="member-view" id="member-view" hidden></section>
+                    </div>
+                </footer>
             </div>
 
-            <!-- ===== FOOTER ===== -->
+            <!-- Mitgliederbereich (nur eingeloggt sichtbar, gesteuert über body.is-authenticated) -->
+            <div class="member-area" id="member-area">
+                <div class="member-area__bg" aria-hidden="true"></div>
 
-            <footer class="member-footer">
-                <div class="member-footer__inner">
-                    <div class="member-footer__brand">
-                        <img src="./assets/img/logo/gvg-wappen.webp" alt="Wappen der Gründer von Goldenau" />
-                        <div>
-                            <strong>Gründer von Goldenau [GvG]</strong>
-                            <span>Gemeinsam. Stark. Für Goldenau.</span>
-                            <em class="est-line">Est. 2012</em>
+                <div class="member-shell">
+                    <div class="member-dashboard" id="member-dashboard">
+                        <div class="member-top">
+                            <aside class="member-sidebar" aria-label="Mitgliederbereich Navigation">
+                                <div class="member-profile">
+                                    <span class="member-profile__avatar" data-member-initials>GvG</span>
+                                    <strong class="member-profile__name" data-member-name>Siedler</strong>
+                                    <span class="member-profile__status">
+                                        <i aria-hidden="true"></i> Online
+                                    </span>
+                                </div>
+
+                                <nav class="member-menu">
+                                    <a href="#home" class="member-menu__link" data-member-link>
+                                        <svg class="icon"><use href="#i-castle" /></svg>
+                                        Startseite
+                                    </a>
+
+                                    <a href="#member-area" class="member-menu__link is-active" data-member-link>
+                                        <svg class="icon"><use href="#i-home" /></svg>
+                                        Mitglieder&shy;bereich
+                                    </a>
+
+                                    <a href="#member-cards" class="member-menu__link" data-member-link>
+                                        <svg class="icon"><use href="#i-map" /></svg>
+                                        Abenteuer Karten
+                                    </a>
+
+                                    <a href="#member-skills" class="member-menu__link" data-member-link>
+                                        <svg class="icon"><use href="#i-tools" /></svg>
+                                        Skills &amp; Wissen
+                                    </a>
+
+                                    <a href="#kampfsimulator" class="member-menu__link" data-member-link>
+                                        <svg class="icon"><use href="#i-swords" /></svg>
+                                        Kampfsimulator
+                                    </a>
+
+                                    <a href="#" class="member-menu__link is-soon" data-soon>
+                                        <svg class="icon"><use href="#i-chat" /></svg>
+                                        Gilden-Chat
+                                    </a>
+
+                                    <a href="#minigames" class="member-menu__link" data-member-link>
+                                        <svg class="icon"><use href="#i-gamepad" /></svg>
+                                        Mini Games
+                                    </a>
+
+                                    <a href="#" class="member-menu__link is-soon" data-soon>
+                                        <svg class="icon"><use href="#i-gear" /></svg>
+                                        Einstellungen
+                                    </a>
+
+                                    <button type="button" class="member-menu__link member-menu__link--logout" id="member-logout">
+                                        <svg class="icon"><use href="#i-logout" /></svg>
+                                        Abmelden
+                                    </button>
+                                </nav>
+                            </aside>
+
+                            <div class="member-main">
+                                <header class="member-welcome">
+                                    <div class="member-welcome__text">
+                                        <p class="member-welcome__eyebrow">Willkommen im</p>
+                                        <h1>Mitglieder&shy;bereich</h1>
+                                        <p class="member-welcome__greeting">
+                                            Schön, dass du da bist,
+                                            <span data-member-name>Siedler</span>!
+                                        </p>
+                                    </div>
+
+                                    <blockquote class="member-quote">
+                                        <p>Gemeinsam sind wir stärker – für eine erfolgreiche Gilde!</p>
+                                        <cite>– Gründer von Goldenau [GvG]</cite>
+                                    </blockquote>
+                                </header>
+                                <section class="tribute" id="member-tribute" aria-labelledby="tribute-title">
+                                    <div class="tribute__stage" id="tribute-stage">
+                                        <img
+                                            class="tribute__img tribute__img--portrait"
+                                            src="./assets/img/franjo/franjo.webp"
+                                            alt="Porträt von Franjo im blauen Gildenumhang"
+                                            loading="lazy"
+                                        />
+                                        <img
+                                            class="tribute__img tribute__img--bike"
+                                            src="./assets/img/franjo/franjo-motorrad.webp"
+                                            alt="Franjo auf seinem Motorrad"
+                                            loading="lazy"
+                                        />
+
+                                        <button type="button" class="tribute__toggle" id="tribute-toggle" aria-pressed="false">
+                                            Franjos Hobby
+                                        </button>
+                                    </div>
+
+                                    <div class="tribute__text">
+                                        <!-- Standard-Text -->
+
+                                        <div class="tribute__panel tribute__panel--main" id="tribute-main">
+                                            <p class="tribute__eyebrow">Est. 2012 · Gründer von Goldenau</p>
+
+                                            <h2 id="tribute-title">Eine Legende unserer Gilde</h2>
+
+                                            <p class="tribute__lead">
+                                                Manche gründen eine Gilde. Andere schaffen eine Gemeinschaft.
+                                            </p>
+
+                                            <p>
+                                                Seit den Anfängen der Gründer von Goldenau steht Franjo an unserer Seite. Mit
+                                                mittlerweile 68 Jahren bringt er nicht nur jede Menge Erfahrung mit, sondern auch
+                                                etwas, das man nicht selbstverständlich findet: Herzblut, Zusammenhalt und die
+                                                Freude am gemeinsamen Spiel.
+                                            </p>
+
+                                            <p>
+                                                Für viele von uns ist er nicht einfach nur unser Gildenleiter, sondern auch ein
+                                                guter Freund und unser geschätzter Gilden-Opa.
+                                            </p>
+
+                                            <p class="tribute__thanks">Lieber Franjo, danke für deinen Einsatz!</p>
+
+                                            <p class="tribute__plate"><strong>Franjo</strong> <span>Gründer &amp; Gilden-Opa</span></p>
+                                        </div>
+
+                                        <!-- Hover-/Hobby-Text -->
+
+                                        <div class="tribute__panel tribute__panel--alt" id="tribute-alt" aria-hidden="true">
+                                            <p class="tribute__eyebrow">Abseits von Goldenau</p>
+
+                                            <h2>Ride free!</h2>
+
+                                            <p class="tribute__lead">
+                                                Wenn Franjo nicht für die Gilde unterwegs ist, dann auf zwei Rädern.
+                                            </p>
+
+                                            <p>
+                                                Das Motorrad ist seine große Leidenschaft: Fahrtwind, offene Straße und die
+                                                Freiheit, einfach loszufahren. Ob im Sattel oder in Goldenau – Franjo bleibt
+                                                immer in Bewegung.
+                                            </p>
+
+                                            <p class="tribute__thanks">Gute Fahrt, Franjo – und danke für alles!</p>
+
+                                            <p class="tribute__plate"><strong>Franjo</strong> <span>Biker &amp; Gilden-Opa</span></p>
+                                        </div>
+                                    </div>
+                                </section>
+                                <section class="member-panel" id="member-cards" aria-labelledby="member-cards-title">
+                                    <div class="member-panel__head">
+                                        <svg class="member-panel__icon"><use href="#i-compass" /></svg>
+
+                                        <div>
+                                            <h2 id="member-cards-title">Abenteuer Karten</h2>
+                                            <p>Taktikkarten der Gilde – ansehen, vergrößern und herunterladen.</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="adventure-grid">
+                                        <article class="adventure-card adventure-card--klassisch" data-go="karten-klassisch">
+                                            <div class="adventure-card__media">
+                                                <span class="adventure-card__tag">
+                                                    <svg class="icon"><use href="#i-swords" /></svg> Klassisch
+                                                </span>
+                                            </div>
+                                            <div class="adventure-card__body">
+                                                <h3>Klassisch</h3>
+                                                <p>Taktikkarten und Aufstellungen für klassische Abenteuer.</p>
+                                                <a href="#karten-klassisch" class="adventure-card__button">
+                                                    <svg class="icon"><use href="#i-map" /></svg> Karten ansehen
+                                                </a>
+                                            </div>
+                                        </article>
+
+                                        <article class="adventure-card adventure-card--maerchen" data-go="karten-maerchen">
+                                            <div class="adventure-card__media">
+                                                <span class="adventure-card__tag">
+                                                    <svg class="icon"><use href="#i-star" /></svg> Märchen
+                                                </span>
+                                            </div>
+                                            <div class="adventure-card__body">
+                                                <h3>Märchen</h3>
+                                                <p>Taktikkarten und Aufstellungen für Märchen-Abenteuer.</p>
+                                                <a href="#karten-maerchen" class="adventure-card__button">
+                                                    <svg class="icon"><use href="#i-map" /></svg> Karten ansehen
+                                                </a>
+                                            </div>
+                                        </article>
+
+                                        <article class="adventure-card adventure-card--szenario" data-go="karten-szenario">
+                                            <div class="adventure-card__media">
+                                                <span class="adventure-card__tag">
+                                                    <svg class="icon"><use href="#i-map" /></svg> Szenario
+                                                </span>
+                                            </div>
+                                            <div class="adventure-card__body">
+                                                <h3>Szenario</h3>
+                                                <p>Taktikkarten und Aufstellungen für Szenario-Abenteuer.</p>
+                                                <a href="#karten-szenario" class="adventure-card__button">
+                                                    <svg class="icon"><use href="#i-map" /></svg> Karten ansehen
+                                                </a>
+                                            </div>
+                                        </article>
+
+                                        <article class="adventure-card adventure-card--unternehmungen" data-go="karten-unternehmungen">
+                                            <div class="adventure-card__media">
+                                                <span class="adventure-card__tag">
+                                                    <svg class="icon"><use href="#i-sail" /></svg> Unternehmungen
+                                                </span>
+                                            </div>
+                                            <div class="adventure-card__body">
+                                                <h3>Unternehmungen</h3>
+                                                <p>Taktikkarten und Aufstellungen für Unternehmungen.</p>
+                                                <a href="#karten-unternehmungen" class="adventure-card__button">
+                                                    <svg class="icon"><use href="#i-map" /></svg> Karten ansehen
+                                                </a>
+                                            </div>
+                                        </article>
+
+                                        <article class="adventure-card adventure-card--koop" data-go="karten-koop">
+                                            <div class="adventure-card__media">
+                                                <span class="adventure-card__tag">
+                                                    <svg class="icon"><use href="#i-users" /></svg> Koop
+                                                </span>
+                                            </div>
+                                            <div class="adventure-card__body">
+                                                <h3>Koop</h3>
+                                                <p>Taktikkarten und Aufstellungen für Koop-Abenteuer.</p>
+                                                <a href="#karten-koop" class="adventure-card__button">
+                                                    <svg class="icon"><use href="#i-map" /></svg> Karten ansehen
+                                                </a>
+                                            </div>
+                                        </article>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+
+                        <section class="member-panel member-skills" id="member-skills" aria-labelledby="member-skills-title">
+                            <div class="member-panel__head">
+                                <svg class="member-panel__icon"><use href="#i-tools" /></svg>
+
+                                <div>
+                                    <h2 id="member-skills-title">Skills &amp; Wissen teilen</h2>
+                                    <p>Teile deine Skills mit der Gilde – ob für Generäle oder Entdecker!</p>
+                                </div>
+
+                                <a href="#" class="member-outline-button" data-soon>
+                                    Neue Skill-Anfrage
+                                    <svg class="icon"><use href="#i-arrow" /></svg>
+                                </a>
+                            </div>
+
+                            <div class="skill-grid">
+                                <article class="skill-card skill-card--generals" data-go="generaele">
+                                    <div class="skill-card__content">
+                                        <svg class="skill-card__icon"><use href="#i-helmet" /></svg>
+
+                                        <div>
+                                            <h3>Generäle Skills</h3>
+                                            <p>Strategien, Taktiken und Tipps für die Armeeführung.</p>
+                                            <a href="#generaele" class="skill-card__button">
+                                                Skills ansehen
+                                                <svg class="icon"><use href="#i-arrow" /></svg>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </article>
+
+                                <article class="skill-card skill-card--explorers" data-go="entdecker">
+                                    <div class="skill-card__content">
+                                        <svg class="skill-card__icon"><use href="#i-compass" /></svg>
+
+                                        <div>
+                                            <h3>Entdecker Skills</h3>
+                                            <p>Tipps und Tricks für die Entdeckung der Welt.</p>
+                                            <a href="#entdecker" class="skill-card__button">
+                                                Skills ansehen
+                                                <svg class="icon"><use href="#i-arrow" /></svg>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </article>
+                            </div>
+                        </section>
+                        <section class="member-panel member-sim" id="member-sim" aria-labelledby="member-sim-title">
+                            <div class="member-panel__head">
+                                <svg class="member-panel__icon"><use href="#i-swords" /></svg>
+
+                                <div>
+                                    <h2 id="member-sim-title">Kampfsimulator</h2>
+                                    <p>Direkt im Mitgliederbereich nutzen – ohne Umweg.</p>
+                                </div>
+                            </div>
+
+                            <div class="sim-feature" id="sim-teaser"></div>
+                        </section>
+
+                        <div class="member-bottom">
+                            <section class="member-panel" id="member-news" aria-labelledby="member-news-title">
+                                <div class="member-panel__head member-panel__head--compact">
+                                    <svg class="member-panel__icon member-panel__icon--small"><use href="#i-news" /></svg>
+                                    <h2 id="member-news-title">Aktuelle Infos</h2>
+                                    <a href="#" class="member-text-link" data-soon>
+                                        Alle News
+                                        <svg class="icon"><use href="#i-arrow" /></svg>
+                                    </a>
+                                </div>
+
+                                <ul class="member-news">
+                                    <li>
+                                        <a href="#" class="member-news__item" data-soon>
+                                            <img src="./assets/img/news/gilden-expedition.webp" alt="" loading="lazy" />
+                                            <div>
+                                                <time datetime="2025-10-12">12. Okt. 2025</time>
+                                                <h3>Neuer Kampfsimulator verfügbar!</h3>
+                                                <p>Ab sofort könnt ihr den neuen Kampfsimulator auf unserer Gilde-Seite testen.</p>
+                                            </div>
+                                            <svg class="icon"><use href="#i-chevron" /></svg>
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a href="#" class="member-news__item" data-soon>
+                                            <img src="./assets/img/news/bauettbewerb.webp" alt="" loading="lazy" />
+                                            <div>
+                                                <time datetime="2025-10-05">05. Okt. 2025</time>
+                                                <h3>Gilden-Event: Bauwettbewerb</h3>
+                                                <p>Zeigt uns eure kreativsten Bauwerke und sichert euch tolle Preise!</p>
+                                            </div>
+                                            <svg class="icon"><use href="#i-chevron" /></svg>
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a href="#" class="member-news__item" data-soon>
+                                            <img src="./assets/img/news/neue-mitglieder.webp" alt="" loading="lazy" />
+                                            <div>
+                                                <time datetime="2025-09-28">28. Sep. 2025</time>
+                                                <h3>Skills-Update</h3>
+                                                <p>Neue Skills für Generäle und Entdecker wurden hinzugefügt.</p>
+                                            </div>
+                                            <svg class="icon"><use href="#i-chevron" /></svg>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </section>
+                            <section class="member-panel member-minigames" id="member-minigames" aria-labelledby="member-minigames-title">
+                                <div class="member-panel__head member-panel__head--compact">
+                                    <svg class="member-panel__icon member-panel__icon--small"><use href="#i-gamepad" /></svg>
+                                    <h2 id="member-minigames-title">Mini Games</h2>
+                                    <a href="#minigames" class="member-text-link">
+                                        Alle Mini Games
+                                        <svg class="icon"><use href="#i-arrow" /></svg>
+                                    </a>
+                                </div>
+
+                                <p class="member-minigames__text">
+                                    Kleine Spiele aus der Gilde – direkt im Browser testen.
+                                </p>
+
+                                <div class="teaser-grid" id="minigames-teaser"></div>
+
+                                <a href="#minigames" class="member-motto member-motto--link">
+                                    <span aria-hidden="true">♛</span>
+                                    Zu den Mini Games
+                                </a>
+                            </section>
                         </div>
                     </div>
 
-                    <div class="member-footer__links">
-                        <h3>Schnellzugriff</h3>
-                        <a href="#member-area">Mitgliederbereich</a>
-                        <a href="#member-cards">Abenteuer Karten</a>
-                        <a href="#member-skills">Skills &amp; Wissen</a>
-                        <a href="#member-news">Aktuelle Infos</a>
-                        <a href="#kampfsimulator">Kampfsimulator</a>
-                        <a href="#minigames">Mini Games</a>
-                    </div>
-
-                    <div class="member-footer__links">
-                        <h3>Rechtliches</h3>
-                        <a href="./impressum.html">Impressum</a>
-                        <a href="./datenschutz.html">Datenschutz</a>
-                        <a href="./haftungsausschluss.html">Haftungsausschluss</a>
-                        <a href="https://github.com/marcel-schmitz-dev" target="_blank" rel="noopener noreferrer">GitHub</a>
-                    </div>
+                    <!-- Unterseiten (Generäle, Entdecker, Mini Games, Karten) – wird per TypeScript befüllt -->
+                    <section class="member-view" id="member-view" hidden></section>
                 </div>
 
-                <p class="member-footer__copy">
-                    © 2026 Gründer von Goldenau [GvG] – Die Siedler Online | Alle Rechte vorbehalten.
-                </p>
-            </footer>
-        </div>
+                <footer class="member-footer">
+                    <div class="member-footer__inner">
+                        <div class="member-footer__brand">
+                            <img src="./assets/img/logo/gvg-wappen.webp" alt="Wappen der Gründer von Goldenau" />
+                            <div>
+                                <strong>Gründer von Goldenau [GvG]</strong>
+                                <span>Gemeinsam. Stark. Für Goldenau.</span>
+                                <em class="est-line">Est. 2012</em>
+                            </div>
+                        </div>
+
+                        <div class="member-footer__links">
+                            <h3>Schnellzugriff</h3>
+                            <a href="#member-area">Mitgliederbereich</a>
+                            <a href="#member-cards">Abenteuer Karten</a>
+                            <a href="#member-skills">Skills &amp; Wissen</a>
+                            <a href="#member-news">Aktuelle Infos</a>
+                            <a href="#kampfsimulator">Kampfsimulator</a>
+                            <a href="#minigames">Mini Games</a>
+                        </div>
+
+                        <div class="member-footer__links">
+                            <h3>Rechtliches</h3>
+                            <a href="./impressum.html">Impressum</a>
+                            <a href="./datenschutz.html">Datenschutz</a>
+                            <a href="./haftungsausschluss.html">Haftungsausschluss</a>
+                            <a href="https://github.com/marcel-schmitz-dev" target="_blank" rel="noopener noreferrer">GitHub</a>
+                        </div>
+                    </div>
+
+                    <p class="member-footer__copy">
+                        © 2026 Gründer von Goldenau [GvG] – Die Siedler Online | Alle Rechte vorbehalten.
+                    </p>
+                </footer>
+            </div>
         </main>
 
-        <!-- =========================
-         AUTH MODAL (Registrieren / Anmelden)
-    ========================== -->
-
+        <!-- Fenster: Registrieren / Anmelden -->
         <div class="auth-modal" id="auth-modal" hidden>
             <div class="auth-modal__backdrop" data-auth-close></div>
 
@@ -1267,6 +889,11 @@
                         />
                     </label>
 
+                    <label class="auth-check">
+            <input type="checkbox" name="ageConfirm" required />
+            <span>Ich bin mindestens 16 Jahre alt.</span>
+        </label>
+
                     <p class="auth-legal">
                         Spielername, E-Mail und Passwort werden für den Zugang zum Mitgliederbereich bei Supabase
                         gespeichert. Mehr dazu in der
@@ -1310,8 +937,6 @@
                 <p class="auth-message" id="auth-message" role="alert"></p>
             </div>
         </div>
-
-        <!-- JAVASCRIPT -->
 
         <script type="module" src="./js/main.js"></script>
     </body>

@@ -192,6 +192,30 @@ $serif: Georgia, "Times New Roman", serif;
     }
 }
 
+// Altersbestätigung im Registrieren-Formular
+
+.auth-check {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin: 2px 0 0;
+
+    color: $text-primary;
+    font-size: 13px;
+
+    cursor: pointer;
+
+    input {
+        flex-shrink: 0;
+
+        width: 18px;
+        height: 18px;
+
+        accent-color: $gold-primary;
+    }
+}
+
 @media (max-width: 700px) {
     .legal-meta {
         margin-top: -20px;

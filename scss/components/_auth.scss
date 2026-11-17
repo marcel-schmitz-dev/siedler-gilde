@@ -104,10 +104,7 @@ body.is-authenticated {
 
     .site-header .login-button,
     .site-header .join-button,
-    .nav-link--auth,
-    .hero-buttons .primary-button,
-    .join-section__button,
-    .site-footer__join {
+    .nav-link--auth {
         display: none !important;
     }
 }

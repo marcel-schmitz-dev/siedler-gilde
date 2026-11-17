@@ -37,8 +37,35 @@ export function initViews(): void {
         window.scrollTo(0, 0);
     }
 
+    // Alle IDs der öffentlichen Startseite (home, history, founder, about, news, guild …)
+    const publicIds = new Set(
+        Array.from(document.querySelectorAll<HTMLElement>(".public-site [id]")).map((element) => element.id)
+    );
+
+    let wasHomeView = false;
+
     function route(): void {
         const hash = decodeURIComponent(window.location.hash.slice(1));
+
+        // Startseite (für Mitglieder per "Startseite" erreichbar)
+        const isHomeView = publicIds.has(hash);
+
+        document.body.classList.toggle("is-home-view", isHomeView);
+
+        if (isHomeView) {
+            wasHomeView = true;
+
+            // erst nach dem Einblenden scrollen, sonst ist das Ziel noch unsichtbar
+            window.requestAnimationFrame(() => {
+                if (hash === "home") {
+                    window.scrollTo(0, 0);
+                } else {
+                    document.getElementById(hash)?.scrollIntoView();
+                }
+            });
+
+            return;
+        }
 
         if (hash === "generaele") {
             renderSpecialists(view!, "generals");
@@ -71,7 +98,9 @@ export function initViews(): void {
         }
 
         // Dashboard
-        const wasHidden = dashboard!.hidden;
+        const wasHidden = dashboard!.hidden || wasHomeView;
+
+        wasHomeView = false;
 
         dashboard!.hidden = false;
         view!.hidden = true;

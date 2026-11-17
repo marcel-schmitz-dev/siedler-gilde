@@ -1,0 +1,148 @@
+<div class="auth-modal" id="auth-modal" hidden>
+    <div class="auth-modal__backdrop" data-auth-close></div>
+
+    <div
+        class="auth-modal__dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="auth-title"
+    >
+        <button
+            type="button"
+            class="auth-modal__close"
+            data-auth-close
+            aria-label="Fenster schließen"
+        >
+            ×
+        </button>
+
+        <img
+            class="auth-modal__crest"
+            src="./assets/img/logo/gvg-wappen.webp"
+            alt="Wappen der Gründer von Goldenau"
+        />
+
+        <span class="auth-modal__eyebrow">Die Siedler Online Gilde</span>
+
+        <h2 id="auth-title">Werde Teil der Gilde</h2>
+
+        <div class="auth-tabs" role="tablist">
+            <button
+                type="button"
+                class="auth-tab is-active"
+                role="tab"
+                aria-selected="true"
+                data-auth-view="signup"
+            >
+                Registrieren
+            </button>
+
+            <button
+                type="button"
+                class="auth-tab"
+                role="tab"
+                aria-selected="false"
+                data-auth-view="login"
+            >
+                Anmelden
+            </button>
+        </div>
+
+        <!-- REGISTRIEREN -->
+
+        <form id="signup-form" class="auth-form" novalidate>
+            <label class="auth-field">
+                <span>Spielername</span>
+                <input
+                    type="text"
+                    name="username"
+                    placeholder="Dein Name in Die Siedler Online"
+                    autocomplete="username"
+                    minlength="3"
+                    maxlength="20"
+                    required
+                />
+            </label>
+
+            <label class="auth-field">
+                <span>E-Mail</span>
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="name@beispiel.de"
+                    autocomplete="email"
+                    required
+                />
+            </label>
+
+            <label class="auth-field">
+                <span>Passwort</span>
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Mindestens 8 Zeichen"
+                    autocomplete="new-password"
+                    minlength="8"
+                    required
+                />
+            </label>
+
+            <label class="auth-field">
+                <span>Passwort wiederholen</span>
+                <input
+                    type="password"
+                    name="passwordRepeat"
+                    autocomplete="new-password"
+                    minlength="8"
+                    required
+                />
+            </label>
+
+            <label class="auth-check">
+    <input type="checkbox" name="ageConfirm" required />
+    <span>Ich bin mindestens 16 Jahre alt.</span>
+</label>
+
+            <p class="auth-legal">
+                Spielername, E-Mail und Passwort werden für den Zugang zum Mitgliederbereich bei Supabase
+                gespeichert. Mehr dazu in der
+                <a href="./datenschutz.html" target="_blank" rel="noopener noreferrer">Datenschutzerklärung</a>.
+            </p>
+
+            <button type="submit" class="auth-submit">
+                <span>♛</span> Registrieren
+            </button>
+        </form>
+
+        <!-- ANMELDEN -->
+
+        <form id="login-form" class="auth-form" novalidate hidden>
+            <label class="auth-field">
+                <span>E-Mail</span>
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="name@beispiel.de"
+                    autocomplete="email"
+                    required
+                />
+            </label>
+
+            <label class="auth-field">
+                <span>Passwort</span>
+                <input
+                    type="password"
+                    name="password"
+                    autocomplete="current-password"
+                    required
+                />
+            </label>
+
+            <button type="submit" class="auth-submit">
+                <span>♛</span> Anmelden
+            </button>
+        </form>
+
+        <p class="auth-message" id="auth-message" role="alert"></p>
+    </div>
+</div>

@@ -36,45 +36,23 @@ $serif: Georgia, "Times New Roman", serif;
         letter-spacing: 2px;
     }
 
-    // Auf schmalen Bildschirmen ist kein Platz neben dem Wappen
+    // etwas kompakter auf kleineren Laptops, auf Handys ist kein Platz neben dem Wappen
     @media (max-width: 1200px) {
-        display: none;
-    }
-}
+        margin-left: 10px;
+        padding-left: 10px;
 
-.hero-est {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 16px;
-
-    margin-top: 22px;
-
-    color: $gold-primary;
-
-    p {
-        font-family: $serif;
-        font-size: clamp(18px, 2.4vw, 26px);
-        letter-spacing: 6px;
-        text-transform: uppercase;
-        white-space: nowrap;
-    }
-
-    strong {
-        color: $gold-light;
-        font-weight: 700;
-    }
-
-    .ornament-line {
-        width: 60px;
-        height: 1px;
-
-        background-color: $gold-primary;
-        opacity: 0.8;
-
-        @media (max-width: 600px) {
-            width: 24px;
+        span {
+            font-size: 9px;
+            letter-spacing: 2px;
         }
+
+        strong {
+            font-size: 18px;
+        }
+    }
+
+    @media (max-width: 950px) {
+        display: none;
     }
 }
 

@@ -147,9 +147,14 @@ export function initAuth(): void {
         const email = String(data.get("email") ?? "").trim();
         const password = String(data.get("password") ?? "");
         const passwordRepeat = String(data.get("passwordRepeat") ?? "");
+        const ageConfirmed = data.get("ageConfirm") === "on";
 
         if (username.length < 3 || username.length > 20) {
             showMessage("Der Spielername braucht 3 bis 20 Zeichen.", "error");
+            return;
+        }
+        if (!ageConfirmed) {
+            showMessage("Die Registrierung ist ab 16 Jahren möglich. Bitte bestätige dein Alter.", "error");
             return;
         }
         if (password.length < 8) {
@@ -167,7 +172,7 @@ export function initAuth(): void {
             email,
             password,
             options: {
-                data: { username },
+                data: { username, age_confirmed_at: new Date().toISOString() },
                 emailRedirectTo: window.location.origin + window.location.pathname,
             },
         });

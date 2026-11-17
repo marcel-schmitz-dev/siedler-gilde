@@ -36,6 +36,7 @@ export function initMember(): void {
     }
 
     let wasLoggedIn = false;
+    let sessionChecked = false; // false, bis die Sitzung beim Seitenstart einmal geprüft wurde
 
     // =========================
     // HILFSFUNKTIONEN
@@ -125,9 +126,18 @@ export function initMember(): void {
 
         // Beim Wechsel ausgeloggt <-> eingeloggt wieder nach oben springen
         if (loggedIn !== wasLoggedIn) {
+            // Nach einer Anmeldung (nicht beim Seitenstart) im Mitgliederbereich landen,
+            // auch wenn gerade der Hash einer Startseiten-Sektion (#about …) in der Adresse steht
+            if (loggedIn && sessionChecked && window.location.hash) {
+                window.history.replaceState(null, "", window.location.pathname + window.location.search);
+                window.dispatchEvent(new HashChangeEvent("hashchange"));
+            }
+
             window.scrollTo(0, 0);
             wasLoggedIn = loggedIn;
         }
+
+        sessionChecked = true;
     });
 
     // =========================
