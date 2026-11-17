@@ -1,4 +1,4 @@
-// Erzeugt den Upload-Ordner dist/ für den IONOS-Webspace.
+// Erzeugt bzw. aktualisiert den Upload-Ordner dist/ für den IONOS-Webspace.
 // Aufruf: npm run deploy   (baut vorher html, sass und ts)
 //
 // dist/ enthält nur, was der Server wirklich braucht:
@@ -54,48 +54,87 @@ if (!indexHtml.includes("AUTOMATISCH ERZEUGT")) {
     fail("index.html wurde nicht aus src/ erzeugt. Bitte \"npm run html\" ausführen.");
 }
 
-// --- dist/ neu aufbauen ---
+// --- dist/ abgleichen ---
+// dist/ wird nicht gelöscht, sondern abgeglichen: Eine Datei wird nur dann neu
+// geschrieben, wenn sich ihr Inhalt geändert hat. So behalten unveränderte Dateien
+// ihren Zeitstempel, und das SFTP-Programm lädt nur das wirklich Geänderte hoch.
 
-fs.rmSync(DIST, { recursive: true, force: true });
 fs.mkdirSync(DIST, { recursive: true });
+
+const wanted = new Set(); // alle Dateien, die in dist/ sein sollen (relativ)
+let changed = 0;
+let unchanged = 0;
+let removed = 0;
+
+function syncFile(sourceFile, relativePath) {
+    const target = path.join(DIST, relativePath);
+    wanted.add(relativePath);
+
+    fs.mkdirSync(path.dirname(target), { recursive: true });
+
+    if (fs.existsSync(target) && fs.readFileSync(sourceFile).equals(fs.readFileSync(target))) {
+        unchanged += 1;
+        return;
+    }
+
+    fs.copyFileSync(sourceFile, target);
+    changed += 1;
+    console.log(`  geändert: ${relativePath}`);
+}
+
+function syncFolder(sourceDir, relativeDir) {
+    for (const entry of fs.readdirSync(sourceDir, { withFileTypes: true })) {
+        const sourcePath = path.join(sourceDir, entry.name);
+        const relativePath = path.join(relativeDir, entry.name);
+
+        if (entry.isDirectory()) {
+            syncFolder(sourcePath, relativePath);
+        } else if (skipMaps(sourcePath)) {
+            syncFile(sourcePath, relativePath);
+        }
+    }
+}
 
 for (const file of FILES) {
     const source = path.join(ROOT, file);
     if (fs.existsSync(source)) {
-        fs.copyFileSync(source, path.join(DIST, file));
+        syncFile(source, file);
     }
 }
 
 for (const folder of FOLDERS) {
-    fs.cpSync(path.join(ROOT, folder), path.join(DIST, folder), {
-        recursive: true,
-        filter: skipMaps,
-    });
+    syncFolder(path.join(ROOT, folder), folder);
 }
+
+// Dateien, die es im Projekt nicht mehr gibt, auch aus dist/ entfernen
+function cleanFolder(dir, relativeDir) {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+        const full = path.join(dir, entry.name);
+        const relativePath = path.join(relativeDir, entry.name);
+
+        if (entry.isDirectory()) {
+            cleanFolder(full, relativePath);
+
+            if (fs.readdirSync(full).length === 0) {
+                fs.rmdirSync(full);
+            }
+        } else if (!wanted.has(relativePath)) {
+            fs.unlinkSync(full);
+            removed += 1;
+            console.log(`  entfernt: ${relativePath}`);
+        }
+    }
+}
+
+cleanFolder(DIST, "");
 
 // --- Zusammenfassung ---
 
-function countFiles(dir) {
-    let count = 0;
-    let bytes = 0;
+console.log(`\ndist/ ist aktuell: ${changed} geändert, ${removed} entfernt, ${unchanged} unverändert.`);
 
-    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-        const full = path.join(dir, entry.name);
-
-        if (entry.isDirectory()) {
-            const inner = countFiles(full);
-            count += inner.count;
-            bytes += inner.bytes;
-        } else {
-            count += 1;
-            bytes += fs.statSync(full).size;
-        }
-    }
-
-    return { count, bytes };
+if (changed === 0 && removed === 0) {
+    console.log("Es gibt nichts Neues hochzuladen.");
+} else {
+    console.log("Jetzt die geänderten Dateien aus dist/ per SFTP hochladen (siehe README).");
+    console.log("Entfernte Dateien müssen auf dem Server von Hand gelöscht werden.");
 }
-
-const { count, bytes } = countFiles(DIST);
-
-console.log(`dist/ erstellt: ${count} Dateien, ${(bytes / 1024 / 1024).toFixed(1)} MB`);
-console.log("Jetzt den Inhalt von dist/ per SFTP in das Web-Verzeichnis hochladen.");

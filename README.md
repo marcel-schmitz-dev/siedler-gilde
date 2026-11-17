@@ -119,6 +119,8 @@ npm run deploy   # baut html, sass, ts und erzeugt den Ordner dist/
 
 `dist/` enthält nur, was der Server braucht (`index.html`, Rechtsseiten, `css/`, `js/`, `assets/`, ohne Source-Maps). Den **Inhalt** von `dist/` per SFTP in das Web-Verzeichnis hochladen. Der Ordner wird nicht committet (`.gitignore`).
 
+`dist/` wird bei jedem Lauf **abgeglichen**, nicht neu gebaut: Das Skript listet auf, welche Dateien sich geändert haben (`geändert: …`, `entfernt: …`). Nur diese Dateien müssen hochgeladen werden. Steht dort „Es gibt nichts Neues hochzuladen“, ist der Server schon aktuell. Entfernte Dateien löschst du auf dem Server von Hand.
+
 ### Früher: GitHub Pages
 
 *Settings → Pages → Branch `main`, Ordner `/ (root)`.* Die Seite ist danach unter `https://marcel-schmitz-dev.github.io/siedler-gilde/` erreichbar. Alle Pfade im Projekt sind relativ, deshalb funktioniert sie auch im Unterordner.
