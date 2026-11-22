@@ -286,6 +286,11 @@ $panel-border: rgba($gold-primary, 0.38);
     font-family: $serif;
     font-size: 15px;
     font-weight: 700;
+
+    &--long {
+        font-size: 12px;
+        letter-spacing: -0.02em;
+    }
 }
 
 .spec-tags {
@@ -442,6 +447,10 @@ $panel-border: rgba($gold-primary, 0.38);
         height: 56px;
 
         font-size: 19px;
+
+        &--long {
+            font-size: 15px;
+        }
     }
 
     &--simple h3 {

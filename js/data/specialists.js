@@ -7,10 +7,82 @@
 // Besser später lokal ablegen, z. B. "./assets/img/tsowiki/", damit nicht von fremdem Server geladen wird.
 export const TSOWIKI_BASE = "https://tsowiki.eu";
 export const TSOWIKI_PAGE = `${TSOWIKI_BASE}/de/specialists/pages/`;
+// ==================================================
+// KÜRZEL (Avatar-Kreise)
+// Eigene Vergabe, kommt NICHT von tsowiki.eu. Jedes Kürzel darf nur einmal vorkommen
+// (auch über Generäle und Entdecker hinweg) – das prüft `npm run check:abbr`.
+// Neue Einheit = neuer Eintrag hier, sonst bleibt der Avatar leer.
+// ==================================================
+export const ABBR = {
+    // Generäle
+    general: "G",
+    veteran: "VET",
+    generalmajor: "GM",
+    "alterer-zwillingsgeneral": "AZ",
+    "jungerer-zwillingsgeneral": "JZ",
+    "narzisstische-generalin": "NG",
+    "geister-generalin": "GG",
+    "entschlossener-general": "ENG",
+    "frostiger-general": "FG",
+    "einsamer-general": "EIG",
+    "vermummter-general": "VG",
+    "standhafte-generalin": "STG",
+    "brohmann-der-reiter": "BR",
+    "general-boris": "GB",
+    "generalin-sylvana": "GS",
+    "general-juan": "GJ",
+    "generalin-mary-christmas": "MC",
+    "general-zitterbart": "GZ",
+    "generalin-grossmaul": "GRM",
+    "verruckter-wissenschaftler": "VW",
+    "meister-der-kampfkunst": "MK",
+    "nussknacker-general": "NKG",
+    wundergeneralin: "WG",
+    feldsanitatergeneral: "FSG",
+    verteidigungsmeister: "VM",
+    "champion-vargus": "CV",
+    "champion-anslem": "CA",
+    "champion-nusala": "CN",
+    "kampfgestahlter-general": "KG",
+    "general-grosshelm": "GH",
+    "sensenmann-general": "SMG",
+    "general-klotz": "GK",
+    "furst-dracul": "FD",
+    // Entdecker
+    entdecker: "E",
+    "wilder-kundschafter": "WK",
+    "erfahrener-entdecker": "EE",
+    "entzuckende-entdeckerin": "EZ",
+    "erfolgreicher-entdecker": "ER",
+    "abenteuerliche-entdeckerin": "AE",
+    "forscher-entdecker": "FE",
+    "mutige-entdeckerin": "MU",
+    "emphatisch-entdeckerin": "EM",
+    "verzaubernde-entdeckerin": "VZ",
+    "mutterliche-entdeckerin": "MT",
+    "freimutiger-entdecker": "FR",
+    "bescheidener-entdecker": "BE",
+    "romantischer-entdecker": "RO",
+    "unerschrockene-entdeckerin": "UE",
+    "kuhne-entdeckerin": "KU",
+    "schnee-entdecker": "SN",
+    "puscheliger-entdecker": "PU",
+    "piraten-entdecker": "PI",
+    "prinzessin-zoe": "PZ",
+    "schreckhafter-entdecker": "SR",
+    "wohltatige-entdeckerin": "WO",
+    "koniglicher-entdecker": "KO",
+    "rina-die-entdeckerin": "RI",
+    "verliebter-entdecker": "VL",
+    "schwarzbaum-entdeckerin": "SW",
+    "gesellige-entdeckerin": "GE",
+    geistentdecker: "GD",
+    "nora-die-entdeckerin": "NO",
+};
 const FLANK = "Flankenangriff";
 const SPLASH = "Flächenschaden";
 function g(slug, name, special, capacity, travelMin, roundSec, recoveryMin, hp, damage, accuracy, initiative, abilities = []) {
-    return { slug, name, special, capacity, travelMin, roundSec, recoveryMin, hp, damage, accuracy, initiative, abilities };
+    return { slug, abbr: ABBR[slug] ?? "?", name, special, capacity, travelMin, roundSec, recoveryMin, hp, damage, accuracy, initiative, abilities };
 }
 // slug, Name, Besonderheit, Garnison, Reise(min), Runde(s), Erholung(min), Leben, Angriff, Treffsicherheit, Initiative, Fähigkeiten
 export const GENERALS = [
@@ -84,7 +156,7 @@ export const GENERALS = [
     g("furst-dracul", "Fürst Dracul", "", 200, 15, 10, 120, 999, "111-333", 77, "Erstschlag", [SPLASH]),
 ];
 function e(slug, name, speed, special = "") {
-    return { slug, name, speed, special };
+    return { slug, abbr: ABBR[slug] ?? "?", name, speed, special };
 }
 export const EXPLORERS = [
     e("entdecker", "Entdecker", 100, "Erkundet neue Sektoren und sucht nach Schätzen, Abenteuern und Expeditionen."),

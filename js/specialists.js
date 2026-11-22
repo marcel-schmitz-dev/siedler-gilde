@@ -1,5 +1,5 @@
 import { EXPLORERS, GENERALS, TSOWIKI_BASE, TSOWIKI_PAGE } from "./data/specialists.js";
-import { attachImageFallback, esc, initials, openDialog } from "./dom.js";
+import { attachImageFallback, esc, openDialog } from "./dom.js";
 // ==================================================
 // FORMATIERUNG
 // ==================================================
@@ -51,6 +51,11 @@ function statsHtml(general) {
 function tagsHtml(general) {
     return general.abilities.map((ability) => `<span class="spec-tag">${esc(ability)}</span>`).join("");
 }
+function avatarHtml(abbr) {
+    // Kürzel mit 3 Buchstaben bekommen eine kleinere Schrift, damit sie in den Kreis passen
+    const long = abbr.length > 2 ? " spec-avatar--long" : "";
+    return `<span class="spec-avatar${long}">${esc(abbr)}</span>`;
+}
 // ==================================================
 // DETAIL-FENSTER
 // ==================================================
@@ -95,7 +100,7 @@ function openGeneral(general) {
         : "";
     openDialog(`
         <header class="dlg-head">
-            <span class="spec-avatar">${esc(initials(general.name))}</span>
+            ${avatarHtml(general.abbr)}
             <div>
                 <h3>${esc(general.name)}</h3>
                 <div class="spec-tags">${tagsHtml(general)}</div>
@@ -121,7 +126,7 @@ function openGeneral(general) {
 function openExplorer(explorer) {
     openDialog(`
         <header class="dlg-head">
-            <span class="spec-avatar">${esc(initials(explorer.name))}</span>
+            ${avatarHtml(explorer.abbr)}
             <div>
                 <h3>${esc(explorer.name)}</h3>
                 <div class="spec-tags"><span class="spec-tag spec-tag--gold">${explorer.speed} % Aufgabentempo</span></div>
@@ -158,7 +163,7 @@ function generalCard(general) {
     return `
         <article class="spec-card" data-slug="${general.slug}" tabindex="0">
             <header>
-                <span class="spec-avatar">${esc(initials(general.name))}</span>
+                ${avatarHtml(general.abbr)}
                 <h3>${esc(general.name)}</h3>
             </header>
             ${general.abilities.length ? `<div class="spec-tags">${tagsHtml(general)}</div>` : ""}
@@ -171,7 +176,7 @@ function explorerCard(explorer) {
     return `
         <article class="spec-card spec-card--explorer" data-slug="${explorer.slug}" tabindex="0">
             <header>
-                <span class="spec-avatar">${esc(initials(explorer.name))}</span>
+                ${avatarHtml(explorer.abbr)}
                 <h3>${esc(explorer.name)}</h3>
             </header>
             <div class="spec-tags"><span class="spec-tag spec-tag--gold">${explorer.speed} % Aufgabentempo</span></div>

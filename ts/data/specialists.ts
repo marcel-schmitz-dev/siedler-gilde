@@ -18,6 +18,7 @@ export interface SkillTile {
 
 export interface General {
     slug: string;
+    abbr: string; // Kürzel für den Avatar, eindeutig (siehe ABBR)
     name: string;
     special: string;
     capacity: number; // Garnison / Einheitenkapazität
@@ -37,10 +38,85 @@ export interface General {
 
 export interface Explorer {
     slug: string;
+    abbr: string; // Kürzel für den Avatar, eindeutig (siehe ABBR)
     name: string;
     speed: number; // Aufgabentempo in %
     special: string;
 }
+
+// ==================================================
+// KÜRZEL (Avatar-Kreise)
+// Eigene Vergabe, kommt NICHT von tsowiki.eu. Jedes Kürzel darf nur einmal vorkommen
+// (auch über Generäle und Entdecker hinweg) – das prüft `npm run check:abbr`.
+// Neue Einheit = neuer Eintrag hier, sonst bleibt der Avatar leer.
+// ==================================================
+export const ABBR: Record<string, string> = {
+    // Generäle
+    general: "G",
+    veteran: "VET",
+    generalmajor: "GM",
+    "alterer-zwillingsgeneral": "AZ",
+    "jungerer-zwillingsgeneral": "JZ",
+    "narzisstische-generalin": "NG",
+    "geister-generalin": "GG",
+    "entschlossener-general": "ENG",
+    "frostiger-general": "FG",
+    "einsamer-general": "EIG",
+    "vermummter-general": "VG",
+    "standhafte-generalin": "STG",
+    "brohmann-der-reiter": "BR",
+    "general-boris": "GB",
+    "generalin-sylvana": "GS",
+    "general-juan": "GJ",
+    "generalin-mary-christmas": "MC",
+    "general-zitterbart": "GZ",
+    "generalin-grossmaul": "GRM",
+    "verruckter-wissenschaftler": "VW",
+    "meister-der-kampfkunst": "MK",
+    "nussknacker-general": "NKG",
+    wundergeneralin: "WG",
+    feldsanitatergeneral: "FSG",
+    verteidigungsmeister: "VM",
+    "champion-vargus": "CV",
+    "champion-anslem": "CA",
+    "champion-nusala": "CN",
+    "kampfgestahlter-general": "KG",
+    "general-grosshelm": "GH",
+    "sensenmann-general": "SMG",
+    "general-klotz": "GK",
+    "furst-dracul": "FD",
+
+    // Entdecker
+    entdecker: "E",
+    "wilder-kundschafter": "WK",
+    "erfahrener-entdecker": "EE",
+    "entzuckende-entdeckerin": "EZ",
+    "erfolgreicher-entdecker": "ER",
+    "abenteuerliche-entdeckerin": "AE",
+    "forscher-entdecker": "FE",
+    "mutige-entdeckerin": "MU",
+    "emphatisch-entdeckerin": "EM",
+    "verzaubernde-entdeckerin": "VZ",
+    "mutterliche-entdeckerin": "MT",
+    "freimutiger-entdecker": "FR",
+    "bescheidener-entdecker": "BE",
+    "romantischer-entdecker": "RO",
+    "unerschrockene-entdeckerin": "UE",
+    "kuhne-entdeckerin": "KU",
+    "schnee-entdecker": "SN",
+    "puscheliger-entdecker": "PU",
+    "piraten-entdecker": "PI",
+    "prinzessin-zoe": "PZ",
+    "schreckhafter-entdecker": "SR",
+    "wohltatige-entdeckerin": "WO",
+    "koniglicher-entdecker": "KO",
+    "rina-die-entdeckerin": "RI",
+    "verliebter-entdecker": "VL",
+    "schwarzbaum-entdeckerin": "SW",
+    "gesellige-entdeckerin": "GE",
+    geistentdecker: "GD",
+    "nora-die-entdeckerin": "NO",
+};
 
 const FLANK = "Flankenangriff";
 const SPLASH = "Flächenschaden";
@@ -59,7 +135,7 @@ function g(
     initiative: string,
     abilities: string[] = []
 ): General {
-    return { slug, name, special, capacity, travelMin, roundSec, recoveryMin, hp, damage, accuracy, initiative, abilities };
+    return { slug, abbr: ABBR[slug] ?? "?", name, special, capacity, travelMin, roundSec, recoveryMin, hp, damage, accuracy, initiative, abilities };
 }
 
 // slug, Name, Besonderheit, Garnison, Reise(min), Runde(s), Erholung(min), Leben, Angriff, Treffsicherheit, Initiative, Fähigkeiten
@@ -135,7 +211,7 @@ export const GENERALS: General[] = [
 ];
 
 function e(slug: string, name: string, speed: number, special = ""): Explorer {
-    return { slug, name, speed, special };
+    return { slug, abbr: ABBR[slug] ?? "?", name, speed, special };
 }
 
 export const EXPLORERS: Explorer[] = [
