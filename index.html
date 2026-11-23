@@ -1,6 +1,5 @@
 <!doctype html>
-<!-- AUTOMATISCH ERZEUGT aus src/index.html und src/partials/.
-     Nicht hier ändern, sondern in src/ und danach: npm run html -->
+
 <html lang="de">
     <head>
         <meta charset="UTF-8" />
@@ -12,7 +11,6 @@
 
         <title>Gründer von Goldenau | GvG</title>
 
-        <!-- SUPABASE: Bibliothek wird lokal ausgeliefert (npm run vendor), kein fremder CDN -->
         <script src="./js/vendor/supabase.js"></script>
 
         <link rel="stylesheet" href="./css/main.css" />
@@ -25,7 +23,6 @@
     </head>
 
     <body>
-        <!-- SVG-Icons (per <use> überall nutzbar) -->
         <svg class="icon-sprite" aria-hidden="true" focusable="false">
             <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5M5.5 10v10h13V10M10 20v-6h4v6" /></symbol>
             <symbol id="i-map" viewBox="0 0 24 24"><path d="M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20zM9 4v13.5M15 6.5V20" /></symbol>
@@ -59,10 +56,8 @@
             <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.300a4.300 4.300 0 0 1 7.500 2.500C19.500 15.400 12 20 12 20z" /></symbol>
         </svg>
 
-        <!-- Kopfzeile + Navigation -->
         <header class="site-header">
             <div class="header-content">
-                <!-- LOGO -->
 
                 <a href="#home" class="logo">
                     <img
@@ -75,8 +70,6 @@
                         <strong>2012</strong>
                     </span>
                 </a>
-
-                <!-- NAVIGATION -->
 
                 <nav class="main-navigation" id="main-navigation">
                     <a href="#home" class="nav-link nav-link--public active"> Home </a>
@@ -110,7 +103,6 @@
                     </a>
                 </nav>
 
-                <!-- AUTH BUTTONS -->
 
                 <div class="header-actions">
                     <button
@@ -150,7 +142,6 @@
                     </div>
                 </div>
 
-                <!-- MOBILE MENU BUTTON -->
 
                 <button
                     class="menu-button"
@@ -167,7 +158,6 @@
         </header>
 
         <main>
-            <!-- Startseite (nur ausgeloggt sichtbar, oder per "Startseite" im Mitgliederbereich) -->
             <div class="public-site">
                 <section id="home" class="home-hero">
                     <div class="home-hero__bg" aria-hidden="true"></div>
@@ -372,7 +362,6 @@
                 </footer>
             </div>
 
-            <!-- Mitgliederbereich (nur eingeloggt sichtbar, gesteuert über body.is-authenticated) -->
             <div class="member-area" id="member-area">
                 <div class="member-area__bg" aria-hidden="true"></div>
 
@@ -473,7 +462,6 @@
                                     </div>
 
                                     <div class="tribute__text">
-                                        <!-- Standard-Text -->
 
                                         <div class="tribute__panel tribute__panel--main" id="tribute-main">
                                             <p class="tribute__eyebrow">Est. 2012 · Gründer von Goldenau</p>
@@ -500,8 +488,6 @@
 
                                             <p class="tribute__plate"><strong>Franjo</strong> <span>Gründer &amp; Gilden-Opa</span></p>
                                         </div>
-
-                                        <!-- Hover-/Hobby-Text -->
 
                                         <div class="tribute__panel tribute__panel--alt" id="tribute-alt" aria-hidden="true">
                                             <p class="tribute__eyebrow">Abseits von Goldenau</p>
@@ -620,11 +606,11 @@
 
                                 <div>
                                     <h2 id="member-skills-title">Skills &amp; Wissen teilen</h2>
-                                    <p>Teile deine Skills mit der Gilde – ob für Generäle oder Entdecker!</p>
+                                    <p>Teile deine Skills mit der Gilde – ob für Generäle, Entdecker oder Geologen!</p>
                                 </div>
 
-                                <a href="#" class="member-outline-button" data-soon>
-                                    Neue Skill-Anfrage
+                                <a href="#bevorzugte-skills" class="member-outline-button" data-skill-add>
+                                    Neuen Skill hinzufügen
                                     <svg class="icon"><use href="#i-arrow" /></svg>
                                 </a>
                             </div>
@@ -653,6 +639,21 @@
                                             <h3>Entdecker Skills</h3>
                                             <p>Tipps und Tricks für die Entdeckung der Welt.</p>
                                             <a href="#entdecker" class="skill-card__button">
+                                                Skills ansehen
+                                                <svg class="icon"><use href="#i-arrow" /></svg>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </article>
+
+                                <article class="skill-card skill-card--builds" data-go="bevorzugte-skills">
+                                    <div class="skill-card__content">
+                                        <svg class="skill-card__icon"><use href="#i-star" /></svg>
+
+                                        <div>
+                                            <h3>Unsere bevorzugten Skills</h3>
+                                            <p>Bewährte Skillungen der Gildenmitglieder.</p>
+                                            <a href="#bevorzugte-skills" class="skill-card__button">
                                                 Skills ansehen
                                                 <svg class="icon"><use href="#i-arrow" /></svg>
                                             </a>
@@ -747,7 +748,6 @@
                         </div>
                     </div>
 
-                    <!-- Unterseiten (Generäle, Entdecker, Mini Games, Karten) – wird per TypeScript befüllt -->
                     <section class="member-view" id="member-view" hidden></section>
                 </div>
 
@@ -788,7 +788,6 @@
             </div>
         </main>
 
-        <!-- Fenster: Registrieren / Anmelden -->
         <div class="auth-modal" id="auth-modal" hidden>
             <div class="auth-modal__backdrop" data-auth-close></div>
 
@@ -838,8 +837,6 @@
                         Anmelden
                     </button>
                 </div>
-
-                <!-- REGISTRIEREN -->
 
                 <form id="signup-form" class="auth-form" novalidate>
                     <label class="auth-field">
@@ -904,8 +901,6 @@
                         <span>♛</span> Registrieren
                     </button>
                 </form>
-
-                <!-- ANMELDEN -->
 
                 <form id="login-form" class="auth-form" novalidate hidden>
                     <label class="auth-field">
