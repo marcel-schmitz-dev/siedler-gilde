@@ -2,11 +2,12 @@ import { isMapCategory, renderMaps } from "./maps.js";
 import { setActiveMenu } from "./member.js";
 import { renderMinigames, renderMinigamesTeaser } from "./minigames.js";
 import { renderSimulator, renderSimulatorTeaser } from "./simulator.js";
+import { initSkillBuilds, isSkillBuildsHash, leaveSkillBuilds, renderSkillBuilds } from "./skill-builds-view.js";
 import { renderSpecialists } from "./specialists.js";
 
 // ==================================================
 // UNTERSEITEN IM MITGLIEDERBEREICH
-// #generaele, #entdecker, #kampfsimulator, #minigames, #karten-<kategorie>
+// #generaele, #entdecker, #bevorzugte-skills, #kampfsimulator, #minigames, #karten-<kategorie>
 // Alles andere zeigt das Dashboard (und scrollt zu einem Abschnitt).
 // ==================================================
 
@@ -17,6 +18,8 @@ export function initViews(): void {
     if (!dashboard || !view) {
         return;
     }
+
+    initSkillBuilds();
 
     const teaser = document.querySelector<HTMLElement>("#minigames-teaser");
 
@@ -78,6 +81,14 @@ export function initViews(): void {
             showView("#member-skills");
             return;
         }
+
+        if (isSkillBuildsHash(hash)) {
+            void renderSkillBuilds(view!);
+            showView("#member-skills");
+            return;
+        }
+
+        leaveSkillBuilds();
 
         if (hash === "kampfsimulator") {
             renderSimulator(view!);
