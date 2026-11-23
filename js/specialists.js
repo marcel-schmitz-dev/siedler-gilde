@@ -1,4 +1,5 @@
-import { EXPLORERS, GENERALS, TSOWIKI_BASE, TSOWIKI_PAGE } from "./data/specialists.js";
+import { EXPLORERS, GENERALS, TSOWIKI_PAGE } from "./data/specialists.js";
+import { skillIconUrl } from "./data/skill-trees.js";
 import { attachImageFallback, esc, openDialog } from "./dom.js";
 // ==================================================
 // FORMATIERUNG
@@ -66,7 +67,7 @@ function skillMatrixHtml(skills) {
         .map((tile) => {
         const state = tile.level === 0 ? "is-empty" : tile.level === tile.max ? "is-full" : "is-part";
         const name = skillName(tile);
-        const src = `${TSOWIKI_BASE}/icons/skills/${encodeURIComponent(tile.icon)}.webp`;
+        const src = skillIconUrl(tile.icon);
         return `
                         <div class="skill-tile ${state}" title="${esc(name)}">
                             <img src="${src}" alt="" loading="lazy" data-fallback="${esc(name)}" />
@@ -78,7 +79,7 @@ function skillMatrixHtml(skills) {
 }
 function openGeneral(general) {
     const visual = general.garrison
-        ? `<img src="${TSOWIKI_BASE}/images/buildings/${encodeURIComponent(general.garrison)}.webp" alt="Garnison von ${esc(general.name)}" data-fallback="Garnison" />`
+        ? `<img src="./assets/img/garrisons/${encodeURIComponent(general.garrison)}.webp" alt="Garnison von ${esc(general.name)}" data-fallback="Garnison" />`
         : `<img src="./assets/img/logo/gvg-wappen.webp" alt="" class="dlg-crest" />`;
     const skills = general.skills
         ? `

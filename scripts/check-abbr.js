@@ -12,8 +12,8 @@ const { pathToFileURL } = require("node:url");
     fs.writeFileSync(path.join(tmp, "package.json"), '{"type":"module"}');
     fs.copyFileSync(path.join(__dirname, "..", "js", "data", "specialists.js"), path.join(tmp, "specialists.js"));
     const file = pathToFileURL(path.join(tmp, "specialists.js")).href;
-    const { GENERALS, EXPLORERS } = await import(file);
-    const all = [...GENERALS, ...EXPLORERS];
+    const { GENERALS, EXPLORERS, GEOLOGISTS } = await import(file);
+    const all = [...GENERALS, ...EXPLORERS, ...GEOLOGISTS];
     const seen = new Map();
     let errors = 0;
 

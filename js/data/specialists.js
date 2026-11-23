@@ -78,6 +78,30 @@ export const ABBR = {
     "gesellige-entdeckerin": "GE",
     geistentdecker: "GD",
     "nora-die-entdeckerin": "NO",
+    // Geologen
+    geologe: "GL",
+    "frohlicher-geologe": "FRO",
+    "raffinierter-geologe": "RAF",
+    "gewissenhafter-geologe": "GWG",
+    "versierter-geologe": "VSG",
+    "grundlicher-geologe": "GRG",
+    "mumifizierter-geologe": "MUG",
+    "eiserner-geologe": "EIS",
+    "steinharter-geologe": "STH",
+    "russiger-geologe": "RUS",
+    "goldherzige-geologin": "GOL",
+    "bezaubernder-geologe": "BEZ",
+    "geselliger-geologe": "GEG",
+    "archaologischer-geologe": "ARC",
+    "lebkuchen-geologe": "LK",
+    "fleissige-geologin": "FLG",
+    "geologe-im-urlaub": "URL",
+    "ausgeglichene-geologin": "AUS",
+    "marathon-geologe": "MAR",
+    "vesy-der-ahnungslose-graber": "VES",
+    "sternengucker-geologe": "STE",
+    "titanischer-geologe": "TIT",
+    "alchemistischer-geologe": "ALC",
 };
 const FLANK = "Flankenangriff";
 const SPLASH = "Flächenschaden";
@@ -188,5 +212,34 @@ export const EXPLORERS = [
     e("gesellige-entdeckerin", "Gesellige Entdeckerin", 200, "Chance auf Schokoladen-Belohnungen bei langen, sehr langen und ausgedehnten Schatzsuchen."),
     e("geistentdecker", "Geistentdecker", 100, "Chance auf Halloween-Förderungen auf Schatzsuchen."),
     e("nora-die-entdeckerin", "Nora die Entdeckerin", 200, "200 % Tempo auf Abenteuersuchen, 67 % auf Schatzsuchen. Geringe Chance auf ein zusätzliches Märchen-Abenteuer."),
+];
+function geo(slug, name, speed, special = "") {
+    return { slug, abbr: ABBR[slug] ?? "?", name, speed, special };
+}
+// Quelle: https://tsowiki.eu/de/specialists/geologen/ (Texte gekürzt und umformuliert)
+export const GEOLOGISTS = [
+    geo("geologe", "Geologe", 100, "Sucht nach neuen Rohstoffvorkommen."),
+    geo("frohlicher-geologe", "Fröhlicher Geologe", 200),
+    geo("raffinierter-geologe", "Raffinierter Geologe", 300),
+    geo("gewissenhafter-geologe", "Gewissenhafter Geologe", 100, "Findet auf jeder Suche ein zusätzliches Vorkommen."),
+    geo("versierter-geologe", "Versierter Geologe", 200, "+50 % Vorkommensgröße. 50 % Chance auf ein zusätzliches Vorkommen."),
+    geo("grundlicher-geologe", "Gründlicher Geologe", 33, "Dreifache Vorkommensgröße."),
+    geo("mumifizierter-geologe", "Mumifizierter Geologe", 33, "Vierfache Vorkommensgröße."),
+    geo("eiserner-geologe", "Eiserner Geologe", 100, "Auf Eisenerzsuchen 200 % Tempo und doppelte Vorkommensgröße."),
+    geo("steinharter-geologe", "Steinharter Geologe", 100, "Auf Stein-, Marmor- und Granitsuchen 200 % Tempo und doppelte Vorkommensgröße."),
+    geo("russiger-geologe", "Rußiger Geologe", 100, "Auf Kohlesuchen 133 % Tempo und dreifache Vorkommensgröße. Chance auf schneller abbaubare Kohlevorkommen und auf einen Kohle-Auffüller."),
+    geo("goldherzige-geologin", "Goldherzige Geologin", 100, "Auf Golderzsuchen 200 % Tempo und doppelte Vorkommensgröße. Füllt nach erfolgreicher Suche ein Golderzvorkommen auf."),
+    geo("bezaubernder-geologe", "Bezaubernder Geologe", 100, "Doppelte Vorkommensgröße für Eisenerz, Titanerz und Salpeter, dazu schneller abbaubare Vorkommen."),
+    geo("geselliger-geologe", "Geselliger Geologe", 200, "200 % Tempo bei Stein, Kupfererz, Marmor und Eisenerz, sonst 67 %. Chance auf Schokoladengegenstände."),
+    geo("archaologischer-geologe", "Archäologischer Geologe", 200, "Chance, auf Suchen nach Kohle, Golderz, Granit, Titanerz und Salpeter einen Schatz zu finden."),
+    geo("lebkuchen-geologe", "Lebkuchen-Geologe", 33, "+50 % Vorkommensgröße. Chance auf zwei Schätze pro erfolgreicher Suche."),
+    geo("fleissige-geologin", "Fleißige Geologin", 100, "Stein und Kupfererz mit 100 % Tempo, alle anderen Suchen 17 %. +50 % Vorkommensgröße und Chance auf zwei Schätze bei den übrigen Rohstoffen."),
+    geo("geologe-im-urlaub", "Geologe im Urlaub", 50, "Chance auf Kartenfragmente oder Förderungen. Bringt bei Events immer Event-Ressourcen mit."),
+    geo("ausgeglichene-geologin", "Ausgeglichene Geologin", 200, "Füllt nach erfolgreichen Suchen jeweils ein passendes Gegenstück-Vorkommen mit 200 Rohstoffen auf."),
+    geo("marathon-geologe", "Marathon-Geologe", 500, "−50 % Vorkommensgröße. Chance auf zufällige Auffüller."),
+    geo("vesy-der-ahnungslose-graber", "Vesy, der ahnungslose Gräber", 100, "33 % Tempo bei Stein, Marmor, Kohle und Granit. Chance, mit einem Abenteuer zurückzukehren."),
+    geo("sternengucker-geologe", "Sternengucker-Geologe", 50, "+100 % Vorkommensgröße. Chance auf Sternensplitter bei Kohle, Golderz, Granit, Titanerz und Salpeter."),
+    geo("titanischer-geologe", "Titanischer Geologe", 100, "Dreifache Vorkommensgröße für Titanerz. Chance auf Titanerz-Auffüller und Titanhennen-Förderungen."),
+    geo("alchemistischer-geologe", "Alchemistischer Geologe", 50, "Kupfer-, Eisen-, Gold- und Titanvorkommen sind dreimal so schnell abbaubar. Chance auf 250 Golderz durch Transmutation."),
 ];
 //# sourceMappingURL=specialists.js.map

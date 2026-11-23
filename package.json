@@ -12,7 +12,8 @@
     "html": "node scripts/build-html.js",
     "build": "npm run html && npm run sass && npm run ts",
     "deploy": "npm run build && node scripts/deploy.js",
-    "check:abbr": "node scripts/check-abbr.js"
+    "check:abbr": "node scripts/check-abbr.js",
+    "icons": "node scripts/download-icons.js"
   },
   "repository": {
     "type": "git",
