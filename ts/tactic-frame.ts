@@ -1,4 +1,4 @@
-import { FRAME, SLOTS } from "./data/tactic-frame.js";
+import { BAR, FRAME, SLOTS } from "./data/tactic-frame.js";
 import type { Box, SlotId } from "./data/tactic-frame.js";
 import { esc } from "./dom.js";
 
@@ -8,10 +8,32 @@ export interface TacticFrameOptions {
     downloadUrl: string;
     downloadName: string;
     onSlot: (id: SlotId) => void;
+    canMark?: boolean;
+    onMarkToggle?: () => void;
+    onPlaceMark?: (x: number, y: number) => void;
+    onRemoveMark?: (key: string) => void;
+    onMoveMark?: (key: string, x: number, y: number) => void;
+}
+
+export interface MapMark {
+    key: string;
+    nr: string;
+    x: number; // Anteil an der Bildbreite, 0 bis 1
+    y: number; // Anteil an der Bildhöhe, 0 bis 1
+}
+
+export interface PanelHooks {
+    beforeClose?: () => boolean;
+    onClose?: () => void;
 }
 
 export interface TacticFrame {
     destroy(): void;
+    openPanel(id: string, title: string, hooks?: PanelHooks): HTMLElement;
+    closePanel(): void;
+    panelId(): string;
+    setMarks(marks: MapMark[]): void;
+    setMarking(on: boolean): void;
 }
 
 const ICONS = {
@@ -21,11 +43,22 @@ const ICONS = {
     full: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />',
     exit: '<path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5" />',
     download: '<path d="M12 4v11M7 11l5 5 5-5M5 20h14" />',
+    pin: '<path d="M12 21s6-5.6 6-11a6 6 0 0 0-12 0c0 5.4 6 11 6 11z" /><circle cx="12" cy="10" r="2.2" />',
+    eye: '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z" /><circle cx="12" cy="12" r="3" />',
 };
 
 function icon(name: keyof typeof ICONS): string {
     return `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[name]}</svg>`;
 }
+
+const SLOT_ICONS: Record<SlotId, string> = {
+    generals:
+        '<path d="M4 16v-4a8 8 0 0 1 16 0v4l-2.5 1V21h-3l-1-3h-3l-1 3h-3v-4z" /><path d="M8.5 12.5h7" />',
+    units: '<path d="M4 4l10.5 10.5M20 4L9.5 14.5M13 15.5l3.5 3.5M11 15.5L7.5 19M5.5 18l-2 2M18.5 18l2 2" />',
+    specials:
+        '<path d="M12 3l2.7 5.8 6.3.8-4.6 4.3 1.2 6.3L12 17.1 6.4 20.2l1.2-6.3L3 9.6l6.3-.8z" />',
+    tips: '<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z" />',
+};
 
 function boxVars(box: Box): string {
     return `--l:${box.left}%;--t:${box.top}%;--w:${box.width}%;--h:${box.height}%`;
@@ -42,6 +75,7 @@ export function mountTacticFrame(root: HTMLElement, options: TacticFrameOptions)
                     <div class="tactic__view" tabindex="0" role="group"
                         aria-label="Taktikkarte ${esc(options.title)}. Mit den Pfeiltasten verschieben, mit Plus und Minus zoomen, mit Null zurücksetzen, mit F Vollbild.">
                         <img class="tactic__map" src="${esc(options.imageUrl)}" alt="Taktikkarte ${esc(options.title)}" draggable="false" />
+                        <div class="tactic__marks"></div>
                     </div>
                 </div>
 
@@ -51,14 +85,20 @@ export function mountTacticFrame(root: HTMLElement, options: TacticFrameOptions)
                     <button type="button" data-act="in" aria-label="Vergrößern" title="Vergrößern">${icon("plus")}</button>
                     <button type="button" data-act="out" aria-label="Verkleinern" title="Verkleinern">${icon("minus")}</button>
                     <button type="button" data-act="reset" aria-label="Ansicht zurücksetzen" title="Zurücksetzen">${icon("reset")}</button>
+                    <button type="button" data-act="marks" aria-label="Lager auf der Karte ein- oder ausblenden" title="Lager ein-/ausblenden" hidden>${icon("eye")}</button>
+                    ${
+                        options.canMark
+                            ? `<button type="button" data-act="mark" aria-label="Lager auf der Karte markieren" title="Lager markieren" aria-pressed="false">${icon("pin")}</button>`
+                            : ""
+                    }
                     <a href="${esc(options.downloadUrl)}" download="${esc(options.downloadName)}" aria-label="Karte herunterladen" title="Herunterladen">${icon("download")}</a>
                     <button type="button" data-act="full" aria-label="Vollbild" title="Vollbild">${icon("full")}</button>
                 </div>
 
-                <nav class="tactic__slots" aria-label="Angaben zur Taktikkarte">
+                <nav class="tactic__slots" aria-label="Angaben zur Taktikkarte" style="${boxVars(BAR)}">
                     ${SLOTS.map(
                         (slot) =>
-                            `<button type="button" class="tactic__slot" data-slot="${slot.id}" style="${boxVars(slot.box)}">${slot.label}</button>`
+                            `<button type="button" class="tactic__slot" data-slot="${slot.id}" aria-label="${slot.label}"><svg viewBox="0 0 24 24" aria-hidden="true">${SLOT_ICONS[slot.id]}</svg><span>${slot.label}</span></button>`
                     ).join("")}
                 </nav>
             </div>
@@ -98,7 +138,105 @@ export function mountTacticFrame(root: HTMLElement, options: TacticFrameOptions)
         map.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
         inButton.disabled = scale >= maxScale * 0.999;
         outButton.disabled = scale <= minScale * 1.001;
+        positionMarks();
     }
+
+    // Lager-Markierungen: liegen in einer eigenen Ebene, damit sie beim Zoomen gleich groß bleiben
+    const layer = root.querySelector<HTMLElement>(".tactic__marks")!;
+    const eyeButton = root.querySelector<HTMLButtonElement>('[data-act="marks"]')!;
+    const pinButton = root.querySelector<HTMLButtonElement>('[data-act="mark"]');
+    let marks: MapMark[] = [];
+    let marking = false;
+
+    function positionMarks(): void {
+        const { iw, ih } = size();
+
+        if (!iw) {
+            return;
+        }
+
+        layer.querySelectorAll<HTMLElement>(".tactic__mark").forEach((element, index) => {
+            const mark = marks[index];
+
+            element.style.transform = `translate(${tx + mark.x * iw * scale}px, ${ty + mark.y * ih * scale}px)`;
+        });
+    }
+
+    function renderMarks(): void {
+        layer.innerHTML = marks
+            .map(
+                (mark) =>
+                    `<div class="tactic__mark" data-key="${esc(mark.key)}" role="img" aria-label="Lager ${esc(mark.nr)}"><span>${esc(mark.nr)}</span></div>`
+            )
+            .join("");
+        eyeButton.hidden = marks.length === 0;
+        positionMarks();
+    }
+
+    function fraction(event: { clientX: number; clientY: number }): { x: number; y: number } {
+        const { iw, ih } = size();
+        const point = local(event);
+
+        return {
+            x: Math.min(1, Math.max(0, (point.x - tx) / (iw * scale))),
+            y: Math.min(1, Math.max(0, (point.y - ty) / (ih * scale))),
+        };
+    }
+
+    let markDrag: { key: string; index: number; x: number; y: number; moved: boolean } | null = null;
+
+    layer.addEventListener("pointerdown", (event) => {
+        const element = (event.target as HTMLElement).closest<HTMLElement>(".tactic__mark");
+
+        if (!marking || !element) {
+            return;
+        }
+
+        event.stopPropagation();
+        element.setPointerCapture(event.pointerId);
+
+        const index = [...layer.children].indexOf(element);
+
+        markDrag = { key: marks[index].key, index, x: event.clientX, y: event.clientY, moved: false };
+    });
+
+    layer.addEventListener("pointermove", (event) => {
+        if (!markDrag) {
+            return;
+        }
+
+        if (Math.hypot(event.clientX - markDrag.x, event.clientY - markDrag.y) > 4) {
+            markDrag.moved = true;
+        }
+
+        if (markDrag.moved) {
+            const position = fraction(event);
+
+            marks[markDrag.index].x = position.x;
+            marks[markDrag.index].y = position.y;
+            positionMarks();
+        }
+    });
+
+    layer.addEventListener("pointerup", (event) => {
+        if (!markDrag) {
+            return;
+        }
+
+        const done = markDrag;
+
+        markDrag = null;
+
+        if (done.moved) {
+            options.onMoveMark?.(done.key, marks[done.index].x, marks[done.index].y);
+        } else {
+            options.onRemoveMark?.(done.key);
+        }
+
+        event.stopPropagation();
+    });
+
+    let press: { x: number; y: number; moved: boolean } | null = null;
 
     function measure(): void {
         const { vw, vh, iw, ih } = size();
@@ -187,6 +325,13 @@ export function mountTacticFrame(root: HTMLElement, options: TacticFrameOptions)
         }
 
         view.setPointerCapture(event.pointerId);
+
+        if (!pointers.size) {
+            press = { x: event.clientX, y: event.clientY, moved: false };
+        } else if (press) {
+            press.moved = true;
+        }
+
         pointers.set(event.pointerId, local(event));
         view.classList.add("is-dragging");
     });
@@ -199,6 +344,10 @@ export function mountTacticFrame(root: HTMLElement, options: TacticFrameOptions)
         }
 
         const now = local(event);
+
+        if (press && Math.hypot(event.clientX - press.x, event.clientY - press.y) > 5) {
+            press.moved = true;
+        }
 
         if (pointers.size === 1) {
             tx += now.x - previous.x;
@@ -234,11 +383,25 @@ export function mountTacticFrame(root: HTMLElement, options: TacticFrameOptions)
         }
     }
 
-    view.addEventListener("pointerup", release);
+    view.addEventListener("pointerup", (event) => {
+        const wasClick = marking && press && !press.moved && pointers.size === 1;
+
+        release(event);
+
+        if (wasClick) {
+            const position = fraction(event);
+
+            options.onPlaceMark?.(position.x, position.y);
+        }
+
+        if (!pointers.size) {
+            press = null;
+        }
+    });
     view.addEventListener("pointercancel", release);
 
     view.addEventListener("dblclick", (event) => {
-        if (!ready) {
+        if (!ready || marking) {
             return;
         }
 
@@ -400,6 +563,13 @@ export function mountTacticFrame(root: HTMLElement, options: TacticFrameOptions)
             case "reset":
                 reset();
                 break;
+            case "marks":
+                layer.hidden = !layer.hidden;
+                eyeButton.setAttribute("aria-pressed", String(layer.hidden));
+                break;
+            case "mark":
+                options.onMarkToggle?.();
+                break;
             case "full":
                 void toggleFullscreen();
                 break;
@@ -414,7 +584,127 @@ export function mountTacticFrame(root: HTMLElement, options: TacticFrameOptions)
         }
     });
 
+    // Schwebendes Fenster (z. B. Einheiten), lässt sich verschieben und verdeckt die Karte nicht dauerhaft
+    const stage = root.querySelector<HTMLElement>(".tactic__stage")!;
+    let panel: HTMLElement | null = null;
+    let currentPanel = "";
+
+    let panelHooks: PanelHooks | undefined;
+
+    function removePanel(): void {
+        const hooks = panelHooks;
+
+        panel?.remove();
+        panel = null;
+        currentPanel = "";
+        panelHooks = undefined;
+        hooks?.onClose?.();
+    }
+
+    function closePanel(): void {
+        if (panelHooks?.beforeClose && !panelHooks.beforeClose()) {
+            return;
+        }
+
+        removePanel();
+    }
+
+    function openPanel(id: string, title: string, hooks?: PanelHooks): HTMLElement {
+        removePanel();
+        currentPanel = id;
+        panelHooks = hooks;
+
+        panel = document.createElement("section");
+        panel.className = "tactic__panel";
+        panel.setAttribute("role", "dialog");
+        panel.setAttribute("aria-label", title);
+        panel.innerHTML = `
+            <header class="tactic__panel-head" tabindex="0" title="Zum Verschieben ziehen">
+                <span>${esc(title)}</span>
+                <button type="button" data-panel-close aria-label="Fenster schließen">×</button>
+            </header>
+            <div class="tactic__panel-body"></div>`;
+
+        stage.appendChild(panel);
+
+        const head = panel.querySelector<HTMLElement>(".tactic__panel-head")!;
+        const box = panel;
+        let drag: { x: number; y: number; left: number; top: number } | null = null;
+
+        function place(left: number, top: number): void {
+            box.style.right = "auto";
+            box.style.left = `${Math.min(Math.max(0, left), stage.clientWidth - box.offsetWidth)}px`;
+            box.style.top = `${Math.min(Math.max(0, top), stage.clientHeight - head.offsetHeight)}px`;
+        }
+
+        head.addEventListener("pointerdown", (event) => {
+            if ((event.target as HTMLElement).closest("button")) {
+                return;
+            }
+
+            head.setPointerCapture(event.pointerId);
+            drag = { x: event.clientX, y: event.clientY, left: box.offsetLeft, top: box.offsetTop };
+        });
+
+        head.addEventListener("pointermove", (event) => {
+            if (drag) {
+                place(drag.left + event.clientX - drag.x, drag.top + event.clientY - drag.y);
+            }
+        });
+
+        head.addEventListener("pointerup", () => {
+            drag = null;
+        });
+
+        head.addEventListener("keydown", (event) => {
+            const step = 24;
+            const moves: Record<string, [number, number]> = {
+                ArrowLeft: [-step, 0],
+                ArrowRight: [step, 0],
+                ArrowUp: [0, -step],
+                ArrowDown: [0, step],
+            };
+
+            if (moves[event.key]) {
+                event.preventDefault();
+                place(box.offsetLeft + moves[event.key][0], box.offsetTop + moves[event.key][1]);
+            }
+        });
+
+        box.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") {
+                event.stopPropagation();
+                closePanel();
+            }
+        });
+
+        box.querySelector("[data-panel-close]")!.addEventListener("click", closePanel);
+
+        // Fenster ins Bild holen, sonst merkt man bei gescrollter Seite nicht, dass es offen ist
+        const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        box.scrollIntoView({ block: "center", inline: "nearest", behavior: calm ? "auto" : "smooth" });
+        head.focus({ preventScroll: true });
+        box.classList.add("is-new");
+        box.addEventListener("animationend", () => box.classList.remove("is-new"), { once: true });
+
+        return box.querySelector<HTMLElement>(".tactic__panel-body")!;
+    }
+
     return {
+        openPanel,
+        closePanel,
+        panelId: () => currentPanel,
+        setMarks(next: MapMark[]): void {
+            marks = next.map((mark) => ({ ...mark }));
+            renderMarks();
+        },
+        setMarking(on: boolean): void {
+            marking = on;
+            view.classList.toggle("is-marking", on);
+            layer.classList.toggle("is-editing", on);
+            pinButton?.setAttribute("aria-pressed", String(on));
+        },
         destroy(): void {
             resizeObserver.disconnect();
             document.removeEventListener("fullscreenchange", onFullscreenChange);
