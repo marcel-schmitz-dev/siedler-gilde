@@ -1,0 +1,231 @@
+import { ADVENTURE_MAPS } from "./data/adventure-maps.js";
+import { BUILD_COLUMNS, buildFromRow, getCurrentUser } from "./skill-builds.js";
+import { supabase } from "./supabase.js";
+export const LIMITS = {
+    title: { min: 3, max: 60 },
+    text: 1500,
+    note: 200,
+    units: 40,
+    generals: 8,
+};
+const BUCKET = "tactic-maps";
+const MAP_COLUMNS = "id, user_id, category, title, image_path, thumb_path, status, units, specials, tips, created_at, profiles(username)";
+const URL_SECONDS = 60 * 60;
+export const STATIC_PREFIX = "statisch-";
+function fileName(path) {
+    return path.split("/").pop() ?? "karte";
+}
+function staticMaps() {
+    return ADVENTURE_MAPS.map((map) => {
+        const name = fileName(map.image);
+        return {
+            id: STATIC_PREFIX + name.replace(/\.[^.]+$/, ""),
+            isStatic: true,
+            userId: "",
+            username: map.author ?? "",
+            category: map.category,
+            title: map.title,
+            status: "approved",
+            units: [],
+            specials: "",
+            tips: "",
+            createdAt: "",
+            imagePath: map.image,
+            thumbPath: map.image,
+            imageUrl: map.image,
+            thumbUrl: map.image,
+            downloadUrl: map.image,
+            downloadName: name,
+        };
+    });
+}
+function fromRow(row) {
+    const profile = Array.isArray(row.profiles) ? row.profiles[0] : row.profiles;
+    return {
+        id: row.id,
+        isStatic: false,
+        userId: row.user_id,
+        username: profile?.username ?? "Unbekannt",
+        category: row.category,
+        title: row.title,
+        status: row.status,
+        units: row.units ?? [],
+        specials: row.specials ?? "",
+        tips: row.tips ?? "",
+        createdAt: row.created_at,
+        imagePath: row.image_path,
+        thumbPath: row.thumb_path,
+        imageUrl: "",
+        thumbUrl: "",
+        downloadUrl: "",
+        downloadName: "",
+    };
+}
+async function attachThumbUrls(maps) {
+    const own = maps.filter((map) => !map.isStatic);
+    if (!own.length) {
+        return;
+    }
+    const { data } = await supabase.storage.from(BUCKET).createSignedUrls(own.map((map) => map.thumbPath), URL_SECONDS);
+    data?.forEach((entry, index) => {
+        own[index].thumbUrl = entry.signedUrl ?? "";
+    });
+}
+export async function attachImageUrls(map) {
+    if (map.isStatic) {
+        return true;
+    }
+    const [view, download] = await Promise.all([
+        supabase.storage.from(BUCKET).createSignedUrl(map.imagePath, URL_SECONDS),
+        supabase.storage.from(BUCKET).createSignedUrl(map.imagePath, URL_SECONDS, {
+            download: `${map.title.replace(/[^\p{L}\p{N}]+/gu, "-")}.${map.imagePath.split(".").pop()}`,
+        }),
+    ]);
+    if (!view.data) {
+        return false;
+    }
+    map.imageUrl = view.data.signedUrl;
+    map.downloadUrl = download.data?.signedUrl ?? view.data.signedUrl;
+    map.downloadName = fileName(map.imagePath);
+    return true;
+}
+let adminCache = null;
+export async function isAdmin() {
+    const user = await getCurrentUser();
+    if (!user) {
+        return false;
+    }
+    if (adminCache?.userId === user.id) {
+        return adminCache.value;
+    }
+    const { data } = await supabase.from("profiles").select("is_admin").eq("id", user.id).maybeSingle();
+    const value = data?.is_admin === true;
+    adminCache = { userId: user.id, value };
+    return value;
+}
+export async function listMaps(category) {
+    const fixed = staticMaps().filter((map) => map.category === category);
+    const { data, error } = await supabase
+        .from("tactic_maps")
+        .select(MAP_COLUMNS)
+        .eq("category", category)
+        .order("created_at", { ascending: false });
+    if (error) {
+        return { maps: fixed, error: "Die hochgeladenen Taktikkarten konnten nicht geladen werden." };
+    }
+    const uploaded = data.map(fromRow);
+    await attachThumbUrls(uploaded);
+    return { maps: [...uploaded, ...fixed] };
+}
+export async function getMap(id) {
+    if (id.startsWith(STATIC_PREFIX)) {
+        return staticMaps().find((map) => map.id === id) ?? null;
+    }
+    const { data } = await supabase.from("tactic_maps").select(MAP_COLUMNS).eq("id", id).maybeSingle();
+    if (!data) {
+        return null;
+    }
+    const map = fromRow(data);
+    return (await attachImageUrls(map)) ? map : null;
+}
+function translate(error) {
+    if (error.code === "P0001") {
+        return error.message;
+    }
+    if (error.code === "23514") {
+        return "Eine Eingabe ist zu lang oder ungültig.";
+    }
+    if (error.code === "23505") {
+        return "Das gibt es für diese Karte schon.";
+    }
+    if (error.code === "42501" || error.message.toLowerCase().includes("row-level security")) {
+        return "Dafür hast du keine Berechtigung.";
+    }
+    return "Das hat nicht geklappt. Bitte versuche es erneut.";
+}
+export async function createMap(input) {
+    const user = await getCurrentUser();
+    if (!user) {
+        return { error: "Du musst angemeldet sein." };
+    }
+    const id = crypto.randomUUID();
+    const ext = input.image.type === "image/png" ? "png" : "webp";
+    const thumbExt = input.thumb.type === "image/png" ? "png" : "webp";
+    const imagePath = `${user.id}/${id}.${ext}`;
+    const thumbPath = `${user.id}/${id}-thumb.${thumbExt}`;
+    const bucket = supabase.storage.from(BUCKET);
+    const first = await bucket.upload(imagePath, input.image, { contentType: input.image.type });
+    if (first.error) {
+        return { error: "Das Bild konnte nicht hochgeladen werden." };
+    }
+    const second = await bucket.upload(thumbPath, input.thumb, { contentType: input.thumb.type });
+    if (second.error) {
+        await bucket.remove([imagePath]);
+        return { error: "Das Vorschaubild konnte nicht hochgeladen werden." };
+    }
+    const admin = await isAdmin();
+    const { error } = await supabase.from("tactic_maps").insert({
+        id,
+        category: input.category,
+        title: input.title,
+        image_path: imagePath,
+        thumb_path: thumbPath,
+        status: admin ? "approved" : "pending",
+    });
+    if (error) {
+        await bucket.remove([imagePath, thumbPath]);
+        return { error: translate(error) };
+    }
+    return { id, approved: admin };
+}
+export async function updateMap(id, patch) {
+    const { data, error } = await supabase.from("tactic_maps").update(patch).eq("id", id).select("id");
+    if (error) {
+        return translate(error);
+    }
+    return data.length ? null : "Dafür hast du keine Berechtigung.";
+}
+export async function setStatus(id, status) {
+    const { error } = await supabase.rpc("set_tactic_map_status", { p_id: id, p_status: status });
+    return error ? translate(error) : null;
+}
+export async function deleteMap(map) {
+    const { data, error } = await supabase.from("tactic_maps").delete().eq("id", map.id).select("id");
+    if (error) {
+        return translate(error);
+    }
+    if (!data.length) {
+        return "Dafür hast du keine Berechtigung.";
+    }
+    await supabase.storage.from(BUCKET).remove([map.imagePath, map.thumbPath]);
+    return null;
+}
+export async function loadGenerals(mapId) {
+    const { data, error } = await supabase
+        .from("tactic_map_generals")
+        .select(`id, note, skill_builds(${BUILD_COLUMNS})`)
+        .eq("map_id", mapId)
+        .order("created_at", { ascending: true });
+    if (error) {
+        return { generals: [], error: "Die Generäle konnten nicht geladen werden." };
+    }
+    const rows = data;
+    const generals = [];
+    rows.forEach((row) => {
+        const raw = Array.isArray(row.skill_builds) ? row.skill_builds[0] : row.skill_builds;
+        const build = raw ? buildFromRow(raw) : null;
+        if (build) {
+            generals.push({ id: row.id, note: row.note, build });
+        }
+    });
+    return { generals };
+}
+export async function addGeneral(mapId, buildId, note) {
+    const { error } = await supabase.from("tactic_map_generals").insert({ map_id: mapId, build_id: buildId, note });
+    return error ? translate(error) : null;
+}
+export async function removeGeneral(id) {
+    const { error } = await supabase.from("tactic_map_generals").delete().eq("id", id);
+    return error ? translate(error) : null;
+}
+//# sourceMappingURL=tactic-store.js.map

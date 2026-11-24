@@ -18,10 +18,10 @@ function booksText(build) {
         .map((key) => `${books[key]} ${BOOK_LABEL[key]}`)
         .join(" · ");
 }
-function avatar(abbr) {
+export function avatar(abbr) {
     return `<span class="spec-avatar${abbr.length > 2 ? " spec-avatar--long" : ""}">${esc(abbr)}</span>`;
 }
-function cardHtml(build, userId) {
+export function cardHtml(build, userId) {
     const unit = findUnit(build.unitType, build.unitSlug);
     return `
         <article class="build-card${build.userId === userId ? " is-mine" : ""}" data-id="${build.id}" tabindex="0">
@@ -40,7 +40,7 @@ function cardHtml(build, userId) {
             </footer>
         </article>`;
 }
-function openBuild(build, isMine, onChanged) {
+export function openBuild(build, isMine, onChanged) {
     const unit = findUnit(build.unitType, build.unitSlug);
     const dialog = openDialog(`
         <header class="dlg-head">
@@ -70,6 +70,7 @@ function openBuild(build, isMine, onChanged) {
         dialog.close();
         onChanged();
     });
+    return dialog;
 }
 export async function renderSkillBuilds(root) {
     currentRoot = root;

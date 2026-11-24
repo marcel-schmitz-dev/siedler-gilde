@@ -4,10 +4,11 @@ import { renderMinigames, renderMinigamesTeaser } from "./minigames.js";
 import { renderSimulator, renderSimulatorTeaser } from "./simulator.js";
 import { initSkillBuilds, isSkillBuildsHash, leaveSkillBuilds, renderSkillBuilds } from "./skill-builds-view.js";
 import { renderSpecialists } from "./specialists.js";
+import { TACTIC_HASH, leaveTactic, renderTacticView } from "./tactic-view.js";
 
 // ==================================================
 // UNTERSEITEN IM MITGLIEDERBEREICH
-// #generaele, #entdecker, #bevorzugte-skills, #kampfsimulator, #minigames, #karten-<kategorie>
+// #generaele, #entdecker, #bevorzugte-skills, #kampfsimulator, #minigames, #karten-<kategorie>, #taktikkarte-<id>
 // Alles andere zeigt das Dashboard (und scrollt zu einem Abschnitt).
 // ==================================================
 
@@ -50,6 +51,10 @@ export function initViews(): void {
     function route(): void {
         const hash = decodeURIComponent(window.location.hash.slice(1));
 
+        if (!hash.startsWith(TACTIC_HASH)) {
+            leaveTactic();
+        }
+
         // Startseite (für Mitglieder per "Startseite" erreichbar)
         const isHomeView = publicIds.has(hash);
 
@@ -85,6 +90,13 @@ export function initViews(): void {
         if (isSkillBuildsHash(hash)) {
             void renderSkillBuilds(view!);
             showView("#member-skills");
+            return;
+        }
+
+        if (hash.startsWith(TACTIC_HASH)) {
+            leaveSkillBuilds();
+            void renderTacticView(view!, hash.slice(TACTIC_HASH.length));
+            showView("#member-cards");
             return;
         }
 

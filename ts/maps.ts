@@ -1,44 +1,32 @@
-import { ADVENTURE_MAPS, MAP_CATEGORIES } from "./data/adventure-maps.js";
-import type { AdventureMap, MapCategoryId } from "./data/adventure-maps.js";
-import { attachImageFallback, esc, openDialog } from "./dom.js";
+import { MAP_CATEGORIES } from "./data/adventure-maps.js";
+import type { MapCategoryId } from "./data/adventure-maps.js";
+import { attachImageFallback, esc } from "./dom.js";
+import { isAdmin, listMaps } from "./tactic-store.js";
+import type { TacticMap } from "./tactic-store.js";
+import { TACTIC_HASH } from "./tactic-view.js";
+import { openUploadDialog } from "./tactic-upload.js";
 
 export function isMapCategory(id: string): id is MapCategoryId {
     return MAP_CATEGORIES.some((category) => category.id === id);
 }
 
-function fileName(map: AdventureMap): string {
-    return map.image.split("/").pop() ?? "karte";
+function cardHtml(map: TacticMap): string {
+    return `
+        <a href="#${TACTIC_HASH}${esc(map.id)}" class="map-card">
+            <span class="map-card__image map-card__image--sea">
+                ${map.thumbUrl ? `<img src="${esc(map.thumbUrl)}" alt="" loading="lazy" data-fallback="${esc(map.title)}" />` : ""}
+                ${map.status === "pending" ? `<span class="map-badge map-badge--corner">Wartet auf Freigabe</span>` : ""}
+            </span>
+            <span class="map-card__title">${esc(map.title)}</span>
+            ${map.username ? `<span class="map-card__author">von ${esc(map.username)}</span>` : ""}
+        </a>`;
 }
 
-function openMap(map: AdventureMap): void {
-    const dialog = openDialog(
-        `
-        <header class="dlg-head dlg-head--simple">
-            <div>
-                <h3>${esc(map.title)}</h3>
-                ${map.author ? `<p class="dlg-note">von ${esc(map.author)}</p>` : ""}
-            </div>
-        </header>
-
-        <div class="map-zoom" title="Klicken zum Vergrößern / Verkleinern">
-            <img src="${esc(map.image)}" alt="Abenteuer-Karte ${esc(map.title)}" />
-        </div>
-
-        <div class="dlg-actions">
-            <a class="game-button game-button--primary" href="${esc(map.image)}" download="${esc(fileName(map))}">Herunterladen</a>
-            <a class="game-button" href="${esc(map.image)}" target="_blank" rel="noopener noreferrer">In neuem Tab öffnen</a>
-        </div>`,
-        "member-dialog--map"
-    );
-
-    const zoom = dialog.querySelector<HTMLElement>(".map-zoom");
-
-    zoom?.addEventListener("click", () => zoom.classList.toggle("is-zoomed"));
-}
+let renderId = 0;
 
 export function renderMaps(root: HTMLElement, categoryId: MapCategoryId): void {
     const category = MAP_CATEGORIES.find((item) => item.id === categoryId)!;
-    const maps = ADVENTURE_MAPS.filter((map) => map.category === categoryId);
+    const current = ++renderId;
 
     root.innerHTML = `
         <a href="#member-cards" class="view-back">← Zurück zum Mitgliederbereich</a>
@@ -47,7 +35,7 @@ export function renderMaps(root: HTMLElement, categoryId: MapCategoryId): void {
             <svg class="member-panel__icon"><use href="#i-map" /></svg>
             <div>
                 <h2>Abenteuer Karten: ${esc(category.title)}</h2>
-                <p>${esc(category.description)} Klicke auf eine Karte für die Großansicht und den Download.</p>
+                <p>${esc(category.description)} Klicke auf eine Karte, um sie im Rahmen mit allen Angaben zu öffnen.</p>
             </div>
         </div>
 
@@ -58,35 +46,39 @@ export function renderMaps(root: HTMLElement, categoryId: MapCategoryId): void {
             ).join("")}
         </nav>
 
-        <div class="map-grid">
-            ${
-                maps.length
-                    ? maps
-                          .map(
-                              (map, index) => `
-                <button type="button" class="map-card" data-index="${index}">
-                    <span class="map-card__image">
-                        <img src="${esc(map.image)}" alt="" loading="lazy" data-fallback="${esc(map.title)}" />
-                    </span>
-                    <span class="map-card__title">${esc(map.title)}</span>
-                    ${map.author ? `<span class="map-card__author">von ${esc(map.author)}</span>` : ""}
-                </button>`
-                          )
-                          .join("")
-                    : `<p class="view-empty">Hier liegen noch keine Karten. Neue Karten trägst du in <code>ts/data/adventure-maps.ts</code> ein.</p>`
-            }
+        <div class="map-actions">
+            <button type="button" class="wiz-button" id="map-add">Neue Taktikkarte hinzufügen</button>
         </div>
+
+        <p class="wiz-message" id="map-message" role="alert"></p>
+
+        <div class="map-grid" id="map-grid"><p class="view-empty">Karten werden geladen …</p></div>
     `;
 
-    attachImageFallback(root);
+    const grid = root.querySelector<HTMLElement>("#map-grid")!;
+    const message = root.querySelector<HTMLElement>("#map-message")!;
+    let admin = false;
 
-    root.querySelectorAll<HTMLButtonElement>(".map-card").forEach((button) => {
-        button.addEventListener("click", () => {
-            const map = maps[Number(button.dataset.index)];
-
-            if (map) {
-                openMap(map);
-            }
+    root.querySelector("#map-add")!.addEventListener("click", () => {
+        openUploadDialog(categoryId, admin, (id) => {
+            window.location.hash = `${TACTIC_HASH}${id}`;
         });
     });
+
+    void (async () => {
+        const [result, isAdminUser] = await Promise.all([listMaps(categoryId), isAdmin()]);
+
+        if (current !== renderId) {
+            return;
+        }
+
+        admin = isAdminUser;
+        message.textContent = result.error ?? "";
+
+        grid.innerHTML = result.maps.length
+            ? result.maps.map(cardHtml).join("")
+            : `<p class="view-empty">Hier liegen noch keine Karten. Lade die erste hoch.</p>`;
+
+        attachImageFallback(grid);
+    })();
 }

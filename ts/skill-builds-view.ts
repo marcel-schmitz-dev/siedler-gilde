@@ -26,11 +26,11 @@ function booksText(build: SkillBuild): string {
         .join(" · ");
 }
 
-function avatar(abbr: string): string {
+export function avatar(abbr: string): string {
     return `<span class="spec-avatar${abbr.length > 2 ? " spec-avatar--long" : ""}">${esc(abbr)}</span>`;
 }
 
-function cardHtml(build: SkillBuild, userId: string | undefined): string {
+export function cardHtml(build: SkillBuild, userId: string | undefined): string {
     const unit = findUnit(build.unitType, build.unitSlug)!;
 
     return `
@@ -51,7 +51,7 @@ function cardHtml(build: SkillBuild, userId: string | undefined): string {
         </article>`;
 }
 
-function openBuild(build: SkillBuild, isMine: boolean, onChanged: () => void): void {
+export function openBuild(build: SkillBuild, isMine: boolean, onChanged: () => void): HTMLDialogElement {
     const unit = findUnit(build.unitType, build.unitSlug)!;
 
     const dialog = openDialog(
@@ -89,6 +89,8 @@ function openBuild(build: SkillBuild, isMine: boolean, onChanged: () => void): v
         dialog.close();
         onChanged();
     });
+
+    return dialog;
 }
 
 export async function renderSkillBuilds(root: HTMLElement): Promise<void> {

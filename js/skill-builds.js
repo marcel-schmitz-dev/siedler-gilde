@@ -22,7 +22,7 @@ export async function getCurrentUser() {
     const meta = user.user_metadata;
     return { id: user.id, username: meta?.username ?? user.email?.split("@")[0] ?? "Siedler" };
 }
-function fromRow(row) {
+export function buildFromRow(row) {
     // Nur Skillungen anzeigen, die zu den aktuellen Daten passen (Einheit bekannt, Stufen gültig)
     if (!findUnit(row.unit_type, row.unit_slug) || !isValidLevels(row.unit_type, row.skills)) {
         return null;
@@ -39,16 +39,17 @@ function fromRow(row) {
         createdAt: row.created_at,
     };
 }
+export const BUILD_COLUMNS = "id, user_id, unit_type, unit_slug, title, skills, created_at, profiles(username)";
 export async function loadBuilds() {
     const { data, error } = await supabase
         .from("skill_builds")
-        .select("id, user_id, unit_type, unit_slug, title, skills, created_at, profiles(username)")
+        .select(BUILD_COLUMNS)
         .order("created_at", { ascending: false });
     if (error) {
         return { builds: [], error: "Die Skillungen konnten nicht geladen werden. Bitte versuche es später erneut." };
     }
     const builds = data
-        .map(fromRow)
+        .map(buildFromRow)
         .filter((build) => build !== null);
     return { builds };
 }

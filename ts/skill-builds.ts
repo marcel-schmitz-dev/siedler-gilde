@@ -58,7 +58,7 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
     return { id: user.id, username: meta?.username ?? user.email?.split("@")[0] ?? "Siedler" };
 }
 
-interface SkillBuildRow {
+export interface SkillBuildRow {
     id: string;
     user_id: string;
     unit_type: SkillUnitType;
@@ -69,7 +69,7 @@ interface SkillBuildRow {
     profiles: { username: string } | { username: string }[] | null;
 }
 
-function fromRow(row: SkillBuildRow): SkillBuild | null {
+export function buildFromRow(row: SkillBuildRow): SkillBuild | null {
     // Nur Skillungen anzeigen, die zu den aktuellen Daten passen (Einheit bekannt, Stufen gültig)
     if (!findUnit(row.unit_type, row.unit_slug) || !isValidLevels(row.unit_type, row.skills)) {
         return null;
@@ -89,10 +89,12 @@ function fromRow(row: SkillBuildRow): SkillBuild | null {
     };
 }
 
+export const BUILD_COLUMNS = "id, user_id, unit_type, unit_slug, title, skills, created_at, profiles(username)";
+
 export async function loadBuilds(): Promise<{ builds: SkillBuild[]; error?: string }> {
     const { data, error } = await supabase
         .from("skill_builds")
-        .select("id, user_id, unit_type, unit_slug, title, skills, created_at, profiles(username)")
+        .select(BUILD_COLUMNS)
         .order("created_at", { ascending: false });
 
     if (error) {
@@ -100,7 +102,7 @@ export async function loadBuilds(): Promise<{ builds: SkillBuild[]; error?: stri
     }
 
     const builds = (data as unknown as SkillBuildRow[])
-        .map(fromRow)
+        .map(buildFromRow)
         .filter((build): build is SkillBuild => build !== null);
 
     return { builds };
