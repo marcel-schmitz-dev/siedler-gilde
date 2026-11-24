@@ -203,6 +203,8 @@
         <li><strong>Passwort</strong>: Es wird nicht im Klartext gespeichert, sondern nur als gesicherter Hash. Ich kann dein Passwort nicht einsehen.</li>
         <li><strong>Nutzer-ID</strong> (zufällig erzeugte Kennung) sowie Zeitpunkte der Registrierung und der letzten Anmeldung.</li>
         <li><strong>Altersbestätigung</strong>: der Zeitpunkt, zu dem du bestätigt hast, mindestens 16 Jahre alt zu sein. Sie dient als Nachweis, dass die Bestätigung eingeholt wurde.</li>
+        <li><strong>Skillungen</strong>, die du im Mitgliederbereich speicherst (Spezialist, verteilte Skillpunkte, Zusatz, Zeitpunkt), verknüpft mit deiner Nutzer-ID.</li>
+        <li><strong>Taktikkarten</strong>, die du hochlädst: das Bild und eine kleine Vorschau (im Supabase Storage), Name, Reiter, deine Angaben zu Einheiten, Besonderheiten und Tipps, verknüpfte Generäle (Skillungen) und der Freigabestatus, verknüpft mit deiner Nutzer-ID.</li>
         <li><strong>Technische Daten</strong> bei Anmeldung und Anfragen, zum Beispiel IP-Adresse und Browserdaten, soweit Supabase sie für Betrieb und Schutz vor Missbrauch (zum Beispiel Begrenzung zu vieler Anmeldeversuche) verarbeitet.</li>
     </ul>
 
@@ -216,13 +218,25 @@
         ergänze diese Erklärung vorher.
     </p>
 
+    <p>
+        <strong>Skillungen</strong> und <strong>freigegebene Taktikkarten</strong> sind für
+        alle angemeldeten Mitglieder sichtbar, zusammen mit deinem Spielernamen als
+        Ersteller. Neue Taktikkarten sehen zunächst nur du und ich als Betreiber, bis ich
+        sie freigebe. Besucher ohne Anmeldung sehen sie nicht. Die Bilddateien liegen in
+        einem nicht öffentlichen Speicher und werden nur über zeitlich befristete,
+        nicht erratbare Links ausgeliefert. Bitte lade nur Karten hoch, die du verwenden
+        darfst, und keine Bilder mit erkennbaren Personen.
+    </p>
+
     <h3>4.3 Zweck und Rechtsgrundlage</h3>
 
     <p>
         Die Daten werden verarbeitet, um dir den Zugang zum Mitgliederbereich zu
         ermöglichen und dich einem Spielernamen zuzuordnen (Art. 6 Abs. 1 lit. b
         DSGVO). Die Verarbeitung technischer Daten zur Sicherheit und
-        Missbrauchsabwehr erfolgt auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO.
+        Missbrauchsabwehr erfolgt auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO. Auch das
+        Speichern und Anzeigen deiner Skillungen und Taktikkarten dient der Bereitstellung
+        der Mitgliederfunktionen (Art. 6 Abs. 1 lit. b DSGVO).
     </p>
 
     <h3>4.4 Speicherdauer und Löschung</h3>
@@ -230,7 +244,10 @@
     <p>
         Deine Daten bleiben gespeichert, bis du dein Konto löschen lässt. Schreib dazu
         eine E-Mail an <a href="mailto:kontakt@mschmitz-dev.de">kontakt@mschmitz-dev.de</a>. Beim Löschen des Kontos wird auch dein Profil
-        (Spielername) entfernt.
+        (Spielername) entfernt. Deine Skillungen und Taktikkarten kannst du jederzeit
+        selbst löschen; bei Taktikkarten werden auch die Bilddateien entfernt. Bei der
+        Löschung des Kontos entferne ich deine Skillungen, Taktikkarten und Bilddateien
+        ebenfalls.
     </p>
 
     <h3>4.5 Auftragsverarbeitung und Drittlandübermittlung</h3>
