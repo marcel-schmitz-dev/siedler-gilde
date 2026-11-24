@@ -1,14 +1,16 @@
 import { MAP_CATEGORIES } from "./data/adventure-maps.js";
 import type { SlotId } from "./data/tactic-frame.js";
+import { GENERALS } from "./data/specialists.js";
 import { BATTLE_UNITS, findBattleUnit } from "./data/units.js";
 import { esc, openDialog } from "./dom.js";
 import { findUnit, getCurrentUser, loadBuilds } from "./skill-builds.js";
 import { cardHtml, openBuild } from "./skill-builds-view.js";
 import { mountTacticFrame } from "./tactic-frame.js";
-import type { TacticFrame } from "./tactic-frame.js";
+import type { MapMark, TacticFrame } from "./tactic-frame.js";
 import {
     LIMITS,
     addGeneral,
+    cleanCamps,
     deleteMap,
     getMap,
     isAdmin,
@@ -17,7 +19,7 @@ import {
     setStatus,
     updateMap,
 } from "./tactic-store.js";
-import type { TacticMap } from "./tactic-store.js";
+import type { Camp, TacticMap } from "./tactic-store.js";
 
 export const TACTIC_HASH = "taktikkarte-";
 
@@ -89,7 +91,15 @@ export async function renderTacticView(root: HTMLElement, id: string): Promise<v
         downloadUrl: map.downloadUrl,
         downloadName: map.downloadName,
         onSlot: (slot) => void openSlot(map, slot, canEdit, user.id),
+        canMark: canEdit,
+        onMarkToggle: () => toggleMarking(map),
+        onPlaceMark: (x, y) => placeMark(map, x, y),
+        onRemoveMark: (key) => removeMark(map, key),
+        onMoveMark: (key, x, y) => moveMark(map, key, x, y),
     });
+
+    marking = false;
+    frame.setMarks(flattenMarks(map));
 
     const buttons: string[] = [];
 
@@ -221,7 +231,7 @@ async function openSlot(map: TacticMap, slot: SlotId, canEdit: boolean, userId: 
     if (slot === "generals") {
         await showGenerals(map, canEdit, userId);
     } else if (slot === "units") {
-        showUnits(map, canEdit, false);
+        toggleCamps(map, canEdit);
     } else {
         showText(map, slot, canEdit, false);
     }
@@ -302,71 +312,394 @@ function showText(map: TacticMap, slot: "specials" | "tips", canEdit: boolean, e
     });
 }
 
-function showUnits(map: TacticMap, canEdit: boolean, editing: boolean): void {
-    if (!editing) {
-        const chips = map.units
-            .map((slug) => findBattleUnit(slug))
-            .filter((unit): unit is NonNullable<typeof unit> => Boolean(unit));
+// --------------------------------------------------
+// Lager direkt auf der Karte markieren
+// --------------------------------------------------
 
-        const dialog = openDialog(
-            shell(
-                map,
-                "units",
-                chips.length
-                    ? `<ul class="tactic-chips">${chips
-                          .map((unit) => `<li><span class="spec-avatar${unit.abbr.length > 2 ? " spec-avatar--long" : ""}">${esc(unit.abbr)}</span>${esc(unit.name)}</li>`)
-                          .join("")}</ul>`
-                    : `<p class="view-empty">Hier steht noch nichts.</p>`,
-                canEdit,
-                false
-            ),
-            "member-dialog--wide"
-        );
+let marking = false;
+let selectedCamp = 0;
+let dirty = false;
+let snapshot = "";
 
-        dialog.querySelector("#slot-edit")?.addEventListener("click", () => showUnits(map, canEdit, true));
+function flattenMarks(map: TacticMap): MapMark[] {
+    return map.camps.flatMap((camp, ci) => camp.marks.map((mark, mi) => ({ key: `${ci}:${mi}`, nr: camp.nr, x: mark.x, y: mark.y })));
+}
+
+function refreshMarks(map: TacticMap): void {
+    frame?.setMarks(flattenMarks(map));
+
+    const panelBody = document.querySelector<HTMLElement>(".tactic__panel-body");
+
+    if (marking && panelBody && frame?.panelId() === "mark") {
+        renderMarkPanel(panelBody, map);
+    }
+}
+
+function placeMark(map: TacticMap, x: number, y: number): void {
+    const camp = map.camps[selectedCamp];
+
+    if (!camp) {
+        setMarkMessage("Lege zuerst ein Lager an.");
         return;
     }
 
+    if (camp.marks.length >= LIMITS.marks) {
+        setMarkMessage(`Pro Lager höchstens ${LIMITS.marks} Markierungen.`);
+        return;
+    }
+
+    camp.marks.push({ x: Math.round(x * 10000) / 10000, y: Math.round(y * 10000) / 10000 });
+    dirty = true;
+    refreshMarks(map);
+}
+
+function removeMark(map: TacticMap, key: string): void {
+    const [ci, mi] = key.split(":").map(Number);
+
+    map.camps[ci]?.marks.splice(mi, 1);
+    dirty = true;
+    refreshMarks(map);
+}
+
+function moveMark(map: TacticMap, key: string, x: number, y: number): void {
+    const [ci, mi] = key.split(":").map(Number);
+    const mark = map.camps[ci]?.marks[mi];
+
+    if (mark) {
+        mark.x = Math.round(x * 10000) / 10000;
+        mark.y = Math.round(y * 10000) / 10000;
+        dirty = true;
+        refreshMarks(map);
+    }
+}
+
+function setMarkMessage(text: string): void {
+    const element = document.querySelector<HTMLElement>("#mark-message");
+
+    if (element) {
+        element.textContent = text;
+    }
+}
+
+function stopMarking(map: TacticMap, discard: boolean): void {
+    if (discard && dirty) {
+        map.camps = cleanCamps(JSON.parse(snapshot));
+    }
+
+    marking = false;
+    dirty = false;
+    frame?.setMarking(false);
+    frame?.setMarks(flattenMarks(map));
+}
+
+function toggleMarking(map: TacticMap): void {
+    if (!frame) {
+        return;
+    }
+
+    if (marking) {
+        frame.closePanel();
+        return;
+    }
+
+    marking = true;
+    dirty = false;
+    selectedCamp = 0;
+    snapshot = JSON.stringify(map.camps);
+    frame.setMarking(true);
+
+    const body = frame.openPanel("mark", "Lager markieren", {
+        beforeClose: () => !dirty || window.confirm("Nicht gespeicherte Markierungen verwerfen?"),
+        onClose: () => {
+            if (marking) {
+                stopMarking(map, true);
+            }
+        },
+    });
+
+    renderMarkPanel(body, map);
+}
+
+function renderMarkPanel(body: HTMLElement, map: TacticMap): void {
+    body.innerHTML = `
+        <p class="mark-help">Lager wählen, dann auf die Karte klicken. Markierung anklicken entfernt sie, ziehen verschiebt sie.</p>
+        <div class="mark-list">
+            ${
+                map.camps.length
+                    ? map.camps
+                          .map(
+                              (camp, i) =>
+                                  `<button type="button" class="mark-camp${i === selectedCamp ? " is-selected" : ""}" data-i="${i}" aria-pressed="${i === selectedCamp}"><b>${esc(camp.nr)}</b><span>${esc(camp.general) || "–"}</span><small>${camp.marks.length}×</small></button>`
+                          )
+                          .join("")
+                    : `<p class="camp-empty">Lege zuerst ein Lager an.</p>`
+            }
+        </div>
+        <div class="mark-actions">
+            <button type="button" class="camp-edit" data-mark-add>+ Lager</button>
+            <button type="button" class="camp-edit" data-mark-save>Speichern</button>
+            <button type="button" class="camp-edit" data-mark-done>Beenden</button>
+        </div>
+        <p class="camp-legend" id="mark-message" role="status">${dirty ? "Nicht gespeichert." : ""}</p>`;
+
+    body.querySelectorAll<HTMLButtonElement>(".mark-camp").forEach((button) => {
+        button.addEventListener("click", () => {
+            selectedCamp = Number(button.dataset.i);
+            renderMarkPanel(body, map);
+        });
+    });
+
+    body.querySelector("[data-mark-add]")!.addEventListener("click", () => {
+        if (map.camps.length >= LIMITS.camps) {
+            setMarkMessage(`Höchstens ${LIMITS.camps} Lager pro Karte.`);
+            return;
+        }
+
+        const highest = Math.max(0, ...map.camps.map((camp) => parseInt(camp.nr, 10) || 0));
+
+        map.camps.push({ nr: String(highest + 1), general: "", units: [], marks: [] });
+        selectedCamp = map.camps.length - 1;
+        dirty = true;
+        renderMarkPanel(body, map);
+    });
+
+    body.querySelector<HTMLButtonElement>("[data-mark-save]")!.addEventListener("click", async (event) => {
+        const button = event.currentTarget as HTMLButtonElement;
+        const camps = cleanCamps(map.camps);
+
+        button.disabled = true;
+        setMarkMessage("Wird gespeichert …");
+
+        const error = await updateMap(map.id, { camps });
+
+        button.disabled = false;
+
+        if (error) {
+            setMarkMessage(error);
+            return;
+        }
+
+        map.camps = camps;
+        snapshot = JSON.stringify(camps);
+        dirty = false;
+        refreshMarks(map);
+        setMarkMessage("Gespeichert.");
+    });
+
+    body.querySelector("[data-mark-done]")!.addEventListener("click", () => frame?.closePanel());
+}
+
+function toggleCamps(map: TacticMap, canEdit: boolean): void {
+    if (!frame) {
+        return;
+    }
+
+    if (frame.panelId() === "units") {
+        frame.closePanel();
+        return;
+    }
+
+    if (marking && frame.panelId() === "mark") {
+        if (dirty && !window.confirm("Nicht gespeicherte Markierungen verwerfen?")) {
+            return;
+        }
+    }
+
+    renderCamps(frame.openPanel("units", "Einheiten pro Lager"), map, canEdit);
+}
+
+function renderCamps(body: HTMLElement, map: TacticMap, canEdit: boolean): void {
+    const used = new Map<string, string>();
+
+    const rows = map.camps
+        .map((camp) => {
+            const units = camp.units
+                .map((entry) => {
+                    const unit = findBattleUnit(entry.unit);
+
+                    if (!unit) {
+                        return "";
+                    }
+
+                    used.set(unit.abbr, unit.name);
+
+                    return `<span class="camp-unit" title="${esc(unit.name)}">${entry.count}&nbsp;${esc(unit.abbr)}</span>`;
+                })
+                .join(" ");
+
+            return `<tr><th scope="row">${esc(camp.nr)}.</th><td>${esc(camp.general) || "–"}</td><td>${units || "–"}</td></tr>`;
+        })
+        .join("");
+
+    const legend = [...used.entries()].map(([abbr, name]) => `${esc(abbr)} = ${esc(name)}`).join(" · ");
+
+    body.innerHTML = `
+        ${
+            rows
+                ? `<div class="camp-scroll" tabindex="0" aria-label="Tabelle der Lager">
+                    <table class="camp-table">
+                        <thead><tr><th scope="col">Lager</th><th scope="col">General</th><th scope="col">Einheiten</th></tr></thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                </div>
+                <p class="camp-legend">${legend}</p>`
+                : `<p class="camp-empty">Für diese Karte sind noch keine Lager eingetragen.</p>`
+        }
+        ${canEdit ? `<button type="button" class="camp-edit" data-camp-edit>Lager bearbeiten</button>` : ""}`;
+
+    body.querySelector("[data-camp-edit]")?.addEventListener("click", () =>
+        openCampEditor(map, () => {
+            frame?.setMarks(flattenMarks(map));
+
+            if (frame?.panelId() === "units") {
+                renderCamps(frame.openPanel("units", "Einheiten pro Lager"), map, canEdit);
+            }
+        })
+    );
+}
+
+function openCampEditor(map: TacticMap, onSaved: () => void): void {
+    let draft: Camp[] = map.camps.map((camp) => ({ ...camp, units: camp.units.map((entry) => ({ ...entry })) }));
+
     const dialog = openDialog(
-        shell(
-            map,
-            "units",
-            `<p class="dlg-note">Wähle die Einheiten, die für diese Karte gebraucht werden.</p>
-            <div class="tactic-unit-grid">
-                ${BATTLE_UNITS.map(
-                    (unit) => `
-                    <label class="tactic-unit">
-                        <input type="checkbox" value="${unit.slug}"${map.units.includes(unit.slug) ? " checked" : ""} />
-                        <span class="spec-avatar${unit.abbr.length > 2 ? " spec-avatar--long" : ""}">${esc(unit.abbr)}</span>
-                        <span>${esc(unit.name)}</span>
-                    </label>`
-                ).join("")}
+        `
+        <header class="dlg-head dlg-head--simple">
+            <div>
+                <h3>Einheiten pro Lager</h3>
+                <p class="dlg-note">${esc(map.title)}: Nummer des Lagers, Kürzel des Generals und die Einheiten mit Stückzahl.</p>
             </div>
-            <p class="wiz-message" id="slot-message" role="alert"></p>
-            <div class="dlg-actions">
-                <button type="button" class="wiz-button" id="slot-save">Speichern</button>
-                <button type="button" class="wiz-button wiz-button--ghost" id="slot-cancel">Abbrechen</button>
-            </div>`,
-            canEdit,
-            true
-        ),
+        </header>
+
+        <div id="camp-edit"></div>
+
+        <datalist id="camp-generals">
+            ${GENERALS.filter((general) => general.abbr)
+                .map((general) => `<option value="${esc(general.abbr)}">${esc(general.name)}</option>`)
+                .join("")}
+        </datalist>
+
+        <p class="wiz-message" id="camp-message" role="alert"></p>
+
+        <div class="dlg-actions">
+            <button type="button" class="wiz-button" id="camp-save">Speichern</button>
+            <button type="button" class="wiz-button wiz-button--ghost" id="camp-add">Lager hinzufügen</button>
+            <button type="button" class="wiz-button wiz-button--ghost" data-dialog-close>Abbrechen</button>
+        </div>`,
         "member-dialog--wide"
     );
 
-    const text = dialog.querySelector<HTMLElement>("#slot-message")!;
+    const host = dialog.querySelector<HTMLElement>("#camp-edit")!;
+    const text = dialog.querySelector<HTMLElement>("#camp-message")!;
 
-    dialog.querySelector("#slot-cancel")!.addEventListener("click", () => showUnits(map, canEdit, false));
+    function unitOptions(selected: string): string {
+        return BATTLE_UNITS.map(
+            (unit) => `<option value="${unit.slug}"${unit.slug === selected ? " selected" : ""}>${esc(unit.abbr)} – ${esc(unit.name)}</option>`
+        ).join("");
+    }
 
-    dialog.querySelector<HTMLButtonElement>("#slot-save")!.addEventListener("click", async (event) => {
+    function draw(): void {
+        host.innerHTML = draft.length
+            ? draft
+                  .map(
+                      (camp, i) => `
+            <fieldset class="camp-row" data-i="${i}">
+                <div class="camp-row__top">
+                    <label class="view-field"><span>Lager</span>
+                        <input type="text" data-f="nr" maxlength="${LIMITS.campNr}" value="${esc(camp.nr)}" inputmode="numeric" /></label>
+                    <label class="view-field"><span>General</span>
+                        <input type="text" data-f="general" list="camp-generals" maxlength="${LIMITS.campGeneral}" value="${esc(camp.general)}" /></label>
+                    <button type="button" class="wiz-button wiz-button--danger" data-act="rm-camp">Lager entfernen</button>
+                </div>
+                <div class="camp-row__units">
+                    ${camp.units
+                        .map(
+                            (entry, j) => `
+                    <div class="camp-line" data-j="${j}">
+                        <input type="number" data-f="count" min="1" max="${LIMITS.unitCount}" value="${entry.count}" aria-label="Stückzahl" />
+                        <select data-f="unit" aria-label="Einheit">${unitOptions(entry.unit)}</select>
+                        <button type="button" data-act="rm-unit" aria-label="Einheit entfernen">×</button>
+                    </div>`
+                        )
+                        .join("")}
+                    ${
+                        camp.units.length < LIMITS.campUnits
+                            ? `<button type="button" class="wiz-button wiz-button--ghost" data-act="add-unit">+ Einheit</button>`
+                            : ""
+                    }
+                </div>
+            </fieldset>`
+                  )
+                  .join("")
+            : `<p class="view-empty">Noch keine Lager. Füge das erste hinzu.</p>`;
+    }
+
+    draw();
+
+    host.addEventListener("input", (event) => {
+        const field = event.target as HTMLInputElement | HTMLSelectElement;
+        const row = field.closest<HTMLElement>(".camp-row");
+        const name = field.dataset.f;
+
+        if (!row || !name) {
+            return;
+        }
+
+        const camp = draft[Number(row.dataset.i)];
+
+        if (name === "nr" || name === "general") {
+            camp[name] = field.value;
+            return;
+        }
+
+        const entry = camp.units[Number(field.closest<HTMLElement>(".camp-line")!.dataset.j)];
+
+        if (name === "count") {
+            entry.count = Number(field.value);
+        } else {
+            entry.unit = field.value;
+        }
+    });
+
+    host.addEventListener("click", (event) => {
+        const button = (event.target as HTMLElement).closest<HTMLButtonElement>("button[data-act]");
+        const row = button?.closest<HTMLElement>(".camp-row");
+
+        if (!button || !row) {
+            return;
+        }
+
+        const camp = draft[Number(row.dataset.i)];
+
+        if (button.dataset.act === "rm-camp") {
+            draft.splice(Number(row.dataset.i), 1);
+        } else if (button.dataset.act === "add-unit") {
+            camp.units.push({ unit: camp.units[camp.units.length - 1]?.unit ?? BATTLE_UNITS[0].slug, count: 50 });
+        } else {
+            camp.units.splice(Number(button.closest<HTMLElement>(".camp-line")!.dataset.j), 1);
+        }
+
+        draw();
+    });
+
+    dialog.querySelector("#camp-add")!.addEventListener("click", () => {
+        if (draft.length >= LIMITS.camps) {
+            text.textContent = `Höchstens ${LIMITS.camps} Lager pro Karte.`;
+            return;
+        }
+
+        draft.push({ nr: String(draft.length + 1), general: "", units: [], marks: [] });
+        draw();
+        host.lastElementChild?.scrollIntoView({ block: "nearest" });
+    });
+
+    dialog.querySelector<HTMLButtonElement>("#camp-save")!.addEventListener("click", async (event) => {
         const button = event.currentTarget as HTMLButtonElement;
-        const units = Array.from(dialog.querySelectorAll<HTMLInputElement>(".tactic-unit input:checked")).map(
-            (input) => input.value
-        );
+        const camps = cleanCamps(draft);
 
         button.disabled = true;
         text.textContent = "Wird gespeichert …";
 
-        const error = await updateMap(map.id, { units });
+        const error = await updateMap(map.id, { camps });
 
         if (error) {
             text.textContent = error;
@@ -374,8 +707,9 @@ function showUnits(map: TacticMap, canEdit: boolean, editing: boolean): void {
             return;
         }
 
-        map.units = units;
-        showUnits(map, canEdit, false);
+        map.camps = camps;
+        dialog.close();
+        onSaved();
     });
 }
 

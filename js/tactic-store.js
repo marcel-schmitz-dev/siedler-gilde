@@ -5,11 +5,52 @@ export const LIMITS = {
     title: { min: 3, max: 60 },
     text: 1500,
     note: 200,
-    units: 40,
     generals: 8,
+    camps: 30,
+    campUnits: 8,
+    campNr: 3,
+    campGeneral: 12,
+    unitCount: 9999,
+    marks: 10,
 };
+export function cleanCamps(raw) {
+    if (!Array.isArray(raw)) {
+        return [];
+    }
+    const camps = [];
+    raw.slice(0, LIMITS.camps).forEach((item) => {
+        const entry = item;
+        const nr = String(entry.nr ?? "").trim().slice(0, LIMITS.campNr);
+        if (!nr) {
+            return;
+        }
+        const units = [];
+        if (Array.isArray(entry.units)) {
+            entry.units.slice(0, LIMITS.campUnits).forEach((value) => {
+                const row = value;
+                const count = Math.floor(Number(row.count));
+                if (typeof row.unit === "string" && row.unit && count >= 1 && count <= LIMITS.unitCount) {
+                    units.push({ unit: row.unit, count });
+                }
+            });
+        }
+        const marks = [];
+        if (Array.isArray(entry.marks)) {
+            entry.marks.slice(0, LIMITS.marks).forEach((value) => {
+                const mark = value;
+                const x = Number(mark.x);
+                const y = Number(mark.y);
+                if (x >= 0 && x <= 1 && y >= 0 && y <= 1) {
+                    marks.push({ x: Math.round(x * 10000) / 10000, y: Math.round(y * 10000) / 10000 });
+                }
+            });
+        }
+        camps.push({ nr, general: String(entry.general ?? "").trim().slice(0, LIMITS.campGeneral), units, marks });
+    });
+    return camps;
+}
 const BUCKET = "tactic-maps";
-const MAP_COLUMNS = "id, user_id, category, title, image_path, thumb_path, status, units, specials, tips, created_at, profiles(username)";
+const MAP_COLUMNS = "id, user_id, category, title, image_path, thumb_path, status, camps, specials, tips, created_at, profiles(username)";
 const URL_SECONDS = 60 * 60;
 export const STATIC_PREFIX = "statisch-";
 function fileName(path) {
@@ -26,7 +67,7 @@ function staticMaps() {
             category: map.category,
             title: map.title,
             status: "approved",
-            units: [],
+            camps: [],
             specials: "",
             tips: "",
             createdAt: "",
@@ -49,7 +90,7 @@ function fromRow(row) {
         category: row.category,
         title: row.title,
         status: row.status,
-        units: row.units ?? [],
+        camps: cleanCamps(row.camps),
         specials: row.specials ?? "",
         tips: row.tips ?? "",
         createdAt: row.created_at,

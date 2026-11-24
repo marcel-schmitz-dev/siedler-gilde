@@ -10,9 +10,79 @@ export const LIMITS = {
     title: { min: 3, max: 60 },
     text: 1500,
     note: 200,
-    units: 40,
     generals: 8,
+    camps: 30,
+    campUnits: 8,
+    campNr: 3,
+    campGeneral: 12,
+    unitCount: 9999,
+    marks: 10,
 };
+
+export interface CampUnit {
+    unit: string;
+    count: number;
+}
+
+export interface CampMark {
+    x: number;
+    y: number;
+}
+
+export interface Camp {
+    nr: string;
+    general: string;
+    units: CampUnit[];
+    marks: CampMark[];
+}
+
+export function cleanCamps(raw: unknown): Camp[] {
+    if (!Array.isArray(raw)) {
+        return [];
+    }
+
+    const camps: Camp[] = [];
+
+    raw.slice(0, LIMITS.camps).forEach((item) => {
+        const entry = item as { nr?: unknown; general?: unknown; units?: unknown; marks?: unknown };
+        const nr = String(entry.nr ?? "").trim().slice(0, LIMITS.campNr);
+
+        if (!nr) {
+            return;
+        }
+
+        const units: CampUnit[] = [];
+
+        if (Array.isArray(entry.units)) {
+            entry.units.slice(0, LIMITS.campUnits).forEach((value) => {
+                const row = value as { unit?: unknown; count?: unknown };
+                const count = Math.floor(Number(row.count));
+
+                if (typeof row.unit === "string" && row.unit && count >= 1 && count <= LIMITS.unitCount) {
+                    units.push({ unit: row.unit, count });
+                }
+            });
+        }
+
+        const marks: CampMark[] = [];
+
+        if (Array.isArray(entry.marks)) {
+            entry.marks.slice(0, LIMITS.marks).forEach((value) => {
+                const mark = value as { x?: unknown; y?: unknown };
+                const x = Number(mark.x);
+                const y = Number(mark.y);
+
+                if (x >= 0 && x <= 1 && y >= 0 && y <= 1) {
+                    marks.push({ x: Math.round(x * 10000) / 10000, y: Math.round(y * 10000) / 10000 });
+                }
+            });
+        }
+
+        camps.push({ nr, general: String(entry.general ?? "").trim().slice(0, LIMITS.campGeneral), units, marks });
+    });
+
+    return camps;
+}
 
 export interface TacticMap {
     id: string;
@@ -22,7 +92,7 @@ export interface TacticMap {
     category: MapCategoryId;
     title: string;
     status: MapStatus;
-    units: string[];
+    camps: Camp[];
     specials: string;
     tips: string;
     createdAt: string;
@@ -48,7 +118,7 @@ interface MapRow {
     image_path: string;
     thumb_path: string;
     status: MapStatus;
-    units: string[] | null;
+    camps: unknown;
     specials: string | null;
     tips: string | null;
     created_at: string;
@@ -57,7 +127,7 @@ interface MapRow {
 
 const BUCKET = "tactic-maps";
 const MAP_COLUMNS =
-    "id, user_id, category, title, image_path, thumb_path, status, units, specials, tips, created_at, profiles(username)";
+    "id, user_id, category, title, image_path, thumb_path, status, camps, specials, tips, created_at, profiles(username)";
 const URL_SECONDS = 60 * 60;
 
 export const STATIC_PREFIX = "statisch-";
@@ -78,7 +148,7 @@ function staticMaps(): TacticMap[] {
             category: map.category,
             title: map.title,
             status: "approved",
-            units: [],
+            camps: [],
             specials: "",
             tips: "",
             createdAt: "",
@@ -103,7 +173,7 @@ function fromRow(row: MapRow): TacticMap {
         category: row.category,
         title: row.title,
         status: row.status,
-        units: row.units ?? [],
+        camps: cleanCamps(row.camps),
         specials: row.specials ?? "",
         tips: row.tips ?? "",
         createdAt: row.created_at,
@@ -282,7 +352,7 @@ export async function createMap(input: {
 
 export async function updateMap(
     id: string,
-    patch: Partial<Pick<TacticMap, "title" | "units" | "specials" | "tips" | "category">>
+    patch: Partial<Pick<TacticMap, "title" | "camps" | "specials" | "tips" | "category">>
 ): Promise<string | null> {
     const { data, error } = await supabase.from("tactic_maps").update(patch).eq("id", id).select("id");
 
