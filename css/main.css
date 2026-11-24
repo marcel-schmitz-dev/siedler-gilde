@@ -2726,6 +2726,435 @@ button.member-outline-button {
   color: #08131D;
 }
 
+body.has-tactic-fullscreen {
+  overflow: hidden;
+}
+
+.tactic__stage {
+  position: relative;
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  aspect-ratio: 3072/2048;
+  container-type: inline-size;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+}
+.tactic__frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+}
+.tactic__window {
+  position: absolute;
+  left: var(--l);
+  top: var(--t);
+  width: var(--w);
+  height: var(--h);
+  clip-path: var(--clip);
+}
+.tactic__view {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: none;
+}
+.tactic__view.is-dragging {
+  cursor: grabbing;
+}
+.tactic__view:focus-visible {
+  outline: 3px solid #F2D27D;
+  outline-offset: -3px;
+}
+.tactic__map {
+  position: absolute;
+  left: 0;
+  top: 0;
+  max-width: none;
+  transform-origin: 0 0;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.tactic__error {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  text-shadow: 0 1px 6px #000;
+}
+.tactic__plaque {
+  position: absolute;
+  left: 50%;
+  top: 8.6%;
+  max-width: 46%;
+  padding: 0.5cqw 2.4cqw;
+  transform: translateX(-50%);
+  border: 0.2cqw solid #c9a24a;
+  border-radius: 0.8cqw;
+  background: linear-gradient(180deg, #7a4a24, #4a2a12);
+  box-shadow: 0 0.5cqw 1.4cqw rgba(0, 0, 0, 0.6), inset 0 0 0 0.15cqw rgba(0, 0, 0, 0.45);
+  color: #f6dd9a;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 2.1cqw;
+  font-weight: 700;
+  letter-spacing: 0.1cqw;
+  text-shadow: 0 0.15cqw 0.3cqw #000;
+  pointer-events: none;
+}
+.tactic__plaque span {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.tactic__tools {
+  position: absolute;
+  left: 11.2%;
+  top: 25%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6cqw;
+}
+.tactic__tools button,
+.tactic__tools a {
+  display: grid;
+  place-items: center;
+  width: 3.6cqw;
+  height: 3.6cqw;
+  min-width: 30px;
+  min-height: 30px;
+  border: 0.15cqw solid rgba(246, 221, 154, 0.85);
+  border-radius: 50%;
+  background: rgba(20, 12, 6, 0.78);
+  color: #f6dd9a;
+  cursor: pointer;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+.tactic__tools button:hover:not(:disabled), .tactic__tools button:focus-visible,
+.tactic__tools a:hover:not(:disabled),
+.tactic__tools a:focus-visible {
+  background: #f6dd9a;
+  color: #2a1608;
+}
+.tactic__tools button:disabled,
+.tactic__tools a:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.tactic__tools button svg,
+.tactic__tools a svg {
+  width: 55%;
+  height: 55%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.tactic__slots {
+  display: contents;
+}
+.tactic__slot {
+  position: absolute;
+  left: var(--l);
+  top: var(--t);
+  width: var(--w);
+  height: var(--h);
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 0.6cqw;
+  background: transparent;
+  color: #f6dd9a;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 2.3cqw;
+  font-weight: 700;
+  letter-spacing: 0.12cqw;
+  text-shadow: 0 0.15cqw 0.3cqw #000, 0 0 0.8cqw rgba(0, 0, 0, 0.8);
+  cursor: pointer;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+.tactic__slot:hover, .tactic__slot:focus-visible {
+  background: rgba(255, 214, 120, 0.16);
+  box-shadow: inset 0 0 0 0.2cqw rgba(246, 221, 154, 0.8);
+  outline: none;
+}
+.tactic.is-fullscreen, .tactic.is-pseudo {
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background: #0b3550 url("../assets/img/tactic/meer.webp") 0 0/800px 800px repeat;
+}
+.tactic.is-pseudo {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+}
+.tactic.is-fullscreen .tactic__stage {
+  position: absolute;
+  inset: 0;
+  max-width: none;
+  aspect-ratio: auto;
+  border-radius: 0;
+  box-shadow: none;
+  container-type: normal;
+}
+.tactic.is-fullscreen .tactic__frame,
+.tactic.is-fullscreen .tactic__plaque {
+  display: none;
+}
+.tactic.is-fullscreen .tactic__window {
+  inset: 0;
+  width: auto;
+  height: auto;
+  clip-path: none;
+}
+.tactic.is-fullscreen .tactic__tools {
+  left: auto;
+  right: 16px;
+  top: 16px;
+  flex-direction: row;
+}
+.tactic.is-fullscreen .tactic__tools button,
+.tactic.is-fullscreen .tactic__tools a {
+  width: 42px;
+  height: 42px;
+}
+.tactic.is-fullscreen .tactic__slots {
+  position: absolute;
+  left: 50%;
+  bottom: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  width: max-content;
+  max-width: calc(100% - 24px);
+  transform: translateX(-50%);
+}
+.tactic.is-fullscreen .tactic__slot {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: 10px 18px;
+  border: 1px solid rgba(246, 221, 154, 0.85);
+  border-radius: 30px;
+  background: rgba(20, 12, 6, 0.8);
+  font-size: 15px;
+  letter-spacing: 0.5px;
+}
+
+@container (max-width: 700px) {
+  .tactic__tools {
+    top: 21%;
+    gap: 3px;
+  }
+  .tactic__tools button,
+  .tactic__tools a {
+    width: 26px;
+    height: 26px;
+    min-width: 26px;
+    min-height: 26px;
+  }
+  .tactic__slot {
+    font-size: 9px;
+    letter-spacing: 0;
+    white-space: nowrap;
+  }
+  .tactic__plaque {
+    font-size: 11px;
+  }
+}
+.tactic-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  max-width: 1280px;
+  margin: 16px auto 0;
+}
+.tactic-meta__info {
+  color: #C8C0AE;
+  font-size: 14px;
+}
+.tactic-meta__info b {
+  color: #F2D27D;
+}
+.tactic-meta__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+#tactic-message {
+  max-width: 1280px;
+  margin-inline: auto;
+}
+
+.map-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 10px;
+  border: 1px solid rgba(214, 169, 76, 0.7);
+  border-radius: 20px;
+  background: rgba(5, 11, 16, 0.85);
+  color: #F2D27D;
+  font-size: 12px;
+  font-weight: 600;
+}
+.map-badge--corner {
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  margin: 0;
+}
+
+.map-actions {
+  margin-bottom: 14px;
+}
+
+.map-card__image {
+  position: relative;
+}
+.map-card__image--sea {
+  background: #0b3550 url("../assets/img/tactic/meer.webp") center/400px repeat;
+}
+.map-card__image--sea img {
+  object-fit: contain;
+}
+
+.upload-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.upload-preview {
+  display: grid;
+  gap: 6px;
+}
+.upload-preview img {
+  max-width: 320px;
+  max-height: 220px;
+  border: 1px solid rgba(214, 169, 76, 0.4);
+  border-radius: 6px;
+  background: #0b3550 url("../assets/img/tactic/meer.webp") center/400px repeat;
+}
+.upload-preview p {
+  color: #C8C0AE;
+  font-size: 13px;
+}
+
+.tactic-text {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+}
+
+.tactic-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid rgba(214, 169, 76, 0.45);
+  border-radius: 5px;
+  background: rgba(5, 11, 16, 0.9);
+  color: #F5F0E3;
+  font: inherit;
+  line-height: 1.5;
+  resize: vertical;
+}
+.tactic-textarea:focus {
+  outline: 2px solid #F2D27D;
+  outline-offset: 1px;
+}
+
+.tactic-counter {
+  margin-top: 4px;
+  color: #C8C0AE;
+  font-size: 12px;
+  text-align: right;
+}
+
+.tactic-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  list-style: none;
+}
+.tactic-chips li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px 6px 6px;
+  border: 1px solid rgba(214, 169, 76, 0.4);
+  border-radius: 30px;
+  background: rgba(13, 31, 45, 0.85);
+}
+
+.tactic-unit-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+.tactic-unit {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border: 1px solid rgba(214, 169, 76, 0.3);
+  border-radius: 8px;
+  cursor: pointer;
+}
+.tactic-unit:hover, .tactic-unit:has(input:checked) {
+  border-color: #F2D27D;
+  background: rgba(214, 169, 76, 0.12);
+}
+.tactic-unit input {
+  accent-color: #D6A94C;
+}
+
+.tactic-generals {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.tactic-general {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.tactic-general__note {
+  padding: 8px 12px;
+  border-left: 3px solid #D6A94C;
+  background: rgba(5, 11, 16, 0.6);
+  color: #C8C0AE;
+  font-size: 14px;
+}
+.tactic-general__remove {
+  align-self: flex-start;
+  padding: 6px 12px;
+  font-size: 13px;
+}
+
+.tactic-add {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(214, 169, 76, 0.3);
+}
+.tactic-add h4 {
+  color: #D6A94C;
+  font-family: Georgia, "Times New Roman", serif;
+}
+
 .site-header .logo .est-badge {
   display: flex;
   flex-direction: column;
