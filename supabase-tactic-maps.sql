@@ -48,7 +48,14 @@ create table public.tactic_maps (
   image_path  text not null check (char_length(image_path) <= 200 and image_path like user_id::text || '/%'),
   thumb_path  text not null check (char_length(thumb_path) <= 200 and thumb_path like user_id::text || '/%'),
   status      text not null default 'pending' check (status in ('pending', 'approved')),
-  units       text[] not null default '{}' check (cardinality(units) <= 40),
+  -- Lager: [{"nr": "1", "general": "Ent.", "units": [{"unit": "schwertkaempfer", "count": 50}]}]
+  camps       jsonb not null default '[]'::jsonb check (
+    case
+      when jsonb_typeof(camps) = 'array'
+        then jsonb_array_length(camps) <= 30 and char_length(camps::text) <= 30000
+      else false
+    end
+  ),
   specials    text not null default '' check (char_length(specials) <= 1500),
   tips        text not null default '' check (char_length(tips) <= 1500),
   created_at  timestamptz not null default now(),
@@ -132,7 +139,7 @@ create policy "Taktikkarte löschen"
 -- Spalten-Rechte: status, user_id und Dateipfade lassen sich nach dem Anlegen nicht mehr ändern
 revoke all on public.tactic_maps from anon, authenticated;
 grant select, insert, delete on public.tactic_maps to authenticated;
-grant update (category, title, units, specials, tips) on public.tactic_maps to authenticated;
+grant update (category, title, camps, specials, tips) on public.tactic_maps to authenticated;
 
 -- Freigabe nur über diese Funktion
 create or replace function public.set_tactic_map_status(p_id uuid, p_status text)
@@ -332,7 +339,7 @@ create policy "Taktikkarten-Dateien löschen"
 --    or (schemaname = 'storage' and policyname like 'Taktikkarten-Dateien%')
 -- order by tablename, cmd;
 
--- Test 3: Spalten, die Mitglieder ändern dürfen (erwartet: category, title, units, specials, tips, note, username)
+-- Test 3: Spalten, die Mitglieder ändern dürfen (erwartet: category, title, camps, specials, tips, note, username)
 -- select table_name, column_name from information_schema.column_privileges
 -- where grantee = 'authenticated' and privilege_type = 'UPDATE'
 --   and table_name in ('tactic_maps', 'tactic_map_generals', 'profiles')
@@ -394,7 +401,10 @@ create policy "Taktikkarten-Dateien löschen"
 --   if not v_failed then raise exception 'FEHLER c: Mitglied konnte den Status ändern'; end if;
 --
 --   -- d) Titel und Texte ändern klappt
---   update public.tactic_maps set title = 'Testkarte neu', tips = 'Ein Tipp' where id = v_map;
+--   update public.tactic_maps
+--   set title = 'Testkarte neu', tips = 'Ein Tipp',
+--       camps = '[{"nr": "1", "general": "Ent.", "units": [{"unit": "soldat", "count": 50}]}]'::jsonb
+--   where id = v_map;
 --   select count(*) into v_count from public.tactic_maps where id = v_map and title = 'Testkarte neu';
 --   if v_count <> 1 then raise exception 'FEHLER d: Titel nicht geändert'; end if;
 --
