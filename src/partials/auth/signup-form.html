@@ -1,0 +1,63 @@
+<form id="signup-form" class="auth-form" novalidate>
+    <label class="auth-field">
+        <span>Spielername</span>
+        <input
+            type="text"
+            name="username"
+            placeholder="Dein Name in Die Siedler Online"
+            autocomplete="username"
+            minlength="3"
+            maxlength="20"
+            required
+        />
+    </label>
+
+    <label class="auth-field">
+        <span>E-Mail</span>
+        <input
+            type="email"
+            name="email"
+            placeholder="name@beispiel.de"
+            autocomplete="email"
+            required
+        />
+    </label>
+
+    <label class="auth-field">
+        <span>Passwort</span>
+        <input
+            type="password"
+            name="password"
+            placeholder="Mindestens 8 Zeichen"
+            autocomplete="new-password"
+            minlength="8"
+            required
+        />
+    </label>
+
+    <label class="auth-field">
+        <span>Passwort wiederholen</span>
+        <input
+            type="password"
+            name="passwordRepeat"
+            autocomplete="new-password"
+            minlength="8"
+            required
+        />
+    </label>
+
+    <label class="auth-check">
+        <input type="checkbox" name="ageConfirm" required />
+        <span>Ich bin mindestens 16 Jahre alt.</span>
+    </label>
+
+    <p class="auth-legal">
+        Spielername, E-Mail und Passwort werden für den Zugang zum Mitgliederbereich bei Supabase
+        gespeichert. Mehr dazu in der
+        <a href="./datenschutz.html" target="_blank" rel="noopener noreferrer">Datenschutzerklärung</a>.
+    </p>
+
+    <button type="submit" class="auth-submit">
+        <span>♛</span> Registrieren
+    </button>
+</form>

@@ -16,77 +16,11 @@
 
         <!-- NAVIGATION -->
 
-        <nav class="main-navigation" id="main-navigation">
-            <a href="#home" class="nav-link nav-link--public active"> Home </a>
-
-            <a href="#history" class="nav-link nav-link--public"> Geschichte </a>
-
-            <a href="#founder" class="nav-link nav-link--public"> Franjo </a>
-
-            <a href="#team" class="nav-link nav-link--public"> Team </a>
-
-            <a href="#member-area" class="nav-link nav-link--to-member"> Mitglieder&shy;bereich </a>
-
-            <a href="#home" class="nav-link nav-link--member"> Startseite </a>
-
-            <a href="#member-area" class="nav-link nav-link--member active"> Mitglieder&shy;bereich </a>
-
-            <a href="#member-cards" class="nav-link nav-link--member"> Abenteuer </a>
-
-            <a href="#member-skills" class="nav-link nav-link--member"> Skills </a>
-
-            <a href="#member-news" class="nav-link nav-link--member"> Infos </a>
-
-            <a href="#minigames" class="nav-link nav-link--member"> Mini Games </a>
-
-            <a href="#" class="nav-link nav-link--auth" data-auth-open="login">
-                Anmelden
-            </a>
-
-            <a href="#" class="nav-link nav-link--auth" data-auth-open="signup">
-                Jetzt beitreten
-            </a>
-        </nav>
+        <!-- @include partials/layout/nav.html -->
 
         <!-- AUTH BUTTONS -->
 
-        <div class="header-actions">
-            <button
-                type="button"
-                class="login-button"
-                data-auth-open="login"
-                aria-label="Anmelden"
-            >
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <circle cx="12" cy="8" r="4" />
-                    <path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" />
-                </svg>
-            </button>
-
-            <button
-                type="button"
-                class="join-button"
-                data-auth-open="signup"
-            >
-                <span class="crown"> ♛ </span>
-
-                Jetzt beitreten
-            </button>
-
-            <div class="auth-user">
-                <span class="auth-user__avatar" id="auth-user-avatar" aria-hidden="true"></span>
-
-                <span class="auth-user__name" id="auth-user-name"></span>
-
-                <button
-                    type="button"
-                    class="auth-user__logout"
-                    id="auth-logout"
-                >
-                    Abmelden
-                </button>
-            </div>
-        </div>
+        <!-- @include partials/layout/actions.html -->
 
         <!-- MOBILE MENU BUTTON -->
 
