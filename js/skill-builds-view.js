@@ -75,6 +75,7 @@ export function openBuild(build, isMine, onChanged) {
 export async function renderSkillBuilds(root) {
     currentRoot = root;
     root.innerHTML = `
+        <div class="skills-page">
         <a href="#member-skills" class="view-back">← Zurück zum Mitgliederbereich</a>
 
         <div class="view-title">
@@ -112,6 +113,7 @@ export async function renderSkillBuilds(root) {
         </div>
 
         <div class="build-grid" id="build-grid"><p class="view-empty">Skillungen werden geladen …</p></div>
+        </div>
     `;
     const grid = root.querySelector("#build-grid");
     const typeSelect = root.querySelector("#build-type");

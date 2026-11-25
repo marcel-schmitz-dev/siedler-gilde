@@ -97,6 +97,7 @@ export async function renderSkillBuilds(root: HTMLElement): Promise<void> {
     currentRoot = root;
 
     root.innerHTML = `
+        <div class="skills-page">
         <a href="#member-skills" class="view-back">← Zurück zum Mitgliederbereich</a>
 
         <div class="view-title">
@@ -134,6 +135,7 @@ export async function renderSkillBuilds(root: HTMLElement): Promise<void> {
         </div>
 
         <div class="build-grid" id="build-grid"><p class="view-empty">Skillungen werden geladen …</p></div>
+        </div>
     `;
 
     const grid = root.querySelector<HTMLElement>("#build-grid")!;
