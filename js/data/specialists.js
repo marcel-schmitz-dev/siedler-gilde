@@ -29,7 +29,7 @@ export const ABBR = {
     "standhafte-generalin": "STG",
     "brohmann-der-reiter": "BR",
     "general-boris": "GB",
-    "generalin-sylvana": "GS",
+    "generalin-sylvana": "Syl",
     "general-juan": "GJ",
     "generalin-mary-christmas": "MC",
     "general-zitterbart": "GZ",
