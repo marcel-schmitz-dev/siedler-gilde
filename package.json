@@ -13,7 +13,8 @@
     "build": "npm run html && npm run sass && npm run ts",
     "deploy": "npm run build && node scripts/deploy.js",
     "check:abbr": "node scripts/check-abbr.js",
-    "icons": "node scripts/download-icons.js"
+    "icons": "node scripts/download-icons.js",
+    "templates": "node scripts/make-templates.js"
   },
   "repository": {
     "type": "git",
