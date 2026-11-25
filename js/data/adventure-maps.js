@@ -30,5 +30,12 @@ export const MAP_CATEGORIES = [
         description: "Taktikkarten und Aufstellungen für Koop-Abenteuer.",
     },
 ];
-export const ADVENTURE_MAPS = [{}];
+export const ADVENTURE_MAPS = [
+    {
+        category: "",
+        title: "",
+        image: "",
+        author: "Matze85s",
+    },
+];
 //# sourceMappingURL=adventure-maps.js.map
