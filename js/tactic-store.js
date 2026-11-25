@@ -1,4 +1,5 @@
 import { ADVENTURE_MAPS } from "./data/adventure-maps.js";
+import { findTemplate } from "./data/map-templates.js";
 import { BUILD_COLUMNS, buildFromRow, getCurrentUser } from "./skill-builds.js";
 import { supabase } from "./supabase.js";
 export const LIMITS = {
@@ -10,6 +11,7 @@ export const LIMITS = {
     campUnits: 8,
     campNr: 3,
     campGeneral: 12,
+    campLosses: 40,
     unitCount: 9999,
     marks: 10,
 };
@@ -45,12 +47,18 @@ export function cleanCamps(raw) {
                 }
             });
         }
-        camps.push({ nr, general: String(entry.general ?? "").trim().slice(0, LIMITS.campGeneral), units, marks });
+        camps.push({
+            nr,
+            general: String(entry.general ?? "").trim().slice(0, LIMITS.campGeneral),
+            losses: String(entry.losses ?? "").trim().slice(0, LIMITS.campLosses),
+            units,
+            marks,
+        });
     });
     return camps;
 }
 const BUCKET = "tactic-maps";
-const MAP_COLUMNS = "id, user_id, category, title, image_path, thumb_path, status, camps, specials, tips, created_at, profiles(username)";
+const MAP_COLUMNS = "id, user_id, category, title, image_path, thumb_path, template, status, camps, specials, tips, created_at, profiles(username)";
 const URL_SECONDS = 60 * 60;
 export const STATIC_PREFIX = "statisch-";
 function fileName(path) {
@@ -67,6 +75,7 @@ function staticMaps() {
             category: map.category,
             title: map.title,
             status: "approved",
+            template: "",
             camps: [],
             specials: "",
             tips: "",
@@ -82,6 +91,8 @@ function staticMaps() {
 }
 function fromRow(row) {
     const profile = Array.isArray(row.profiles) ? row.profiles[0] : row.profiles;
+    const template = row.template ? findTemplate(row.template) : undefined;
+    const source = template?.image ?? "";
     return {
         id: row.id,
         isStatic: false,
@@ -94,16 +105,17 @@ function fromRow(row) {
         specials: row.specials ?? "",
         tips: row.tips ?? "",
         createdAt: row.created_at,
-        imagePath: row.image_path,
-        thumbPath: row.thumb_path,
-        imageUrl: "",
-        thumbUrl: "",
-        downloadUrl: "",
-        downloadName: "",
+        template: row.template ?? "",
+        imagePath: row.image_path ?? "",
+        thumbPath: row.thumb_path ?? "",
+        imageUrl: source,
+        thumbUrl: template?.thumb ?? source,
+        downloadUrl: source,
+        downloadName: source ? fileName(source) : "",
     };
 }
 async function attachThumbUrls(maps) {
-    const own = maps.filter((map) => !map.isStatic);
+    const own = maps.filter((map) => !map.isStatic && !map.template);
     if (!own.length) {
         return;
     }
@@ -113,8 +125,8 @@ async function attachThumbUrls(maps) {
     });
 }
 export async function attachImageUrls(map) {
-    if (map.isStatic) {
-        return true;
+    if (map.isStatic || map.template) {
+        return Boolean(map.imageUrl);
     }
     const [view, download] = await Promise.all([
         supabase.storage.from(BUCKET).createSignedUrl(map.imagePath, URL_SECONDS),
@@ -219,6 +231,21 @@ export async function createMap(input) {
     }
     return { id, approved: admin };
 }
+export async function createFromTemplate(input) {
+    if (!findTemplate(input.template)) {
+        return { error: "Diese Vorlage gibt es nicht mehr." };
+    }
+    const id = crypto.randomUUID();
+    const admin = await isAdmin();
+    const { error } = await supabase.from("tactic_maps").insert({
+        id,
+        category: input.category,
+        title: input.title,
+        template: input.template,
+        status: admin ? "approved" : "pending",
+    });
+    return error ? { error: translate(error) } : { id, approved: admin };
+}
 export async function updateMap(id, patch) {
     const { data, error } = await supabase.from("tactic_maps").update(patch).eq("id", id).select("id");
     if (error) {
@@ -238,7 +265,9 @@ export async function deleteMap(map) {
     if (!data.length) {
         return "Dafür hast du keine Berechtigung.";
     }
-    await supabase.storage.from(BUCKET).remove([map.imagePath, map.thumbPath]);
+    if (!map.template) {
+        await supabase.storage.from(BUCKET).remove([map.imagePath, map.thumbPath]);
+    }
     return null;
 }
 export async function loadGenerals(mapId) {

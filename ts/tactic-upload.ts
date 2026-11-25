@@ -1,7 +1,9 @@
 import { MAP_CATEGORIES } from "./data/adventure-maps.js";
 import type { MapCategoryId } from "./data/adventure-maps.js";
+import { MAP_TEMPLATES, findTemplate } from "./data/map-templates.js";
+import type { MapTemplate } from "./data/map-templates.js";
 import { esc, openDialog } from "./dom.js";
-import { LIMITS, createMap } from "./tactic-store.js";
+import { LIMITS, createFromTemplate, createMap } from "./tactic-store.js";
 
 const MAX_SOURCE = 30 * 1024 * 1024;
 const MAX_WIDTH = 3000;
@@ -48,6 +50,29 @@ function hasTransparency(bitmap: ImageBitmap): boolean {
     }
 
     return false;
+}
+
+function groupOf(template: MapTemplate): string {
+    return template.group ?? "Weitere";
+}
+
+function templateOptions(): string {
+    const groups: string[] = [];
+
+    MAP_TEMPLATES.forEach((template) => {
+        if (!groups.includes(groupOf(template))) {
+            groups.push(groupOf(template));
+        }
+    });
+
+    return groups
+        .map(
+            (group) =>
+                `<optgroup label="${esc(group)}">${MAP_TEMPLATES.filter((template) => groupOf(template) === group)
+                    .map((template) => `<option value="${esc(template.id)}">${esc(template.title)}</option>`)
+                    .join("")}</optgroup>`
+        )
+        .join("");
 }
 
 function formatSize(bytes: number): string {
@@ -138,11 +163,20 @@ export function openUploadDialog(category: MapCategoryId, admin: boolean, onCrea
         <header class="dlg-head dlg-head--simple">
             <div>
                 <h3>Neue Taktikkarte hinzufügen</h3>
-                <p class="dlg-note">Nur die Insel als transparentes PNG oder WebP, ohne Meer und ohne Rahmen. Die Karte wird im Browser auf höchstens 3000 Pixel Breite verkleinert.</p>
+                <p class="dlg-note">Wähle eine Vorlage aus der Liste der Abenteuer oder lade eine eigene Karte hoch.</p>
             </div>
         </header>
 
         <div class="upload-form">
+            ${
+                MAP_TEMPLATES.length
+                    ? `<div class="upload-mode" role="group" aria-label="Quelle der Karte">
+                        <button type="button" data-mode="template" class="is-active" aria-pressed="true">Aus Vorlage</button>
+                        <button type="button" data-mode="file" aria-pressed="false">Eigene Datei</button>
+                    </div>`
+                    : ""
+            }
+
             <label class="view-field">
                 <span>Name der Taktikkarte</span>
                 <input type="text" id="up-title" minlength="${LIMITS.title.min}" maxlength="${LIMITS.title.max}" autocomplete="off" />
@@ -157,8 +191,15 @@ export function openUploadDialog(category: MapCategoryId, admin: boolean, onCrea
                 </select>
             </label>
 
-            <label class="view-field">
-                <span>Bilddatei (PNG oder WebP, bis 30 MB)</span>
+            <label class="view-field" id="up-template-box">
+                <span>Abenteuer</span>
+                <select id="up-template">
+                    ${templateOptions()}
+                </select>
+            </label>
+
+            <label class="view-field" id="up-file-box">
+                <span>Bilddatei (nur die Insel als transparentes PNG oder WebP, bis 30 MB)</span>
                 <input type="file" id="up-file" accept="image/png,image/webp" />
             </label>
 
@@ -187,6 +228,12 @@ export function openUploadDialog(category: MapCategoryId, admin: boolean, onCrea
     const message = dialog.querySelector<HTMLElement>("#up-message")!;
     const save = dialog.querySelector<HTMLButtonElement>("#up-save")!;
 
+    const templateBox = dialog.querySelector<HTMLElement>("#up-template-box")!;
+    const fileBox = dialog.querySelector<HTMLElement>("#up-file-box")!;
+    const templateSelect = dialog.querySelector<HTMLSelectElement>("#up-template")!;
+
+    let mode: "template" | "file" = MAP_TEMPLATES.length ? "template" : "file";
+    let lastTemplateTitle = "";
     let converted: Converted | null = null;
     let previewUrl = "";
     let run = 0;
@@ -202,8 +249,59 @@ export function openUploadDialog(category: MapCategoryId, admin: boolean, onCrea
     }
 
     function updateButton(): void {
-        save.disabled = !converted || title.value.trim().length < LIMITS.title.min;
+        const ready = mode === "template" ? Boolean(findTemplate(templateSelect.value)) : Boolean(converted);
+
+        save.disabled = !ready || title.value.trim().length < LIMITS.title.min;
     }
+
+    function showTemplate(): void {
+        const template = findTemplate(templateSelect.value);
+
+        clearPreview();
+
+        if (!template) {
+            return;
+        }
+
+        if (!title.value.trim() || title.value === lastTemplateTitle) {
+            title.value = template.title;
+        }
+
+        lastTemplateTitle = template.title;
+        select.value = template.category;
+        preview.hidden = false;
+        preview.innerHTML = `<img src="${esc(template.thumb ?? template.image)}" alt="Vorschau der Vorlage" />`;
+        updateButton();
+    }
+
+    function setMode(next: "template" | "file"): void {
+        mode = next;
+        templateBox.hidden = next !== "template";
+        fileBox.hidden = next !== "file";
+        message.textContent = "";
+        dialog.querySelectorAll<HTMLButtonElement>(".upload-mode button").forEach((button) => {
+            const active = button.dataset.mode === next;
+
+            button.classList.toggle("is-active", active);
+            button.setAttribute("aria-pressed", String(active));
+        });
+
+        if (next === "template") {
+            showTemplate();
+        } else {
+            clearPreview();
+            converted = null;
+            fileInput.value = "";
+        }
+
+        updateButton();
+    }
+
+    dialog.querySelectorAll<HTMLButtonElement>(".upload-mode button").forEach((button) => {
+        button.addEventListener("click", () => setMode(button.dataset.mode as "template" | "file"));
+    });
+
+    templateSelect.addEventListener("change", showTemplate);
 
     dialog.addEventListener("close", clearPreview, { once: true });
 
@@ -246,8 +344,36 @@ export function openUploadDialog(category: MapCategoryId, admin: boolean, onCrea
         updateButton();
     });
 
+    setMode(mode);
+
     save.addEventListener("click", async () => {
         const name = title.value.trim();
+
+        if (mode === "template") {
+            if (name.length < LIMITS.title.min) {
+                message.textContent = `Gib einen Namen mit mindestens ${LIMITS.title.min} Zeichen an.`;
+                return;
+            }
+
+            save.disabled = true;
+            message.textContent = "Wird angelegt …";
+
+            const created = await createFromTemplate({
+                category: select.value as MapCategoryId,
+                title: name,
+                template: templateSelect.value,
+            });
+
+            if (created.error || !created.id) {
+                message.textContent = created.error ?? "Das hat nicht geklappt.";
+                save.disabled = false;
+                return;
+            }
+
+            dialog.close();
+            onCreated(created.id);
+            return;
+        }
 
         if (!converted || name.length < LIMITS.title.min) {
             message.textContent = `Gib einen Namen mit mindestens ${LIMITS.title.min} Zeichen an.`;
