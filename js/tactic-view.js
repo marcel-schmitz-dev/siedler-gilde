@@ -331,7 +331,7 @@ function renderMarkPanel(body, map) {
             return;
         }
         const highest = Math.max(0, ...map.camps.map((camp) => parseInt(camp.nr, 10) || 0));
-        map.camps.push({ nr: String(highest + 1), general: "", units: [], marks: [] });
+        map.camps.push({ nr: String(highest + 1), general: "", losses: "", units: [], marks: [] });
         selectedCamp = map.camps.length - 1;
         dirty = true;
         renderMarkPanel(body, map);
@@ -384,7 +384,7 @@ function renderCamps(body, map, canEdit) {
             return `<span class="camp-unit" title="${esc(unit.name)}">${entry.count}&nbsp;${esc(unit.abbr)}</span>`;
         })
             .join(" ");
-        return `<tr><th scope="row">${esc(camp.nr)}.</th><td>${esc(camp.general) || "–"}</td><td>${units || "–"}</td></tr>`;
+        return `<tr><th scope="row">${esc(camp.nr)}.</th><td>${esc(camp.general) || "–"}</td><td>${units || "–"}</td><td class="camp-losses">${esc(camp.losses) || "–"}</td></tr>`;
     })
         .join("");
     const legend = [...used.entries()].map(([abbr, name]) => `${esc(abbr)} = ${esc(name)}`).join(" · ");
@@ -392,7 +392,7 @@ function renderCamps(body, map, canEdit) {
         ${rows
         ? `<div class="camp-scroll" tabindex="0" aria-label="Tabelle der Lager">
                     <table class="camp-table">
-                        <thead><tr><th scope="col">Lager</th><th scope="col">General</th><th scope="col">Einheiten</th></tr></thead>
+                        <thead><tr><th scope="col">Lager</th><th scope="col">General</th><th scope="col">Einheiten</th><th scope="col" class="camp-losses">Verluste</th></tr></thead>
                         <tbody>${rows}</tbody>
                     </table>
                 </div>
@@ -446,6 +446,8 @@ function openCampEditor(map, onSaved) {
                         <input type="text" data-f="nr" maxlength="${LIMITS.campNr}" value="${esc(camp.nr)}" inputmode="numeric" /></label>
                     <label class="view-field"><span>General</span>
                         <input type="text" data-f="general" list="camp-generals" maxlength="${LIMITS.campGeneral}" value="${esc(camp.general)}" /></label>
+                    <label class="view-field"><span>Verluste</span>
+                        <input type="text" data-f="losses" maxlength="${LIMITS.campLosses}" value="${esc(camp.losses)}" placeholder="z. B. 12 BSS" /></label>
                     <button type="button" class="wiz-button wiz-button--danger" data-act="rm-camp">Lager entfernen</button>
                 </div>
                 <div class="camp-row__units">
@@ -474,7 +476,7 @@ function openCampEditor(map, onSaved) {
             return;
         }
         const camp = draft[Number(row.dataset.i)];
-        if (name === "nr" || name === "general") {
+        if (name === "nr" || name === "general" || name === "losses") {
             camp[name] = field.value;
             return;
         }
@@ -509,7 +511,7 @@ function openCampEditor(map, onSaved) {
             text.textContent = `Höchstens ${LIMITS.camps} Lager pro Karte.`;
             return;
         }
-        draft.push({ nr: String(draft.length + 1), general: "", units: [], marks: [] });
+        draft.push({ nr: String(draft.length + 1), general: "", losses: "", units: [], marks: [] });
         draw();
         host.lastElementChild?.scrollIntoView({ block: "nearest" });
     });

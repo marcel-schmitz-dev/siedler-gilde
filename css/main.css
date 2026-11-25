@@ -3155,6 +3155,30 @@ body.has-tactic-fullscreen {
   gap: 14px;
 }
 
+.upload-form [hidden] {
+  display: none;
+}
+
+.upload-mode {
+  display: flex;
+  gap: 8px;
+}
+.upload-mode button {
+  padding: 8px 16px;
+  border: 1px solid rgba(214, 169, 76, 0.5);
+  border-radius: 20px;
+  background: transparent;
+  color: #F5F0E3;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.upload-mode button.is-active {
+  border-color: #F2D27D;
+  background: rgba(214, 169, 76, 0.25);
+  color: #F2D27D;
+}
+
 .upload-preview {
   display: grid;
   gap: 6px;
@@ -3283,7 +3307,7 @@ body.has-tactic-fullscreen {
   z-index: 5;
   display: flex;
   flex-direction: column;
-  width: min(370px, 88%);
+  width: min(440px, 88%);
   max-height: 80%;
   border: 2px solid rgba(217, 164, 65, 0.9);
   border-radius: 8px;
@@ -3386,6 +3410,11 @@ body.has-tactic-fullscreen {
   font-family: Georgia, "Times New Roman", serif;
   text-align: center;
   white-space: nowrap;
+}
+
+.camp-losses {
+  color: #ff7b7b !important;
+  font-weight: 700;
 }
 
 .camp-unit {
