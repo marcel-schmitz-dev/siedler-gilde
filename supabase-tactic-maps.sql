@@ -57,6 +57,10 @@ create table public.tactic_maps (
       else false
     end
   ),
+  -- Positionen, Beschriftungen und Linien auf der Karte: {"pins": [{"t": "P1", "x": 0.2, "y": 0.4}], "lines": [{"x1": 0.1, "y1": 0.1, "x2": 0.3, "y2": 0.2}]}
+  shapes      jsonb not null default '{"pins": [], "lines": []}'::jsonb check (
+    jsonb_typeof(shapes) = 'object' and char_length(shapes::text) <= 20000
+  ),
   specials    text not null default '' check (char_length(specials) <= 1500),
   tips        text not null default '' check (char_length(tips) <= 1500),
   created_at  timestamptz not null default now(),
@@ -155,7 +159,7 @@ create policy "Taktikkarte löschen"
 -- Spalten-Rechte: status, user_id und Dateipfade lassen sich nach dem Anlegen nicht mehr ändern
 revoke all on public.tactic_maps from anon, authenticated;
 grant select, insert, delete on public.tactic_maps to authenticated;
-grant update (category, title, camps, specials, tips) on public.tactic_maps to authenticated;
+grant update (category, title, camps, shapes, specials, tips) on public.tactic_maps to authenticated;
 
 -- Freigabe nur über diese Funktion
 create or replace function public.set_tactic_map_status(p_id uuid, p_status text)
@@ -355,7 +359,7 @@ create policy "Taktikkarten-Dateien löschen"
 --    or (schemaname = 'storage' and policyname like 'Taktikkarten-Dateien%')
 -- order by tablename, cmd;
 
--- Test 3: Spalten, die Mitglieder ändern dürfen (erwartet: category, title, camps, specials, tips, note, username)
+-- Test 3: Spalten, die Mitglieder ändern dürfen (erwartet: category, title, camps, shapes, specials, tips, note, username)
 -- select table_name, column_name from information_schema.column_privileges
 -- where grantee = 'authenticated' and privilege_type = 'UPDATE'
 --   and table_name in ('tactic_maps', 'tactic_map_generals', 'profiles')
