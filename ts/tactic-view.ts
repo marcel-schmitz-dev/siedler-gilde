@@ -1,7 +1,7 @@
 import { MAP_CATEGORIES } from "./data/adventure-maps.js";
 import type { SlotId } from "./data/tactic-frame.js";
 import { GENERALS } from "./data/specialists.js";
-import { FERNKAMPF_NAMES } from "./data/fernkampf.js";
+import { FERNKAMPF } from "./data/fernkampf.js";
 import { BATTLE_UNITS, findBattleUnit } from "./data/units.js";
 import { esc, openDialog } from "./dom.js";
 import { findUnit, getCurrentUser, loadBuilds } from "./skill-builds.js";
@@ -710,7 +710,7 @@ function openCampEditor(map: TacticMap, onSaved: () => void): void {
         <div id="camp-edit"></div>
 
         <datalist id="fk-options">
-            ${FERNKAMPF_NAMES.map((name) => `<option value="${esc(name)}"></option>`).join("")}
+            ${FERNKAMPF.map((item) => `<option value="${esc(item.name)}" label="${esc(item.effect)}"></option>`).join("")}
         </datalist>
 
         <datalist id="camp-generals">
