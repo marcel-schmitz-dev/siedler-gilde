@@ -16,6 +16,12 @@ export const LIMITS = {
     campUnits: 8,
     campNr: 3,
     campGeneral: 12,
+    campFk: 6,
+    fkName: 30,
+    fkCount: 99,
+    pins: 30,
+    pinText: 4,
+    lines: 30,
     campLosses: 40,
     unitCount: 9999,
     marks: 10,
@@ -31,12 +37,73 @@ export interface CampMark {
     y: number;
 }
 
+export interface CampFk {
+    name: string;
+    count: number;
+}
+
 export interface Camp {
     nr: string;
     general: string;
     losses: string;
     units: CampUnit[];
+    fk: CampFk[];
     marks: CampMark[];
+}
+
+export interface Pin {
+    t: string;
+    x: number;
+    y: number;
+}
+
+export interface Line {
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
+}
+
+export interface Shapes {
+    pins: Pin[];
+    lines: Line[];
+}
+
+function fraction(value: unknown): number | null {
+    const number = Number(value);
+
+    return number >= 0 && number <= 1 ? Math.round(number * 10000) / 10000 : null;
+}
+
+export function cleanShapes(raw: unknown): Shapes {
+    const source = (raw ?? {}) as { pins?: unknown; lines?: unknown };
+    const shapes: Shapes = { pins: [], lines: [] };
+
+    if (Array.isArray(source.pins)) {
+        source.pins.slice(0, LIMITS.pins).forEach((value) => {
+            const pin = value as { t?: unknown; x?: unknown; y?: unknown };
+            const t = String(pin.t ?? "").trim().slice(0, LIMITS.pinText);
+            const x = fraction(pin.x);
+            const y = fraction(pin.y);
+
+            if (t && x !== null && y !== null) {
+                shapes.pins.push({ t, x, y });
+            }
+        });
+    }
+
+    if (Array.isArray(source.lines)) {
+        source.lines.slice(0, LIMITS.lines).forEach((value) => {
+            const line = value as Record<string, unknown>;
+            const [x1, y1, x2, y2] = [line.x1, line.y1, line.x2, line.y2].map(fraction);
+
+            if (x1 !== null && y1 !== null && x2 !== null && y2 !== null) {
+                shapes.lines.push({ x1, y1, x2, y2 });
+            }
+        });
+    }
+
+    return shapes;
 }
 
 export function cleanCamps(raw: unknown): Camp[] {
@@ -47,7 +114,7 @@ export function cleanCamps(raw: unknown): Camp[] {
     const camps: Camp[] = [];
 
     raw.slice(0, LIMITS.camps).forEach((item) => {
-        const entry = item as { nr?: unknown; general?: unknown; losses?: unknown; units?: unknown; marks?: unknown };
+        const entry = item as { nr?: unknown; general?: unknown; losses?: unknown; units?: unknown; fk?: unknown; marks?: unknown };
         const nr = String(entry.nr ?? "").trim().slice(0, LIMITS.campNr);
 
         if (!nr) {
@@ -63,6 +130,20 @@ export function cleanCamps(raw: unknown): Camp[] {
 
                 if (typeof row.unit === "string" && row.unit && count >= 1 && count <= LIMITS.unitCount) {
                     units.push({ unit: row.unit, count });
+                }
+            });
+        }
+
+        const fk: CampFk[] = [];
+
+        if (Array.isArray(entry.fk)) {
+            entry.fk.slice(0, LIMITS.campFk).forEach((value) => {
+                const row = value as { name?: unknown; count?: unknown };
+                const name = String(row.name ?? "").trim().slice(0, LIMITS.fkName);
+                const count = Math.floor(Number(row.count));
+
+                if (name && count >= 1 && count <= LIMITS.fkCount) {
+                    fk.push({ name, count });
                 }
             });
         }
@@ -86,6 +167,7 @@ export function cleanCamps(raw: unknown): Camp[] {
             general: String(entry.general ?? "").trim().slice(0, LIMITS.campGeneral),
             losses: String(entry.losses ?? "").trim().slice(0, LIMITS.campLosses),
             units,
+            fk,
             marks,
         });
     });
@@ -103,6 +185,7 @@ export interface TacticMap {
     status: MapStatus;
     template: string;
     camps: Camp[];
+    shapes: Shapes;
     specials: string;
     tips: string;
     createdAt: string;
@@ -130,6 +213,7 @@ interface MapRow {
     template: string | null;
     status: MapStatus;
     camps: unknown;
+    shapes: unknown;
     specials: string | null;
     tips: string | null;
     created_at: string;
@@ -138,7 +222,7 @@ interface MapRow {
 
 const BUCKET = "tactic-maps";
 const MAP_COLUMNS =
-    "id, user_id, category, title, image_path, thumb_path, template, status, camps, specials, tips, created_at, profiles(username)";
+    "id, user_id, category, title, image_path, thumb_path, template, status, camps, shapes, specials, tips, created_at, profiles(username)";
 const URL_SECONDS = 60 * 60;
 
 export const STATIC_PREFIX = "statisch-";
@@ -161,6 +245,7 @@ function staticMaps(): TacticMap[] {
             status: "approved",
             template: "",
             camps: [],
+            shapes: { pins: [], lines: [] },
             specials: "",
             tips: "",
             createdAt: "",
@@ -189,6 +274,7 @@ function fromRow(row: MapRow): TacticMap {
         title: row.title,
         status: row.status,
         camps: cleanCamps(row.camps),
+        shapes: cleanShapes(row.shapes),
         specials: row.specials ?? "",
         tips: row.tips ?? "",
         createdAt: row.created_at,
@@ -391,7 +477,7 @@ export async function createFromTemplate(input: {
 
 export async function updateMap(
     id: string,
-    patch: Partial<Pick<TacticMap, "title" | "camps" | "specials" | "tips" | "category">>
+    patch: Partial<Pick<TacticMap, "title" | "camps" | "shapes" | "specials" | "tips" | "category">>
 ): Promise<string | null> {
     const { data, error } = await supabase.from("tactic_maps").update(patch).eq("id", id).select("id");
 

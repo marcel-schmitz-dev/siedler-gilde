@@ -91,7 +91,10 @@ export function mountTacticFrame(root, options) {
     const eyeButton = root.querySelector('[data-act="marks"]');
     const pinButton = root.querySelector('[data-act="mark"]');
     let marks = [];
+    let lines = [];
+    let pending = null;
     let marking = false;
+    let lineEdit = false;
     function positionMarks() {
         const { iw, ih } = size();
         if (!iw) {
@@ -101,12 +104,37 @@ export function mountTacticFrame(root, options) {
             const mark = marks[index];
             element.style.transform = `translate(${tx + mark.x * iw * scale}px, ${ty + mark.y * ih * scale}px)`;
         });
+        const px = (x) => tx + x * iw * scale;
+        const py = (y) => ty + y * ih * scale;
+        layer.querySelectorAll("svg line").forEach((element) => {
+            const line = lines.find((item) => item.key === element.dataset.key);
+            if (line) {
+                element.setAttribute("x1", String(px(line.x1)));
+                element.setAttribute("y1", String(py(line.y1)));
+                element.setAttribute("x2", String(px(line.x2)));
+                element.setAttribute("y2", String(py(line.y2)));
+            }
+        });
+        const dot = layer.querySelector("svg circle");
+        if (dot && pending) {
+            dot.setAttribute("cx", String(px(pending.x)));
+            dot.setAttribute("cy", String(py(pending.y)));
+        }
     }
     function renderMarks() {
-        layer.innerHTML = marks
-            .map((mark) => `<div class="tactic__mark" data-key="${esc(mark.key)}" role="img" aria-label="Lager ${esc(mark.nr)}"><span>${esc(mark.nr)}</span></div>`)
-            .join("");
-        eyeButton.hidden = marks.length === 0;
+        const svg = `<svg class="tactic__lines" aria-hidden="true">${lines
+            .map((line) => `<line class="tactic__line-hit" data-key="${esc(line.key)}" /><line class="tactic__line" data-key="${esc(line.key)}" />`)
+            .join("")}${pending ? '<circle class="tactic__pending" r="6" />' : ""}</svg>`;
+        layer.innerHTML =
+            svg +
+                marks
+                    .map((mark) => {
+                    const pin = mark.kind === "pin";
+                    const label = pin ? `Position ${mark.nr}` : `Lager ${mark.nr}`;
+                    return `<div class="tactic__mark${pin ? " tactic__mark--pin" : ""}${mark.nr.length > 2 ? " is-long" : ""}" data-key="${esc(mark.key)}" role="img" aria-label="${esc(label)}"><span>${esc(mark.nr)}</span></div>`;
+                })
+                    .join("");
+        eyeButton.hidden = marks.length === 0 && lines.length === 0;
         positionMarks();
     }
     function fraction(event) {
@@ -119,13 +147,19 @@ export function mountTacticFrame(root, options) {
     }
     let markDrag = null;
     layer.addEventListener("pointerdown", (event) => {
+        const hit = event.target.closest(".tactic__line-hit");
+        if (marking && lineEdit && hit) {
+            event.stopPropagation();
+            options.onRemoveLine?.(hit.dataset.key);
+            return;
+        }
         const element = event.target.closest(".tactic__mark");
         if (!marking || !element) {
             return;
         }
         event.stopPropagation();
         element.setPointerCapture(event.pointerId);
-        const index = [...layer.children].indexOf(element);
+        const index = [...layer.querySelectorAll(".tactic__mark")].indexOf(element);
         markDrag = { key: marks[index].key, index, x: event.clientX, y: event.clientY, moved: false };
     });
     layer.addEventListener("pointermove", (event) => {
@@ -529,10 +563,20 @@ export function mountTacticFrame(root, options) {
             marks = next.map((mark) => ({ ...mark }));
             renderMarks();
         },
-        setMarking(on) {
+        setLines(next) {
+            lines = next.map((line) => ({ ...line }));
+            renderMarks();
+        },
+        setPending(point) {
+            pending = point;
+            renderMarks();
+        },
+        setMarking(on, lineMode = false) {
             marking = on;
+            lineEdit = on && lineMode;
             view.classList.toggle("is-marking", on);
             layer.classList.toggle("is-editing", on);
+            layer.classList.toggle("is-line-edit", on && lineMode);
             pinButton?.setAttribute("aria-pressed", String(on));
         },
         destroy() {

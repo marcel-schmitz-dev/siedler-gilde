@@ -13,10 +13,20 @@ export interface TacticFrameOptions {
     onPlaceMark?: (x: number, y: number) => void;
     onRemoveMark?: (key: string) => void;
     onMoveMark?: (key: string, x: number, y: number) => void;
+    onRemoveLine?: (key: string) => void;
+}
+
+export interface MapLine {
+    key: string;
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
 }
 
 export interface MapMark {
     key: string;
+    kind?: "camp" | "pin";
     nr: string;
     x: number; // Anteil an der Bildbreite, 0 bis 1
     y: number; // Anteil an der Bildhöhe, 0 bis 1
@@ -33,7 +43,9 @@ export interface TacticFrame {
     closePanel(): void;
     panelId(): string;
     setMarks(marks: MapMark[]): void;
-    setMarking(on: boolean): void;
+    setLines(lines: MapLine[]): void;
+    setPending(point: { x: number; y: number } | null): void;
+    setMarking(on: boolean, lineEdit?: boolean): void;
 }
 
 const ICONS = {
@@ -146,7 +158,10 @@ export function mountTacticFrame(root: HTMLElement, options: TacticFrameOptions)
     const eyeButton = root.querySelector<HTMLButtonElement>('[data-act="marks"]')!;
     const pinButton = root.querySelector<HTMLButtonElement>('[data-act="mark"]');
     let marks: MapMark[] = [];
+    let lines: MapLine[] = [];
+    let pending: { x: number; y: number } | null = null;
     let marking = false;
+    let lineEdit = false;
 
     function positionMarks(): void {
         const { iw, ih } = size();
@@ -160,16 +175,48 @@ export function mountTacticFrame(root: HTMLElement, options: TacticFrameOptions)
 
             element.style.transform = `translate(${tx + mark.x * iw * scale}px, ${ty + mark.y * ih * scale}px)`;
         });
+
+        const px = (x: number): number => tx + x * iw * scale;
+        const py = (y: number): number => ty + y * ih * scale;
+
+        layer.querySelectorAll<SVGLineElement>("svg line").forEach((element) => {
+            const line = lines.find((item) => item.key === element.dataset.key);
+
+            if (line) {
+                element.setAttribute("x1", String(px(line.x1)));
+                element.setAttribute("y1", String(py(line.y1)));
+                element.setAttribute("x2", String(px(line.x2)));
+                element.setAttribute("y2", String(py(line.y2)));
+            }
+        });
+
+        const dot = layer.querySelector<SVGCircleElement>("svg circle");
+
+        if (dot && pending) {
+            dot.setAttribute("cx", String(px(pending.x)));
+            dot.setAttribute("cy", String(py(pending.y)));
+        }
     }
 
     function renderMarks(): void {
-        layer.innerHTML = marks
+        const svg = `<svg class="tactic__lines" aria-hidden="true">${lines
             .map(
-                (mark) =>
-                    `<div class="tactic__mark" data-key="${esc(mark.key)}" role="img" aria-label="Lager ${esc(mark.nr)}"><span>${esc(mark.nr)}</span></div>`
+                (line) =>
+                    `<line class="tactic__line-hit" data-key="${esc(line.key)}" /><line class="tactic__line" data-key="${esc(line.key)}" />`
             )
-            .join("");
-        eyeButton.hidden = marks.length === 0;
+            .join("")}${pending ? '<circle class="tactic__pending" r="6" />' : ""}</svg>`;
+
+        layer.innerHTML =
+            svg +
+            marks
+                .map((mark) => {
+                    const pin = mark.kind === "pin";
+                    const label = pin ? `Position ${mark.nr}` : `Lager ${mark.nr}`;
+
+                    return `<div class="tactic__mark${pin ? " tactic__mark--pin" : ""}${mark.nr.length > 2 ? " is-long" : ""}" data-key="${esc(mark.key)}" role="img" aria-label="${esc(label)}"><span>${esc(mark.nr)}</span></div>`;
+                })
+                .join("");
+        eyeButton.hidden = marks.length === 0 && lines.length === 0;
         positionMarks();
     }
 
@@ -186,6 +233,14 @@ export function mountTacticFrame(root: HTMLElement, options: TacticFrameOptions)
     let markDrag: { key: string; index: number; x: number; y: number; moved: boolean } | null = null;
 
     layer.addEventListener("pointerdown", (event) => {
+        const hit = (event.target as Element).closest<SVGLineElement>(".tactic__line-hit");
+
+        if (marking && lineEdit && hit) {
+            event.stopPropagation();
+            options.onRemoveLine?.(hit.dataset.key!);
+            return;
+        }
+
         const element = (event.target as HTMLElement).closest<HTMLElement>(".tactic__mark");
 
         if (!marking || !element) {
@@ -195,7 +250,7 @@ export function mountTacticFrame(root: HTMLElement, options: TacticFrameOptions)
         event.stopPropagation();
         element.setPointerCapture(event.pointerId);
 
-        const index = [...layer.children].indexOf(element);
+        const index = [...layer.querySelectorAll(".tactic__mark")].indexOf(element);
 
         markDrag = { key: marks[index].key, index, x: event.clientX, y: event.clientY, moved: false };
     });
@@ -699,10 +754,20 @@ export function mountTacticFrame(root: HTMLElement, options: TacticFrameOptions)
             marks = next.map((mark) => ({ ...mark }));
             renderMarks();
         },
-        setMarking(on: boolean): void {
+        setLines(next: MapLine[]): void {
+            lines = next.map((line) => ({ ...line }));
+            renderMarks();
+        },
+        setPending(point: { x: number; y: number } | null): void {
+            pending = point;
+            renderMarks();
+        },
+        setMarking(on: boolean, lineMode = false): void {
             marking = on;
+            lineEdit = on && lineMode;
             view.classList.toggle("is-marking", on);
             layer.classList.toggle("is-editing", on);
+            layer.classList.toggle("is-line-edit", on && lineMode);
             pinButton?.setAttribute("aria-pressed", String(on));
         },
         destroy(): void {

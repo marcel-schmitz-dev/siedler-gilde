@@ -1,11 +1,12 @@
 import { MAP_CATEGORIES } from "./data/adventure-maps.js";
 import { GENERALS } from "./data/specialists.js";
+import { FERNKAMPF_NAMES } from "./data/fernkampf.js";
 import { BATTLE_UNITS, findBattleUnit } from "./data/units.js";
 import { esc, openDialog } from "./dom.js";
 import { findUnit, getCurrentUser, loadBuilds } from "./skill-builds.js";
 import { cardHtml, openBuild } from "./skill-builds-view.js";
 import { mountTacticFrame } from "./tactic-frame.js";
-import { LIMITS, addGeneral, cleanCamps, deleteMap, getMap, isAdmin, loadGenerals, removeGeneral, setStatus, updateMap, } from "./tactic-store.js";
+import { LIMITS, addGeneral, cleanCamps, cleanShapes, deleteMap, getMap, isAdmin, loadGenerals, removeGeneral, setStatus, updateMap, } from "./tactic-store.js";
 export const TACTIC_HASH = "taktikkarte-";
 let frame = null;
 let token = 0;
@@ -67,9 +68,10 @@ export async function renderTacticView(root, id) {
         onPlaceMark: (x, y) => placeMark(map, x, y),
         onRemoveMark: (key) => removeMark(map, key),
         onMoveMark: (key, x, y) => moveMark(map, key, x, y),
+        onRemoveLine: (key) => removeLine(map, key),
     });
     marking = false;
-    frame.setMarks(flattenMarks(map));
+    showShapes(map);
     const buttons = [];
     if (admin && !map.isStatic) {
         buttons.push(map.status === "pending"
@@ -218,51 +220,33 @@ function showText(map, slot, canEdit, editing) {
         showText(map, slot, canEdit, false);
     });
 }
-// --------------------------------------------------
-// Lager direkt auf der Karte markieren
-// --------------------------------------------------
 let marking = false;
+let drawMode = "camp";
 let selectedCamp = 0;
+let markText = "A";
+let pendingPoint = null;
 let dirty = false;
 let snapshot = "";
+function round(value) {
+    return Math.round(value * 10000) / 10000;
+}
 function flattenMarks(map) {
-    return map.camps.flatMap((camp, ci) => camp.marks.map((mark, mi) => ({ key: `${ci}:${mi}`, nr: camp.nr, x: mark.x, y: mark.y })));
+    const camps = map.camps.flatMap((camp, ci) => camp.marks.map((mark, mi) => ({ key: `c:${ci}:${mi}`, kind: "camp", nr: camp.nr, x: mark.x, y: mark.y })));
+    const pins = map.shapes.pins.map((pin, i) => ({ key: `p:${i}`, kind: "pin", nr: pin.t, x: pin.x, y: pin.y }));
+    return [...camps, ...pins];
+}
+function flattenLines(map) {
+    return map.shapes.lines.map((line, i) => ({ key: `l:${i}`, ...line }));
+}
+function showShapes(map) {
+    frame?.setMarks(flattenMarks(map));
+    frame?.setLines(flattenLines(map));
 }
 function refreshMarks(map) {
-    frame?.setMarks(flattenMarks(map));
+    showShapes(map);
     const panelBody = document.querySelector(".tactic__panel-body");
     if (marking && panelBody && frame?.panelId() === "mark") {
         renderMarkPanel(panelBody, map);
-    }
-}
-function placeMark(map, x, y) {
-    const camp = map.camps[selectedCamp];
-    if (!camp) {
-        setMarkMessage("Lege zuerst ein Lager an.");
-        return;
-    }
-    if (camp.marks.length >= LIMITS.marks) {
-        setMarkMessage(`Pro Lager höchstens ${LIMITS.marks} Markierungen.`);
-        return;
-    }
-    camp.marks.push({ x: Math.round(x * 10000) / 10000, y: Math.round(y * 10000) / 10000 });
-    dirty = true;
-    refreshMarks(map);
-}
-function removeMark(map, key) {
-    const [ci, mi] = key.split(":").map(Number);
-    map.camps[ci]?.marks.splice(mi, 1);
-    dirty = true;
-    refreshMarks(map);
-}
-function moveMark(map, key, x, y) {
-    const [ci, mi] = key.split(":").map(Number);
-    const mark = map.camps[ci]?.marks[mi];
-    if (mark) {
-        mark.x = Math.round(x * 10000) / 10000;
-        mark.y = Math.round(y * 10000) / 10000;
-        dirty = true;
-        refreshMarks(map);
     }
 }
 function setMarkMessage(text) {
@@ -271,14 +255,93 @@ function setMarkMessage(text) {
         element.textContent = text;
     }
 }
+function nextPinText(map) {
+    const used = map.shapes.pins.map((pin) => /^P(\d+)$/.exec(pin.t)).filter((hit) => Boolean(hit));
+    const highest = Math.max(0, ...used.map((hit) => Number(hit[1])));
+    return `P${highest + 1}`;
+}
+function placeMark(map, x, y) {
+    const point = { x: round(x), y: round(y) };
+    if (drawMode === "camp") {
+        const camp = map.camps[selectedCamp];
+        if (!camp) {
+            setMarkMessage("Lege zuerst ein Lager an.");
+            return;
+        }
+        if (camp.marks.length >= LIMITS.marks) {
+            setMarkMessage(`Pro Lager höchstens ${LIMITS.marks} Markierungen.`);
+            return;
+        }
+        camp.marks.push(point);
+    }
+    else if (drawMode === "line") {
+        if (!pendingPoint) {
+            pendingPoint = point;
+            frame?.setPending(point);
+            setMarkMessage("Jetzt den Endpunkt der Linie anklicken.");
+            return;
+        }
+        if (map.shapes.lines.length >= LIMITS.lines) {
+            setMarkMessage(`Höchstens ${LIMITS.lines} Linien.`);
+            return;
+        }
+        map.shapes.lines.push({ x1: pendingPoint.x, y1: pendingPoint.y, x2: point.x, y2: point.y });
+        pendingPoint = null;
+        frame?.setPending(null);
+    }
+    else {
+        if (map.shapes.pins.length >= LIMITS.pins) {
+            setMarkMessage(`Höchstens ${LIMITS.pins} Positionen und Beschriftungen.`);
+            return;
+        }
+        const t = drawMode === "pin" ? nextPinText(map) : markText.trim().slice(0, LIMITS.pinText);
+        if (!t) {
+            setMarkMessage("Gib zuerst einen Text ein, zum Beispiel A oder FK.");
+            return;
+        }
+        map.shapes.pins.push({ t, ...point });
+    }
+    dirty = true;
+    refreshMarks(map);
+}
+function removeMark(map, key) {
+    const [kind, first, second] = key.split(":");
+    if (kind === "c") {
+        map.camps[Number(first)]?.marks.splice(Number(second), 1);
+    }
+    else {
+        map.shapes.pins.splice(Number(first), 1);
+    }
+    dirty = true;
+    refreshMarks(map);
+}
+function moveMark(map, key, x, y) {
+    const [kind, first, second] = key.split(":");
+    const target = kind === "c" ? map.camps[Number(first)]?.marks[Number(second)] : map.shapes.pins[Number(first)];
+    if (target) {
+        target.x = round(x);
+        target.y = round(y);
+        dirty = true;
+        refreshMarks(map);
+    }
+}
+function removeLine(map, key) {
+    map.shapes.lines.splice(Number(key.split(":")[1]), 1);
+    dirty = true;
+    refreshMarks(map);
+}
 function stopMarking(map, discard) {
     if (discard && dirty) {
-        map.camps = cleanCamps(JSON.parse(snapshot));
+        const saved = JSON.parse(snapshot);
+        map.camps = cleanCamps(saved.camps);
+        map.shapes = cleanShapes(saved.shapes);
     }
     marking = false;
     dirty = false;
+    pendingPoint = null;
+    frame?.setPending(null);
     frame?.setMarking(false);
-    frame?.setMarks(flattenMarks(map));
+    showShapes(map);
 }
 function toggleMarking(map) {
     if (!frame) {
@@ -290,10 +353,12 @@ function toggleMarking(map) {
     }
     marking = true;
     dirty = false;
+    drawMode = "camp";
     selectedCamp = 0;
-    snapshot = JSON.stringify(map.camps);
-    frame.setMarking(true);
-    const body = frame.openPanel("mark", "Lager markieren", {
+    pendingPoint = null;
+    snapshot = JSON.stringify({ camps: map.camps, shapes: map.shapes });
+    frame.setMarking(true, false);
+    const body = frame.openPanel("mark", "Auf der Karte markieren", {
         beforeClose: () => !dirty || window.confirm("Nicht gespeicherte Markierungen verwerfen?"),
         onClose: () => {
             if (marking) {
@@ -303,35 +368,67 @@ function toggleMarking(map) {
     });
     renderMarkPanel(body, map);
 }
+const MODE_LABELS = {
+    camp: "Lager",
+    pin: "Position P",
+    text: "Text",
+    line: "Linie",
+};
+const MODE_HELP = {
+    camp: "Lager wählen, dann auf die Karte klicken.",
+    pin: "Klicken setzt P1, P2, … für die Stellen, an denen Generäle stehen sollen.",
+    text: "Text eingeben (zum Beispiel A oder FK) und auf die Karte klicken.",
+    line: "Anfang und Ende anklicken. Eine Linie anklicken entfernt sie.",
+};
 function renderMarkPanel(body, map) {
+    const camps = drawMode === "camp"
+        ? `<div class="mark-list">${map.camps.length
+            ? map.camps
+                .map((camp, i) => `<button type="button" class="mark-camp${i === selectedCamp ? " is-selected" : ""}" data-i="${i}" aria-pressed="${i === selectedCamp}"><b>${esc(camp.nr)}</b><span>${esc(camp.general) || "–"}</span><small>${camp.marks.length}×</small></button>`)
+                .join("")
+            : `<p class="camp-empty">Lege zuerst ein Lager an.</p>`}</div>`
+        : drawMode === "text"
+            ? `<label class="mark-text">Text <input type="text" id="mark-text" maxlength="${LIMITS.pinText}" value="${esc(markText)}" /></label>`
+            : "";
     body.innerHTML = `
-        <p class="mark-help">Lager wählen, dann auf die Karte klicken. Markierung anklicken entfernt sie, ziehen verschiebt sie.</p>
-        <div class="mark-list">
-            ${map.camps.length
-        ? map.camps
-            .map((camp, i) => `<button type="button" class="mark-camp${i === selectedCamp ? " is-selected" : ""}" data-i="${i}" aria-pressed="${i === selectedCamp}"><b>${esc(camp.nr)}</b><span>${esc(camp.general) || "–"}</span><small>${camp.marks.length}×</small></button>`)
-            .join("")
-        : `<p class="camp-empty">Lege zuerst ein Lager an.</p>`}
+        <div class="mark-modes" role="group" aria-label="Was setzen?">
+            ${Object.keys(MODE_LABELS)
+        .map((mode) => `<button type="button" class="mark-mode${mode === drawMode ? " is-selected" : ""}" data-mode="${mode}" aria-pressed="${mode === drawMode}">${MODE_LABELS[mode]}</button>`)
+        .join("")}
         </div>
+        <p class="mark-help">${MODE_HELP[drawMode]} Markierung anklicken entfernt sie, ziehen verschiebt sie.</p>
+        ${camps}
         <div class="mark-actions">
-            <button type="button" class="camp-edit" data-mark-add>+ Lager</button>
+            ${drawMode === "camp" ? `<button type="button" class="camp-edit" data-mark-add>+ Lager</button>` : ""}
             <button type="button" class="camp-edit" data-mark-save>Speichern</button>
             <button type="button" class="camp-edit" data-mark-done>Beenden</button>
         </div>
         <p class="camp-legend" id="mark-message" role="status">${dirty ? "Nicht gespeichert." : ""}</p>`;
+    body.querySelectorAll(".mark-mode").forEach((button) => {
+        button.addEventListener("click", () => {
+            drawMode = button.dataset.mode;
+            pendingPoint = null;
+            frame?.setPending(null);
+            frame?.setMarking(true, drawMode === "line");
+            renderMarkPanel(body, map);
+        });
+    });
     body.querySelectorAll(".mark-camp").forEach((button) => {
         button.addEventListener("click", () => {
             selectedCamp = Number(button.dataset.i);
             renderMarkPanel(body, map);
         });
     });
-    body.querySelector("[data-mark-add]").addEventListener("click", () => {
+    body.querySelector("#mark-text")?.addEventListener("input", (event) => {
+        markText = event.target.value;
+    });
+    body.querySelector("[data-mark-add]")?.addEventListener("click", () => {
         if (map.camps.length >= LIMITS.camps) {
             setMarkMessage(`Höchstens ${LIMITS.camps} Lager pro Karte.`);
             return;
         }
         const highest = Math.max(0, ...map.camps.map((camp) => parseInt(camp.nr, 10) || 0));
-        map.camps.push({ nr: String(highest + 1), general: "", losses: "", units: [], marks: [] });
+        map.camps.push({ nr: String(highest + 1), general: "", losses: "", units: [], fk: [], marks: [] });
         selectedCamp = map.camps.length - 1;
         dirty = true;
         renderMarkPanel(body, map);
@@ -339,16 +436,18 @@ function renderMarkPanel(body, map) {
     body.querySelector("[data-mark-save]").addEventListener("click", async (event) => {
         const button = event.currentTarget;
         const camps = cleanCamps(map.camps);
+        const shapes = cleanShapes(map.shapes);
         button.disabled = true;
         setMarkMessage("Wird gespeichert …");
-        const error = await updateMap(map.id, { camps });
+        const error = await updateMap(map.id, { camps, shapes });
         button.disabled = false;
         if (error) {
             setMarkMessage(error);
             return;
         }
         map.camps = camps;
-        snapshot = JSON.stringify(camps);
+        map.shapes = shapes;
+        snapshot = JSON.stringify({ camps, shapes });
         dirty = false;
         refreshMarks(map);
         setMarkMessage("Gespeichert.");
@@ -384,7 +483,13 @@ function renderCamps(body, map, canEdit) {
             return `<span class="camp-unit" title="${esc(unit.name)}">${entry.count}&nbsp;${esc(unit.abbr)}</span>`;
         })
             .join(" ");
-        return `<tr><th scope="row">${esc(camp.nr)}.</th><td>${esc(camp.general) || "–"}</td><td>${units || "–"}</td><td class="camp-losses">${esc(camp.losses) || "–"}</td></tr>`;
+        const fk = camp.fk
+            .map((entry) => {
+            used.set("FK", "Fernkampf");
+            return `<span class="camp-unit camp-unit--fk" title="Fernkampf">FK&nbsp;${entry.count}×&nbsp;${esc(entry.name)}</span>`;
+        })
+            .join(" ");
+        return `<tr><th scope="row">${esc(camp.nr)}.</th><td>${esc(camp.general) || "–"}</td><td>${[units, fk].filter(Boolean).join(" ") || "–"}</td><td class="camp-losses">${esc(camp.losses) || "–"}</td></tr>`;
     })
         .join("");
     const legend = [...used.entries()].map(([abbr, name]) => `${esc(abbr)} = ${esc(name)}`).join(" · ");
@@ -400,7 +505,7 @@ function renderCamps(body, map, canEdit) {
         : `<p class="camp-empty">Für diese Karte sind noch keine Lager eingetragen.</p>`}
         ${canEdit ? `<button type="button" class="camp-edit" data-camp-edit>Lager bearbeiten</button>` : ""}`;
     body.querySelector("[data-camp-edit]")?.addEventListener("click", () => openCampEditor(map, () => {
-        frame?.setMarks(flattenMarks(map));
+        showShapes(map);
         if (frame?.panelId() === "units") {
             renderCamps(frame.openPanel("units", "Einheiten pro Lager"), map, canEdit);
         }
@@ -417,6 +522,10 @@ function openCampEditor(map, onSaved) {
         </header>
 
         <div id="camp-edit"></div>
+
+        <datalist id="fk-options">
+            ${FERNKAMPF_NAMES.map((name) => `<option value="${esc(name)}"></option>`).join("")}
+        </datalist>
 
         <datalist id="camp-generals">
             ${GENERALS.filter((general) => general.abbr)
@@ -459,9 +568,22 @@ function openCampEditor(map, onSaved) {
                         <button type="button" data-act="rm-unit" aria-label="Einheit entfernen">×</button>
                     </div>`)
                 .join("")}
-                    ${camp.units.length < LIMITS.campUnits
+                    ${camp.fk
+                .map((entry, k) => `
+                    <div class="camp-line camp-line--fk" data-k="${k}">
+                        <input type="number" data-f="fk-count" min="1" max="${LIMITS.fkCount}" value="${entry.count}" aria-label="Anzahl" />
+                        <input type="text" data-f="fk-name" list="fk-options" maxlength="${LIMITS.fkName}" value="${esc(entry.name)}" placeholder="Fernkampf, z. B. Brandpfeil" aria-label="Fernkampf" />
+                        <button type="button" data-act="rm-fk" aria-label="Fernkampf entfernen">×</button>
+                    </div>`)
+                .join("")}
+                    <div class="camp-row__add">
+                        ${camp.units.length < LIMITS.campUnits
                 ? `<button type="button" class="wiz-button wiz-button--ghost" data-act="add-unit">+ Einheit</button>`
                 : ""}
+                        ${camp.fk.length < LIMITS.campFk
+                ? `<button type="button" class="wiz-button wiz-button--ghost" data-act="add-fk">+ Fernkampf</button>`
+                : ""}
+                    </div>
                 </div>
             </fieldset>`)
                 .join("")
@@ -478,6 +600,16 @@ function openCampEditor(map, onSaved) {
         const camp = draft[Number(row.dataset.i)];
         if (name === "nr" || name === "general" || name === "losses") {
             camp[name] = field.value;
+            return;
+        }
+        if (name === "fk-count" || name === "fk-name") {
+            const fkEntry = camp.fk[Number(field.closest(".camp-line").dataset.k)];
+            if (name === "fk-count") {
+                fkEntry.count = Number(field.value);
+            }
+            else {
+                fkEntry.name = field.value;
+            }
             return;
         }
         const entry = camp.units[Number(field.closest(".camp-line").dataset.j)];
@@ -498,6 +630,12 @@ function openCampEditor(map, onSaved) {
         if (button.dataset.act === "rm-camp") {
             draft.splice(Number(row.dataset.i), 1);
         }
+        else if (button.dataset.act === "add-fk") {
+            camp.fk.push({ name: "", count: 1 });
+        }
+        else if (button.dataset.act === "rm-fk") {
+            camp.fk.splice(Number(button.closest(".camp-line").dataset.k), 1);
+        }
         else if (button.dataset.act === "add-unit") {
             camp.units.push({ unit: camp.units[camp.units.length - 1]?.unit ?? BATTLE_UNITS[0].slug, count: 50 });
         }
@@ -511,7 +649,7 @@ function openCampEditor(map, onSaved) {
             text.textContent = `Höchstens ${LIMITS.camps} Lager pro Karte.`;
             return;
         }
-        draft.push({ nr: String(draft.length + 1), general: "", losses: "", units: [], marks: [] });
+        draft.push({ nr: String(draft.length + 1), general: "", losses: "", units: [], fk: [], marks: [] });
         draw();
         host.lastElementChild?.scrollIntoView({ block: "nearest" });
     });

@@ -433,6 +433,62 @@ body.has-tactic-fullscreen {
     }
 }
 
+.tactic__lines {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    overflow: visible;
+
+    pointer-events: none;
+}
+
+.tactic__line {
+    stroke: #ff4d4d;
+    stroke-width: 3;
+    stroke-linecap: round;
+
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.8));
+}
+
+.tactic__line-hit {
+    stroke: transparent;
+    stroke-width: 16;
+    stroke-linecap: round;
+}
+
+.is-line-edit .tactic__line-hit {
+    pointer-events: stroke;
+
+    cursor: pointer;
+}
+
+.tactic__pending {
+    fill: #ff4d4d;
+
+    stroke: #fff;
+    stroke-width: 2;
+}
+
+.tactic__mark.tactic__mark--pin {
+    border-color: #ff5a5a;
+
+    background: rgba(40, 10, 10, 0.82);
+
+    color: #fff;
+
+    &.is-long {
+        width: 38px;
+        margin: -14px 0 0 -19px;
+
+        border-radius: 14px;
+
+        font-size: 12px;
+    }
+}
+
 .tactic__view.is-marking {
     cursor: crosshair;
 }
@@ -475,6 +531,54 @@ body.has-tactic-fullscreen {
 .mark-help {
     color: rgba(241, 226, 189, 0.85);
     font-size: 12px;
+}
+
+.mark-modes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.mark-mode {
+    padding: 4px 12px;
+
+    border: 1px solid rgba(217, 164, 65, 0.5);
+    border-radius: 6px;
+
+    background: rgba(0, 0, 0, 0.3);
+
+    color: #f1e2bd;
+    font: inherit;
+
+    cursor: pointer;
+
+    &.is-selected {
+        border-color: #ffe08a;
+
+        background: rgba(246, 221, 154, 0.28);
+
+        color: #fff;
+    }
+}
+
+.mark-text {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    input {
+        width: 70px;
+
+        padding: 4px 8px;
+
+        border: 1px solid rgba(217, 164, 65, 0.6);
+        border-radius: 5px;
+
+        background: rgba(0, 0, 0, 0.4);
+
+        color: #fff;
+        font: inherit;
+    }
 }
 
 .mark-list {
@@ -945,6 +1049,10 @@ body.has-tactic-fullscreen {
     font-weight: 700;
 }
 
+.camp-unit--fk {
+    color: #ffc98a;
+}
+
 .camp-unit {
     display: inline-block;
 
@@ -1010,6 +1118,16 @@ body.has-tactic-fullscreen {
         align-items: flex-start;
         gap: 8px;
     }
+}
+
+.camp-row__add {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.camp-line--fk input[type="text"] {
+    min-width: 260px;
 }
 
 .camp-line {

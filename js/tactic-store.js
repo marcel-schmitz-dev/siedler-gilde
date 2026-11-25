@@ -11,10 +11,45 @@ export const LIMITS = {
     campUnits: 8,
     campNr: 3,
     campGeneral: 12,
+    campFk: 6,
+    fkName: 30,
+    fkCount: 99,
+    pins: 30,
+    pinText: 4,
+    lines: 30,
     campLosses: 40,
     unitCount: 9999,
     marks: 10,
 };
+function fraction(value) {
+    const number = Number(value);
+    return number >= 0 && number <= 1 ? Math.round(number * 10000) / 10000 : null;
+}
+export function cleanShapes(raw) {
+    const source = (raw ?? {});
+    const shapes = { pins: [], lines: [] };
+    if (Array.isArray(source.pins)) {
+        source.pins.slice(0, LIMITS.pins).forEach((value) => {
+            const pin = value;
+            const t = String(pin.t ?? "").trim().slice(0, LIMITS.pinText);
+            const x = fraction(pin.x);
+            const y = fraction(pin.y);
+            if (t && x !== null && y !== null) {
+                shapes.pins.push({ t, x, y });
+            }
+        });
+    }
+    if (Array.isArray(source.lines)) {
+        source.lines.slice(0, LIMITS.lines).forEach((value) => {
+            const line = value;
+            const [x1, y1, x2, y2] = [line.x1, line.y1, line.x2, line.y2].map(fraction);
+            if (x1 !== null && y1 !== null && x2 !== null && y2 !== null) {
+                shapes.lines.push({ x1, y1, x2, y2 });
+            }
+        });
+    }
+    return shapes;
+}
 export function cleanCamps(raw) {
     if (!Array.isArray(raw)) {
         return [];
@@ -36,6 +71,17 @@ export function cleanCamps(raw) {
                 }
             });
         }
+        const fk = [];
+        if (Array.isArray(entry.fk)) {
+            entry.fk.slice(0, LIMITS.campFk).forEach((value) => {
+                const row = value;
+                const name = String(row.name ?? "").trim().slice(0, LIMITS.fkName);
+                const count = Math.floor(Number(row.count));
+                if (name && count >= 1 && count <= LIMITS.fkCount) {
+                    fk.push({ name, count });
+                }
+            });
+        }
         const marks = [];
         if (Array.isArray(entry.marks)) {
             entry.marks.slice(0, LIMITS.marks).forEach((value) => {
@@ -52,13 +98,14 @@ export function cleanCamps(raw) {
             general: String(entry.general ?? "").trim().slice(0, LIMITS.campGeneral),
             losses: String(entry.losses ?? "").trim().slice(0, LIMITS.campLosses),
             units,
+            fk,
             marks,
         });
     });
     return camps;
 }
 const BUCKET = "tactic-maps";
-const MAP_COLUMNS = "id, user_id, category, title, image_path, thumb_path, template, status, camps, specials, tips, created_at, profiles(username)";
+const MAP_COLUMNS = "id, user_id, category, title, image_path, thumb_path, template, status, camps, shapes, specials, tips, created_at, profiles(username)";
 const URL_SECONDS = 60 * 60;
 export const STATIC_PREFIX = "statisch-";
 function fileName(path) {
@@ -77,6 +124,7 @@ function staticMaps() {
             status: "approved",
             template: "",
             camps: [],
+            shapes: { pins: [], lines: [] },
             specials: "",
             tips: "",
             createdAt: "",
@@ -102,6 +150,7 @@ function fromRow(row) {
         title: row.title,
         status: row.status,
         camps: cleanCamps(row.camps),
+        shapes: cleanShapes(row.shapes),
         specials: row.specials ?? "",
         tips: row.tips ?? "",
         createdAt: row.created_at,

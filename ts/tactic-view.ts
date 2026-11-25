@@ -1,16 +1,18 @@
 import { MAP_CATEGORIES } from "./data/adventure-maps.js";
 import type { SlotId } from "./data/tactic-frame.js";
 import { GENERALS } from "./data/specialists.js";
+import { FERNKAMPF_NAMES } from "./data/fernkampf.js";
 import { BATTLE_UNITS, findBattleUnit } from "./data/units.js";
 import { esc, openDialog } from "./dom.js";
 import { findUnit, getCurrentUser, loadBuilds } from "./skill-builds.js";
 import { cardHtml, openBuild } from "./skill-builds-view.js";
 import { mountTacticFrame } from "./tactic-frame.js";
-import type { MapMark, TacticFrame } from "./tactic-frame.js";
+import type { MapLine, MapMark, TacticFrame } from "./tactic-frame.js";
 import {
     LIMITS,
     addGeneral,
     cleanCamps,
+    cleanShapes,
     deleteMap,
     getMap,
     isAdmin,
@@ -96,10 +98,11 @@ export async function renderTacticView(root: HTMLElement, id: string): Promise<v
         onPlaceMark: (x, y) => placeMark(map, x, y),
         onRemoveMark: (key) => removeMark(map, key),
         onMoveMark: (key, x, y) => moveMark(map, key, x, y),
+        onRemoveLine: (key) => removeLine(map, key),
     });
 
     marking = false;
-    frame.setMarks(flattenMarks(map));
+    showShapes(map);
 
     const buttons: string[] = [];
 
@@ -313,63 +316,48 @@ function showText(map: TacticMap, slot: "specials" | "tips", canEdit: boolean, e
 }
 
 // --------------------------------------------------
-// Lager direkt auf der Karte markieren
+// Lager, Positionen und Linien direkt auf der Karte setzen
 // --------------------------------------------------
 
+type DrawMode = "camp" | "pin" | "text" | "line";
+
 let marking = false;
+let drawMode: DrawMode = "camp";
 let selectedCamp = 0;
+let markText = "A";
+let pendingPoint: { x: number; y: number } | null = null;
 let dirty = false;
 let snapshot = "";
 
+function round(value: number): number {
+    return Math.round(value * 10000) / 10000;
+}
+
 function flattenMarks(map: TacticMap): MapMark[] {
-    return map.camps.flatMap((camp, ci) => camp.marks.map((mark, mi) => ({ key: `${ci}:${mi}`, nr: camp.nr, x: mark.x, y: mark.y })));
+    const camps: MapMark[] = map.camps.flatMap((camp, ci) =>
+        camp.marks.map((mark, mi) => ({ key: `c:${ci}:${mi}`, kind: "camp" as const, nr: camp.nr, x: mark.x, y: mark.y }))
+    );
+    const pins: MapMark[] = map.shapes.pins.map((pin, i) => ({ key: `p:${i}`, kind: "pin" as const, nr: pin.t, x: pin.x, y: pin.y }));
+
+    return [...camps, ...pins];
+}
+
+function flattenLines(map: TacticMap): MapLine[] {
+    return map.shapes.lines.map((line, i) => ({ key: `l:${i}`, ...line }));
+}
+
+function showShapes(map: TacticMap): void {
+    frame?.setMarks(flattenMarks(map));
+    frame?.setLines(flattenLines(map));
 }
 
 function refreshMarks(map: TacticMap): void {
-    frame?.setMarks(flattenMarks(map));
+    showShapes(map);
 
     const panelBody = document.querySelector<HTMLElement>(".tactic__panel-body");
 
     if (marking && panelBody && frame?.panelId() === "mark") {
         renderMarkPanel(panelBody, map);
-    }
-}
-
-function placeMark(map: TacticMap, x: number, y: number): void {
-    const camp = map.camps[selectedCamp];
-
-    if (!camp) {
-        setMarkMessage("Lege zuerst ein Lager an.");
-        return;
-    }
-
-    if (camp.marks.length >= LIMITS.marks) {
-        setMarkMessage(`Pro Lager höchstens ${LIMITS.marks} Markierungen.`);
-        return;
-    }
-
-    camp.marks.push({ x: Math.round(x * 10000) / 10000, y: Math.round(y * 10000) / 10000 });
-    dirty = true;
-    refreshMarks(map);
-}
-
-function removeMark(map: TacticMap, key: string): void {
-    const [ci, mi] = key.split(":").map(Number);
-
-    map.camps[ci]?.marks.splice(mi, 1);
-    dirty = true;
-    refreshMarks(map);
-}
-
-function moveMark(map: TacticMap, key: string, x: number, y: number): void {
-    const [ci, mi] = key.split(":").map(Number);
-    const mark = map.camps[ci]?.marks[mi];
-
-    if (mark) {
-        mark.x = Math.round(x * 10000) / 10000;
-        mark.y = Math.round(y * 10000) / 10000;
-        dirty = true;
-        refreshMarks(map);
     }
 }
 
@@ -381,15 +369,111 @@ function setMarkMessage(text: string): void {
     }
 }
 
+function nextPinText(map: TacticMap): string {
+    const used = map.shapes.pins.map((pin) => /^P(\d+)$/.exec(pin.t)).filter((hit): hit is RegExpExecArray => Boolean(hit));
+    const highest = Math.max(0, ...used.map((hit) => Number(hit[1])));
+
+    return `P${highest + 1}`;
+}
+
+function placeMark(map: TacticMap, x: number, y: number): void {
+    const point = { x: round(x), y: round(y) };
+
+    if (drawMode === "camp") {
+        const camp = map.camps[selectedCamp];
+
+        if (!camp) {
+            setMarkMessage("Lege zuerst ein Lager an.");
+            return;
+        }
+
+        if (camp.marks.length >= LIMITS.marks) {
+            setMarkMessage(`Pro Lager höchstens ${LIMITS.marks} Markierungen.`);
+            return;
+        }
+
+        camp.marks.push(point);
+    } else if (drawMode === "line") {
+        if (!pendingPoint) {
+            pendingPoint = point;
+            frame?.setPending(point);
+            setMarkMessage("Jetzt den Endpunkt der Linie anklicken.");
+            return;
+        }
+
+        if (map.shapes.lines.length >= LIMITS.lines) {
+            setMarkMessage(`Höchstens ${LIMITS.lines} Linien.`);
+            return;
+        }
+
+        map.shapes.lines.push({ x1: pendingPoint.x, y1: pendingPoint.y, x2: point.x, y2: point.y });
+        pendingPoint = null;
+        frame?.setPending(null);
+    } else {
+        if (map.shapes.pins.length >= LIMITS.pins) {
+            setMarkMessage(`Höchstens ${LIMITS.pins} Positionen und Beschriftungen.`);
+            return;
+        }
+
+        const t = drawMode === "pin" ? nextPinText(map) : markText.trim().slice(0, LIMITS.pinText);
+
+        if (!t) {
+            setMarkMessage("Gib zuerst einen Text ein, zum Beispiel A oder FK.");
+            return;
+        }
+
+        map.shapes.pins.push({ t, ...point });
+    }
+
+    dirty = true;
+    refreshMarks(map);
+}
+
+function removeMark(map: TacticMap, key: string): void {
+    const [kind, first, second] = key.split(":");
+
+    if (kind === "c") {
+        map.camps[Number(first)]?.marks.splice(Number(second), 1);
+    } else {
+        map.shapes.pins.splice(Number(first), 1);
+    }
+
+    dirty = true;
+    refreshMarks(map);
+}
+
+function moveMark(map: TacticMap, key: string, x: number, y: number): void {
+    const [kind, first, second] = key.split(":");
+    const target = kind === "c" ? map.camps[Number(first)]?.marks[Number(second)] : map.shapes.pins[Number(first)];
+
+    if (target) {
+        target.x = round(x);
+        target.y = round(y);
+        dirty = true;
+        refreshMarks(map);
+    }
+}
+
+function removeLine(map: TacticMap, key: string): void {
+    map.shapes.lines.splice(Number(key.split(":")[1]), 1);
+    dirty = true;
+    refreshMarks(map);
+}
+
 function stopMarking(map: TacticMap, discard: boolean): void {
     if (discard && dirty) {
-        map.camps = cleanCamps(JSON.parse(snapshot));
+        const saved = JSON.parse(snapshot) as { camps: unknown; shapes: unknown };
+
+        map.camps = cleanCamps(saved.camps);
+        map.shapes = cleanShapes(saved.shapes);
     }
 
     marking = false;
     dirty = false;
+    pendingPoint = null;
+    frame?.setPending(null);
     frame?.setMarking(false);
-    frame?.setMarks(flattenMarks(map));
+    showShapes(map);
 }
 
 function toggleMarking(map: TacticMap): void {
@@ -404,11 +488,13 @@ function toggleMarking(map: TacticMap): void {
 
     marking = true;
     dirty = false;
+    drawMode = "camp";
     selectedCamp = 0;
-    snapshot = JSON.stringify(map.camps);
-    frame.setMarking(true);
+    pendingPoint = null;
+    snapshot = JSON.stringify({ camps: map.camps, shapes: map.shapes });
+    frame.setMarking(true, false);
 
-    const body = frame.openPanel("mark", "Lager markieren", {
+    const body = frame.openPanel("mark", "Auf der Karte markieren", {
         beforeClose: () => !dirty || window.confirm("Nicht gespeicherte Markierungen verwerfen?"),
         onClose: () => {
             if (marking) {
@@ -420,27 +506,64 @@ function toggleMarking(map: TacticMap): void {
     renderMarkPanel(body, map);
 }
 
+const MODE_LABELS: Record<DrawMode, string> = {
+    camp: "Lager",
+    pin: "Position P",
+    text: "Text",
+    line: "Linie",
+};
+
+const MODE_HELP: Record<DrawMode, string> = {
+    camp: "Lager wählen, dann auf die Karte klicken.",
+    pin: "Klicken setzt P1, P2, … für die Stellen, an denen Generäle stehen sollen.",
+    text: "Text eingeben (zum Beispiel A oder FK) und auf die Karte klicken.",
+    line: "Anfang und Ende anklicken. Eine Linie anklicken entfernt sie.",
+};
+
 function renderMarkPanel(body: HTMLElement, map: TacticMap): void {
+    const camps =
+        drawMode === "camp"
+            ? `<div class="mark-list">${
+                  map.camps.length
+                      ? map.camps
+                            .map(
+                                (camp, i) =>
+                                    `<button type="button" class="mark-camp${i === selectedCamp ? " is-selected" : ""}" data-i="${i}" aria-pressed="${i === selectedCamp}"><b>${esc(camp.nr)}</b><span>${esc(camp.general) || "–"}</span><small>${camp.marks.length}×</small></button>`
+                            )
+                            .join("")
+                      : `<p class="camp-empty">Lege zuerst ein Lager an.</p>`
+              }</div>`
+            : drawMode === "text"
+              ? `<label class="mark-text">Text <input type="text" id="mark-text" maxlength="${LIMITS.pinText}" value="${esc(markText)}" /></label>`
+              : "";
+
     body.innerHTML = `
-        <p class="mark-help">Lager wählen, dann auf die Karte klicken. Markierung anklicken entfernt sie, ziehen verschiebt sie.</p>
-        <div class="mark-list">
-            ${
-                map.camps.length
-                    ? map.camps
-                          .map(
-                              (camp, i) =>
-                                  `<button type="button" class="mark-camp${i === selectedCamp ? " is-selected" : ""}" data-i="${i}" aria-pressed="${i === selectedCamp}"><b>${esc(camp.nr)}</b><span>${esc(camp.general) || "–"}</span><small>${camp.marks.length}×</small></button>`
-                          )
-                          .join("")
-                    : `<p class="camp-empty">Lege zuerst ein Lager an.</p>`
-            }
+        <div class="mark-modes" role="group" aria-label="Was setzen?">
+            ${(Object.keys(MODE_LABELS) as DrawMode[])
+                .map(
+                    (mode) =>
+                        `<button type="button" class="mark-mode${mode === drawMode ? " is-selected" : ""}" data-mode="${mode}" aria-pressed="${mode === drawMode}">${MODE_LABELS[mode]}</button>`
+                )
+                .join("")}
         </div>
+        <p class="mark-help">${MODE_HELP[drawMode]} Markierung anklicken entfernt sie, ziehen verschiebt sie.</p>
+        ${camps}
         <div class="mark-actions">
-            <button type="button" class="camp-edit" data-mark-add>+ Lager</button>
+            ${drawMode === "camp" ? `<button type="button" class="camp-edit" data-mark-add>+ Lager</button>` : ""}
             <button type="button" class="camp-edit" data-mark-save>Speichern</button>
             <button type="button" class="camp-edit" data-mark-done>Beenden</button>
         </div>
         <p class="camp-legend" id="mark-message" role="status">${dirty ? "Nicht gespeichert." : ""}</p>`;
+
+    body.querySelectorAll<HTMLButtonElement>(".mark-mode").forEach((button) => {
+        button.addEventListener("click", () => {
+            drawMode = button.dataset.mode as DrawMode;
+            pendingPoint = null;
+            frame?.setPending(null);
+            frame?.setMarking(true, drawMode === "line");
+            renderMarkPanel(body, map);
+        });
+    });
 
     body.querySelectorAll<HTMLButtonElement>(".mark-camp").forEach((button) => {
         button.addEventListener("click", () => {
@@ -449,7 +572,11 @@ function renderMarkPanel(body: HTMLElement, map: TacticMap): void {
         });
     });
 
-    body.querySelector("[data-mark-add]")!.addEventListener("click", () => {
+    body.querySelector<HTMLInputElement>("#mark-text")?.addEventListener("input", (event) => {
+        markText = (event.target as HTMLInputElement).value;
+    });
+
+    body.querySelector("[data-mark-add]")?.addEventListener("click", () => {
         if (map.camps.length >= LIMITS.camps) {
             setMarkMessage(`Höchstens ${LIMITS.camps} Lager pro Karte.`);
             return;
@@ -457,7 +584,7 @@ function renderMarkPanel(body: HTMLElement, map: TacticMap): void {
 
         const highest = Math.max(0, ...map.camps.map((camp) => parseInt(camp.nr, 10) || 0));
 
-        map.camps.push({ nr: String(highest + 1), general: "", losses: "", units: [], marks: [] });
+        map.camps.push({ nr: String(highest + 1), general: "", losses: "", units: [], fk: [], marks: [] });
         selectedCamp = map.camps.length - 1;
         dirty = true;
         renderMarkPanel(body, map);
@@ -466,11 +593,12 @@ function renderMarkPanel(body: HTMLElement, map: TacticMap): void {
     body.querySelector<HTMLButtonElement>("[data-mark-save]")!.addEventListener("click", async (event) => {
         const button = event.currentTarget as HTMLButtonElement;
         const camps = cleanCamps(map.camps);
+        const shapes = cleanShapes(map.shapes);
 
         button.disabled = true;
         setMarkMessage("Wird gespeichert …");
 
-        const error = await updateMap(map.id, { camps });
+        const error = await updateMap(map.id, { camps, shapes });
 
         button.disabled = false;
 
@@ -480,7 +608,8 @@ function renderMarkPanel(body: HTMLElement, map: TacticMap): void {
         }
 
         map.camps = camps;
-        snapshot = JSON.stringify(camps);
+        map.shapes = shapes;
+        snapshot = JSON.stringify({ camps, shapes });
         dirty = false;
         refreshMarks(map);
         setMarkMessage("Gespeichert.");
@@ -527,7 +656,15 @@ function renderCamps(body: HTMLElement, map: TacticMap, canEdit: boolean): void 
                 })
                 .join(" ");
 
-            return `<tr><th scope="row">${esc(camp.nr)}.</th><td>${esc(camp.general) || "–"}</td><td>${units || "–"}</td><td class="camp-losses">${esc(camp.losses) || "–"}</td></tr>`;
+            const fk = camp.fk
+                .map((entry) => {
+                    used.set("FK", "Fernkampf");
+
+                    return `<span class="camp-unit camp-unit--fk" title="Fernkampf">FK&nbsp;${entry.count}×&nbsp;${esc(entry.name)}</span>`;
+                })
+                .join(" ");
+
+            return `<tr><th scope="row">${esc(camp.nr)}.</th><td>${esc(camp.general) || "–"}</td><td>${[units, fk].filter(Boolean).join(" ") || "–"}</td><td class="camp-losses">${esc(camp.losses) || "–"}</td></tr>`;
         })
         .join("");
 
@@ -549,7 +686,7 @@ function renderCamps(body: HTMLElement, map: TacticMap, canEdit: boolean): void 
 
     body.querySelector("[data-camp-edit]")?.addEventListener("click", () =>
         openCampEditor(map, () => {
-            frame?.setMarks(flattenMarks(map));
+            showShapes(map);
 
             if (frame?.panelId() === "units") {
                 renderCamps(frame.openPanel("units", "Einheiten pro Lager"), map, canEdit);
@@ -571,6 +708,10 @@ function openCampEditor(map: TacticMap, onSaved: () => void): void {
         </header>
 
         <div id="camp-edit"></div>
+
+        <datalist id="fk-options">
+            ${FERNKAMPF_NAMES.map((name) => `<option value="${esc(name)}"></option>`).join("")}
+        </datalist>
 
         <datalist id="camp-generals">
             ${GENERALS.filter((general) => general.abbr)
@@ -623,11 +764,28 @@ function openCampEditor(map: TacticMap, onSaved: () => void): void {
                     </div>`
                         )
                         .join("")}
-                    ${
-                        camp.units.length < LIMITS.campUnits
-                            ? `<button type="button" class="wiz-button wiz-button--ghost" data-act="add-unit">+ Einheit</button>`
-                            : ""
-                    }
+                    ${camp.fk
+                        .map(
+                            (entry, k) => `
+                    <div class="camp-line camp-line--fk" data-k="${k}">
+                        <input type="number" data-f="fk-count" min="1" max="${LIMITS.fkCount}" value="${entry.count}" aria-label="Anzahl" />
+                        <input type="text" data-f="fk-name" list="fk-options" maxlength="${LIMITS.fkName}" value="${esc(entry.name)}" placeholder="Fernkampf, z. B. Brandpfeil" aria-label="Fernkampf" />
+                        <button type="button" data-act="rm-fk" aria-label="Fernkampf entfernen">×</button>
+                    </div>`
+                        )
+                        .join("")}
+                    <div class="camp-row__add">
+                        ${
+                            camp.units.length < LIMITS.campUnits
+                                ? `<button type="button" class="wiz-button wiz-button--ghost" data-act="add-unit">+ Einheit</button>`
+                                : ""
+                        }
+                        ${
+                            camp.fk.length < LIMITS.campFk
+                                ? `<button type="button" class="wiz-button wiz-button--ghost" data-act="add-fk">+ Fernkampf</button>`
+                                : ""
+                        }
+                    </div>
                 </div>
             </fieldset>`
                   )
@@ -653,6 +811,17 @@ function openCampEditor(map: TacticMap, onSaved: () => void): void {
             return;
         }
 
+        if (name === "fk-count" || name === "fk-name") {
+            const fkEntry = camp.fk[Number(field.closest<HTMLElement>(".camp-line")!.dataset.k)];
+
+            if (name === "fk-count") {
+                fkEntry.count = Number(field.value);
+            } else {
+                fkEntry.name = field.value;
+            }
+            return;
+        }
+
         const entry = camp.units[Number(field.closest<HTMLElement>(".camp-line")!.dataset.j)];
 
         if (name === "count") {
@@ -674,6 +843,10 @@ function openCampEditor(map: TacticMap, onSaved: () => void): void {
 
         if (button.dataset.act === "rm-camp") {
             draft.splice(Number(row.dataset.i), 1);
+        } else if (button.dataset.act === "add-fk") {
+            camp.fk.push({ name: "", count: 1 });
+        } else if (button.dataset.act === "rm-fk") {
+            camp.fk.splice(Number(button.closest<HTMLElement>(".camp-line")!.dataset.k), 1);
         } else if (button.dataset.act === "add-unit") {
             camp.units.push({ unit: camp.units[camp.units.length - 1]?.unit ?? BATTLE_UNITS[0].slug, count: 50 });
         } else {
@@ -689,7 +862,7 @@ function openCampEditor(map: TacticMap, onSaved: () => void): void {
             return;
         }
 
-        draft.push({ nr: String(draft.length + 1), general: "", losses: "", units: [], marks: [] });
+        draft.push({ nr: String(draft.length + 1), general: "", losses: "", units: [], fk: [], marks: [] });
         draw();
         host.lastElementChild?.scrollIntoView({ block: "nearest" });
     });
