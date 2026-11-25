@@ -44,9 +44,10 @@ create table public.tactic_maps (
   user_id     uuid not null default auth.uid() references public.profiles (id) on delete cascade,
   category    text not null check (category in ('klassisch', 'maerchen', 'szenario', 'unternehmungen', 'koop')),
   title       text not null check (char_length(btrim(title)) between 3 and 60),
-  -- Dateien liegen im Bucket "tactic-maps" im Ordner der Benutzer-ID
-  image_path  text not null check (char_length(image_path) <= 200 and image_path like user_id::text || '/%'),
-  thumb_path  text not null check (char_length(thumb_path) <= 200 and thumb_path like user_id::text || '/%'),
+  -- entweder eigene Datei im Bucket "tactic-maps" (Ordner der Benutzer-ID) oder eine Vorlage aus ts/data/map-templates.ts
+  image_path  text,
+  thumb_path  text,
+  template    text,
   status      text not null default 'pending' check (status in ('pending', 'approved')),
   -- Lager: [{"nr": "1", "general": "Ent.", "units": [{"unit": "schwertkaempfer", "count": 50}]}]
   camps       jsonb not null default '[]'::jsonb check (
@@ -61,6 +62,21 @@ create table public.tactic_maps (
   created_at  timestamptz not null default now(),
   updated_at  timestamptz not null default now()
 );
+
+alter table public.tactic_maps
+  add constraint tactic_maps_source_check check (
+    coalesce(
+      (template is not null and char_length(template) <= 80 and image_path is null and thumb_path is null)
+      or (
+        template is null
+        and image_path is not null and thumb_path is not null
+        and char_length(image_path) <= 200 and char_length(thumb_path) <= 200
+        and image_path like user_id::text || '/%'
+        and thumb_path like user_id::text || '/%'
+      ),
+      false
+    )
+  );
 
 create index tactic_maps_category_idx on public.tactic_maps (category, status);
 create index tactic_maps_user_idx on public.tactic_maps (user_id);
