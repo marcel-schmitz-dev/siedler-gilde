@@ -4,38 +4,11 @@
 // und hier einen Eintrag in ADVENTURE_MAPS ergänzen.
 // ==================================================
 export const MAP_CATEGORIES = [
-    {
-        id: "klassisch",
-        title: "Klassisch",
-        description: "Taktikkarten und Aufstellungen für klassische Abenteuer.",
-    },
-    {
-        id: "maerchen",
-        title: "Märchen",
-        description: "Taktikkarten und Aufstellungen für Märchen-Abenteuer.",
-    },
-    {
-        id: "szenario",
-        title: "Szenario",
-        description: "Taktikkarten und Aufstellungen für Szenario-Abenteuer.",
-    },
-    {
-        id: "unternehmungen",
-        title: "Unternehmungen",
-        description: "Taktikkarten und Aufstellungen für Unternehmungen.",
-    },
-    {
-        id: "koop",
-        title: "Koop",
-        description: "Taktikkarten und Aufstellungen für Koop-Abenteuer.",
-    },
+    { id: "klassisch", title: "Klassisch", description: "Taktikkarten und Aufstellungen für klassische Abenteuer." },
+    { id: "maerchen", title: "Märchen", description: "Taktikkarten und Aufstellungen für Märchen-Abenteuer." },
+    { id: "szenario", title: "Szenario", description: "Taktikkarten und Aufstellungen für Szenario-Abenteuer." },
+    { id: "unternehmungen", title: "Unternehmungen", description: "Taktikkarten und Aufstellungen für Unternehmungen." },
+    { id: "koop", title: "Koop", description: "Taktikkarten und Aufstellungen für Koop-Abenteuer." },
 ];
-export const ADVENTURE_MAPS = [
-    {
-        category: "",
-        title: "",
-        image: "",
-        author: "Matze85s",
-    },
-];
+export const ADVENTURE_MAPS = [];
 //# sourceMappingURL=adventure-maps.js.map
