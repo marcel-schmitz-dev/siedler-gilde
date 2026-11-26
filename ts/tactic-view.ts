@@ -1,5 +1,6 @@
 import { MAP_CATEGORIES } from "./data/adventure-maps.js";
 import type { SlotId } from "./data/tactic-frame.js";
+import { totalLosses, totalUnits } from "./camp-totals.js";
 import { GENERALS } from "./data/specialists.js";
 import { FERNKAMPF } from "./data/fernkampf.js";
 import { BATTLE_UNITS, findBattleUnit } from "./data/units.js";
@@ -668,6 +669,20 @@ function renderCamps(body: HTMLElement, map: TacticMap, canEdit: boolean): void 
         })
         .join("");
 
+    const totals = totalUnits(map.camps);
+    const losses = totalLosses(map.camps);
+
+    totals.units.forEach((entry) => used.set(entry.abbr, entry.name));
+    losses.items.forEach((entry) => used.set(entry.abbr, entry.name));
+
+    const totalUnitsHtml = [
+        ...totals.units.map((entry) => `<span class="camp-unit" title="${esc(entry.name)}">${entry.count}&nbsp;${esc(entry.abbr)}</span>`),
+        ...totals.fk.map((entry) => `<span class="camp-unit camp-unit--fk" title="Fernkampf">FK&nbsp;${entry.count}×&nbsp;${esc(entry.name)}</span>`),
+    ].join(" ");
+    const totalLossesHtml = losses.items
+        .map((entry) => `<span class="camp-unit" title="${esc(entry.name)}">${entry.count}&nbsp;${esc(entry.abbr)}</span>`)
+        .join(" ");
+
     const legend = [...used.entries()].map(([abbr, name]) => `${esc(abbr)} = ${esc(name)}`).join(" · ");
 
     body.innerHTML = `
@@ -677,6 +692,14 @@ function renderCamps(body: HTMLElement, map: TacticMap, canEdit: boolean): void 
                     <table class="camp-table">
                         <thead><tr><th scope="col">Lager</th><th scope="col">General</th><th scope="col">Einheiten</th><th scope="col" class="camp-losses">Verluste</th></tr></thead>
                         <tbody>${rows}</tbody>
+                        <tfoot>
+                            <tr class="camp-total">
+                                <th scope="row">Σ</th>
+                                <td>Gesamt</td>
+                                <td>${totalUnitsHtml || "–"}</td>
+                                <td class="camp-losses">${totalLossesHtml || "–"}${losses.unreadable ? `<abbr title="Ein Teil der Verluste steht nicht als Zahl und Kürzel da und ist nicht mitgezählt.">*</abbr>` : ""}</td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
                 <p class="camp-legend">${legend}</p>`
@@ -703,7 +726,7 @@ function openCampEditor(map: TacticMap, onSaved: () => void): void {
         <header class="dlg-head dlg-head--simple">
             <div>
                 <h3>Einheiten pro Lager</h3>
-                <p class="dlg-note">${esc(map.title)}: Nummer des Lagers, Kürzel des Generals und die Einheiten mit Stückzahl.</p>
+                <p class="dlg-note">${esc(map.title)}: Nummer des Lagers, Kürzel des Generals und die Einheiten mit Stückzahl. Verluste als Zahl und Kürzel eintragen (zum Beispiel 262 SK 46 BSK), dann zählt die Tabelle sie unten zusammen.</p>
             </div>
         </header>
 

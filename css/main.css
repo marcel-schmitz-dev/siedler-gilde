@@ -3468,7 +3468,7 @@ body.has-tactic-fullscreen {
 }
 
 .camp-scroll {
-  max-height: 190px;
+  max-height: 250px;
   overflow: auto;
 }
 .camp-scroll:focus-visible {
@@ -3504,6 +3504,25 @@ body.has-tactic-fullscreen {
 .camp-losses {
   color: #ff7b7b !important;
   font-weight: 700;
+}
+
+.camp-table tfoot th,
+.camp-table tfoot td {
+  position: sticky;
+  bottom: 0;
+  background: rgba(64, 40, 18, 0.97);
+  border-top: 2px solid rgba(217, 164, 65, 0.8);
+  font-weight: 700;
+}
+
+.camp-table tfoot td:not(.camp-losses) {
+  color: #f6dd9a;
+}
+
+.camp-table abbr {
+  margin-left: 3px;
+  text-decoration: none;
+  cursor: help;
 }
 
 .camp-unit--fk {
