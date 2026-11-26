@@ -27,11 +27,4 @@ export const MAP_CATEGORIES: MapCategory[] = [
     { id: "koop", title: "Koop", description: "Taktikkarten und Aufstellungen für Koop-Abenteuer." },
 ];
 
-export const ADVENTURE_MAPS: AdventureMap[] = [
-    {
-        category: "maerchen",
-        title: "Ali Baba der junge Holzfäller",
-        image: "./assets/img_karten/holzi-matze85s.png",
-        author: "Matze85s",
-    },
-];
+export const ADVENTURE_MAPS: AdventureMap[] = [];
