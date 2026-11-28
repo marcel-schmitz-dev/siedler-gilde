@@ -1,11 +1,17 @@
 import { BATTLE_UNITS, findBattleUnit } from "./data/units.js";
 // Alle Einheiten der Lager zusammengezählt, in der Reihenfolge der Einheiten-Liste
-export function totalUnits(camps) {
+// Vorwellen, Leech-Einträge und Fernkampf-Textmarken zählen mit
+export function totalUnits(camps, pins = []) {
     const units = new Map();
     const fk = new Map();
     camps.forEach((camp) => {
         camp.units.forEach((entry) => units.set(entry.unit, (units.get(entry.unit) ?? 0) + entry.count));
+        camp.vanguard?.units.forEach((entry) => units.set(entry.unit, (units.get(entry.unit) ?? 0) + entry.count));
         camp.fk.forEach((entry) => fk.set(entry.name, (fk.get(entry.name) ?? 0) + entry.count));
+    });
+    pins.forEach((pin) => {
+        pin.units?.forEach((entry) => units.set(entry.unit, (units.get(entry.unit) ?? 0) + entry.count));
+        pin.fk?.forEach((entry) => fk.set(entry.name, (fk.get(entry.name) ?? 0) + entry.count));
     });
     return {
         units: BATTLE_UNITS.filter((unit) => units.has(unit.slug)).map((unit) => ({
@@ -17,11 +23,12 @@ export function totalUnits(camps) {
     };
 }
 // Verluste stehen als Text im Lager ("262 SK 46 BSK"). Gezählt wird alles, was nach Zahl und bekanntem Kürzel aussieht.
-export function totalLosses(camps) {
+export function totalLosses(camps, pins = []) {
     const sums = new Map();
     let unreadable = false;
-    camps.forEach((camp) => {
-        const text = camp.losses.trim();
+    const texts = [...camps.map((camp) => camp.losses), ...pins.map((pin) => pin.losses ?? "")];
+    texts.forEach((raw) => {
+        const text = raw.trim();
         if (!text) {
             return;
         }

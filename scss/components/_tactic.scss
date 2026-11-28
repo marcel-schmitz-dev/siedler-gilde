@@ -539,7 +539,8 @@ body.has-tactic-fullscreen {
     gap: 6px;
 }
 
-.mark-mode {
+.mark-mode,
+.mark-quick__btn {
     padding: 4px 12px;
 
     border: 1px solid rgba(217, 164, 65, 0.5);
@@ -559,6 +560,18 @@ body.has-tactic-fullscreen {
 
         color: #fff;
     }
+}
+
+.mark-textrow {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.mark-quick {
+    display: flex;
+    gap: 6px;
 }
 
 .mark-text {
@@ -1184,4 +1197,79 @@ body.has-tactic-fullscreen {
 
 .tactic__tools [hidden] {
     display: none;
+}
+
+// Vorwelle in der Tabelle und im Editor
+.camp-wave {
+    margin-bottom: 3px;
+    padding-bottom: 3px;
+
+    border-bottom: 1px dashed rgba(217, 164, 65, 0.35);
+
+    color: #ffc98a;
+}
+
+.camp-wave__tag {
+    display: inline-block;
+
+    margin-right: 4px;
+    padding: 0 5px;
+
+    border: 1px solid rgba(217, 164, 65, 0.5);
+    border-radius: 4px;
+
+    color: rgba(246, 221, 154, 0.85);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.camp-extra th {
+    color: #ffc98a;
+}
+
+.camp-wave-edit {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+
+    padding: 10px;
+
+    border: 1px dashed rgba($gold-primary, 0.6);
+    border-radius: 6px;
+
+    h4 {
+        margin: 0;
+
+        color: $gold-light;
+        font-family: $serif;
+    }
+}
+
+.camp-general input {
+    min-width: 200px;
+}
+
+.camp-section {
+    margin: 18px 0 8px;
+
+    color: $gold-light;
+    font-family: $serif;
+}
+
+.camp-pin-label {
+    align-self: center;
+
+    min-width: 48px;
+
+    color: $gold-light;
+    font-family: $serif;
+    font-size: 18px;
+}
+
+.camp-pin-kind {
+    align-self: center;
+
+    color: rgba(241, 226, 189, 0.8);
 }

@@ -1,5 +1,5 @@
 import { BATTLE_UNITS, findBattleUnit } from "./data/units.js";
-import type { Camp } from "./tactic-store.js";
+import type { Camp, Pin } from "./tactic-store.js";
 
 export interface TotalEntry {
     abbr: string;
@@ -13,13 +13,20 @@ export interface FkTotal {
 }
 
 // Alle Einheiten der Lager zusammengezählt, in der Reihenfolge der Einheiten-Liste
-export function totalUnits(camps: Camp[]): { units: TotalEntry[]; fk: FkTotal[] } {
+// Vorwellen, Leech-Einträge und Fernkampf-Textmarken zählen mit
+export function totalUnits(camps: Camp[], pins: Pin[] = []): { units: TotalEntry[]; fk: FkTotal[] } {
     const units = new Map<string, number>();
     const fk = new Map<string, number>();
 
     camps.forEach((camp) => {
         camp.units.forEach((entry) => units.set(entry.unit, (units.get(entry.unit) ?? 0) + entry.count));
+        camp.vanguard?.units.forEach((entry) => units.set(entry.unit, (units.get(entry.unit) ?? 0) + entry.count));
         camp.fk.forEach((entry) => fk.set(entry.name, (fk.get(entry.name) ?? 0) + entry.count));
+    });
+
+    pins.forEach((pin) => {
+        pin.units?.forEach((entry) => units.set(entry.unit, (units.get(entry.unit) ?? 0) + entry.count));
+        pin.fk?.forEach((entry) => fk.set(entry.name, (fk.get(entry.name) ?? 0) + entry.count));
     });
 
     return {
@@ -33,12 +40,14 @@ export function totalUnits(camps: Camp[]): { units: TotalEntry[]; fk: FkTotal[] 
 }
 
 // Verluste stehen als Text im Lager ("262 SK 46 BSK"). Gezählt wird alles, was nach Zahl und bekanntem Kürzel aussieht.
-export function totalLosses(camps: Camp[]): { items: TotalEntry[]; unreadable: boolean } {
+export function totalLosses(camps: Camp[], pins: Pin[] = []): { items: TotalEntry[]; unreadable: boolean } {
     const sums = new Map<string, number>();
     let unreadable = false;
 
-    camps.forEach((camp) => {
-        const text = camp.losses.trim();
+    const texts = [...camps.map((camp) => camp.losses), ...pins.map((pin) => pin.losses ?? "")];
+
+    texts.forEach((raw) => {
+        const text = raw.trim();
 
         if (!text) {
             return;

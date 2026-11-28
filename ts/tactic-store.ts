@@ -25,6 +25,8 @@ export const LIMITS = {
     campLosses: 40,
     unitCount: 9999,
     marks: 10,
+    vanguardUnits: 4,
+    pinNote: 60,
 };
 
 export interface CampUnit {
@@ -42,6 +44,12 @@ export interface CampFk {
     count: number;
 }
 
+// Vorwelle: ein General mit wenigen Einheiten (oft 1 Rekrut) greift vor dem eigentlichen General an
+export interface Vanguard {
+    general: string;
+    units: CampUnit[];
+}
+
 export interface Camp {
     nr: string;
     general: string;
@@ -49,12 +57,33 @@ export interface Camp {
     units: CampUnit[];
     fk: CampFk[];
     marks: CampMark[];
+    vanguard: Vanguard | null;
+}
+
+// Textmarken auf der Karte, zu denen es unter „Einheiten“ einen eigenen Eintrag gibt
+export type PinKind = "A" | "FK" | "L";
+
+export const PIN_KINDS: Record<PinKind, string> = {
+    A: "Aussetzen",
+    FK: "Fernkampf",
+    L: "Leech",
+};
+
+export function pinKind(text: string): PinKind | null {
+    const key = text.trim().toUpperCase();
+
+    return key === "A" || key === "FK" || key === "L" ? key : null;
 }
 
 export interface Pin {
     t: string;
     x: number;
     y: number;
+    general?: string;
+    losses?: string;
+    units?: CampUnit[];
+    fk?: CampFk[];
+    note?: string;
 }
 
 export interface Line {
@@ -75,20 +104,90 @@ function fraction(value: unknown): number | null {
     return number >= 0 && number <= 1 ? Math.round(number * 10000) / 10000 : null;
 }
 
+function cleanUnits(raw: unknown, max: number): CampUnit[] {
+    const units: CampUnit[] = [];
+
+    if (Array.isArray(raw)) {
+        raw.slice(0, max).forEach((value) => {
+            const row = value as { unit?: unknown; count?: unknown };
+            const count = Math.floor(Number(row.count));
+
+            if (typeof row.unit === "string" && row.unit && count >= 1 && count <= LIMITS.unitCount) {
+                units.push({ unit: row.unit, count });
+            }
+        });
+    }
+
+    return units;
+}
+
+function cleanFk(raw: unknown, max: number): CampFk[] {
+    const fk: CampFk[] = [];
+
+    if (Array.isArray(raw)) {
+        raw.slice(0, max).forEach((value) => {
+            const row = value as { name?: unknown; count?: unknown };
+            const name = String(row.name ?? "").trim().slice(0, LIMITS.fkName);
+            const count = Math.floor(Number(row.count));
+
+            if (name && count >= 1 && count <= LIMITS.fkCount) {
+                fk.push({ name, count });
+            }
+        });
+    }
+
+    return fk;
+}
+
 export function cleanShapes(raw: unknown): Shapes {
     const source = (raw ?? {}) as { pins?: unknown; lines?: unknown };
     const shapes: Shapes = { pins: [], lines: [] };
 
     if (Array.isArray(source.pins)) {
         source.pins.slice(0, LIMITS.pins).forEach((value) => {
-            const pin = value as { t?: unknown; x?: unknown; y?: unknown };
+            const pin = value as Record<string, unknown>;
             const t = String(pin.t ?? "").trim().slice(0, LIMITS.pinText);
             const x = fraction(pin.x);
             const y = fraction(pin.y);
 
-            if (t && x !== null && y !== null) {
-                shapes.pins.push({ t, x, y });
+            if (!t || x === null || y === null) {
+                return;
             }
+
+            const clean: Pin = { t, x, y };
+            const kind = pinKind(t);
+
+            if (kind === "A") {
+                const note = String(pin.note ?? "").trim().slice(0, LIMITS.pinNote);
+
+                if (note) {
+                    clean.note = note;
+                }
+            } else if (kind === "FK") {
+                const fk = cleanFk(pin.fk, LIMITS.campFk);
+
+                if (fk.length) {
+                    clean.fk = fk;
+                }
+            } else if (kind === "L") {
+                const general = String(pin.general ?? "").trim().slice(0, LIMITS.campGeneral);
+                const losses = String(pin.losses ?? "").trim().slice(0, LIMITS.campLosses);
+                const units = cleanUnits(pin.units, LIMITS.campUnits);
+
+                if (general) {
+                    clean.general = general;
+                }
+
+                if (losses) {
+                    clean.losses = losses;
+                }
+
+                if (units.length) {
+                    clean.units = units;
+                }
+            }
+
+            shapes.pins.push(clean);
         });
     }
 
@@ -114,39 +213,23 @@ export function cleanCamps(raw: unknown): Camp[] {
     const camps: Camp[] = [];
 
     raw.slice(0, LIMITS.camps).forEach((item) => {
-        const entry = item as { nr?: unknown; general?: unknown; losses?: unknown; units?: unknown; fk?: unknown; marks?: unknown };
+        const entry = item as {
+            nr?: unknown;
+            general?: unknown;
+            losses?: unknown;
+            units?: unknown;
+            fk?: unknown;
+            marks?: unknown;
+            vanguard?: unknown;
+        };
         const nr = String(entry.nr ?? "").trim().slice(0, LIMITS.campNr);
 
         if (!nr) {
             return;
         }
 
-        const units: CampUnit[] = [];
-
-        if (Array.isArray(entry.units)) {
-            entry.units.slice(0, LIMITS.campUnits).forEach((value) => {
-                const row = value as { unit?: unknown; count?: unknown };
-                const count = Math.floor(Number(row.count));
-
-                if (typeof row.unit === "string" && row.unit && count >= 1 && count <= LIMITS.unitCount) {
-                    units.push({ unit: row.unit, count });
-                }
-            });
-        }
-
-        const fk: CampFk[] = [];
-
-        if (Array.isArray(entry.fk)) {
-            entry.fk.slice(0, LIMITS.campFk).forEach((value) => {
-                const row = value as { name?: unknown; count?: unknown };
-                const name = String(row.name ?? "").trim().slice(0, LIMITS.fkName);
-                const count = Math.floor(Number(row.count));
-
-                if (name && count >= 1 && count <= LIMITS.fkCount) {
-                    fk.push({ name, count });
-                }
-            });
-        }
+        const units = cleanUnits(entry.units, LIMITS.campUnits);
+        const fk = cleanFk(entry.fk, LIMITS.campFk);
 
         const marks: CampMark[] = [];
 
@@ -162,6 +245,10 @@ export function cleanCamps(raw: unknown): Camp[] {
             });
         }
 
+        const wave = (entry.vanguard ?? {}) as { general?: unknown; units?: unknown };
+        const waveGeneral = String(wave.general ?? "").trim().slice(0, LIMITS.campGeneral);
+        const waveUnits = cleanUnits(wave.units, LIMITS.vanguardUnits);
+
         camps.push({
             nr,
             general: String(entry.general ?? "").trim().slice(0, LIMITS.campGeneral),
@@ -169,6 +256,7 @@ export function cleanCamps(raw: unknown): Camp[] {
             units,
             fk,
             marks,
+            vanguard: waveGeneral || waveUnits.length ? { general: waveGeneral, units: waveUnits } : null,
         });
     });
 
