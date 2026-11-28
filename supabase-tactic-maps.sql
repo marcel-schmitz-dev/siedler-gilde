@@ -59,7 +59,7 @@ create table public.tactic_maps (
   ),
   -- Positionen, Beschriftungen und Linien auf der Karte: {"pins": [{"t": "P1", "x": 0.2, "y": 0.4}], "lines": [{"x1": 0.1, "y1": 0.1, "x2": 0.3, "y2": 0.2}]}
   shapes      jsonb not null default '{"pins": [], "lines": []}'::jsonb check (
-    jsonb_typeof(shapes) = 'object' and char_length(shapes::text) <= 20000
+    jsonb_typeof(shapes) = 'object' and char_length(shapes::text) <= 40000
   ),
   specials    text not null default '' check (char_length(specials) <= 1500),
   tips        text not null default '' check (char_length(tips) <= 1500),
