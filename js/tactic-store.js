@@ -93,6 +93,10 @@ export function cleanShapes(raw) {
                 const general = String(pin.general ?? "").trim().slice(0, LIMITS.campGeneral);
                 const losses = String(pin.losses ?? "").trim().slice(0, LIMITS.campLosses);
                 const units = cleanUnits(pin.units, LIMITS.campUnits);
+                const fk = cleanFk(pin.fk, LIMITS.campFk);
+                if (fk.length) {
+                    clean.fk = fk;
+                }
                 if (general) {
                     clean.general = general;
                 }

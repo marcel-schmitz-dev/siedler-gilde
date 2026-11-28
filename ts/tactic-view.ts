@@ -747,7 +747,7 @@ function renderCamps(body: HTMLElement, map: TacticMap, canEdit: boolean): void 
             } else if (kind === "FK") {
                 content = fkSpans(pin.fk ?? [], used) || "–";
             } else {
-                content = unitSpans(pin.units ?? [], used) || "–";
+                content = [unitSpans(pin.units ?? [], used), fkSpans(pin.fk ?? [], used)].filter(Boolean).join(" ") || "–";
             }
 
             return `<tr class="camp-extra"><th scope="row" title="${PIN_KINDS[kind]}">${esc(label)}</th><td>${esc(pin.general ?? "") || "–"}</td><td>${content}</td><td class="camp-losses">${esc(pin.losses ?? "") || "–"}</td></tr>`;
@@ -976,8 +976,10 @@ function openCampEditor(map: TacticMap, onSaved: () => void): void {
                 </div>
                 <div class="camp-row__units">
                     ${units.map((entry, j) => unitLine(entry, j, "u")).join("")}
+                    ${(pin.fk ?? []).map((entry, k) => fkLine(entry, k, "k")).join("")}
                     <div class="camp-row__add">
                         ${units.length < LIMITS.campUnits ? `<button type="button" class="wiz-button wiz-button--ghost" data-act="add-u">+ Einheit</button>` : ""}
+                        ${(pin.fk ?? []).length < LIMITS.campFk ? `<button type="button" class="wiz-button wiz-button--ghost" data-act="add-k">+ Fernkampf</button>` : ""}
                     </div>
                 </div>
             </fieldset>`;
